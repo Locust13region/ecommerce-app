@@ -14,6 +14,8 @@ Key pages in the application include:
 - Basket page 🛒
 - About Us page 🙋‍♂️🙋‍♀️
 
+The application is powered by CommerceTools 🌐, a leading provider of commerce solutions for B2C and B2B enterprises.
+
 ## Team
 
 ### Frontend Team Lead
