@@ -54,10 +54,34 @@ npm run dev
 npm run build
 ```
 
+### Compile without preview and type-checking for Production
+
+```sh
+npm run build-only
+```
+
+### Start a local web server that serves the built solution from ./dist for previewing
+
+```sh
+npm run preview
+```
+
 ### Run Unit Tests with [Vitest](https://vitest.dev/)
 
 ```sh
 npm run test:unit
+```
+
+### Install [Husky](https://typicode.github.io/husky/)
+
+```sh
+npm run prepare
+```
+
+### Install [Cypress](https://www.cypress.io/)
+
+```sh
+npm run prepare-test
 ```
 
 ### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
@@ -76,8 +100,20 @@ npm run build
 npm run test:e2e
 ```
 
+### Run type checking
+
+```sh
+npm run type-check
+```
+
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh
 npm run lint
+```
+
+### Format all code in the src/ folder using [Prettier](https://prettier.io/)
+
+```sh
+npm run format
 ```
