@@ -16,14 +16,20 @@
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
-    "test": "npx eslint . && npx prettier --check ."
+    "test": "npx eslint . && npx prettier --check .",
+    "stylelint": "stylelint \"**/*.{css,scss}\""
   },
   "lint-staged": {
-    "src/**/*.{ts,tsx}": [
+    "src/**/*.{ts,tsx,vue,css,scss}": [
       "npm run lint",
-      "npm run prettier",
+      "npm run format",
       "npm run stylelint"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "echo \"[Husky] pre-commit\""
+    }
   },
   "dependencies": {
     "pinia": "^3.0.1",
@@ -48,6 +54,7 @@
     "husky": "^9.1.7",
     "jiti": "^2.4.2",
     "jsdom": "^26.0.0",
+    "lint-staged": "^15.5.1",
     "npm-run-all2": "^7.0.2",
     "prettier": "3.5.3",
     "start-server-and-test": "^2.0.11",
