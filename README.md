@@ -4,7 +4,7 @@ Welcome to our eCommerce application! This platform replicates real-world shoppi
 
 An important aspect of our application is that it's responsive 📲, ensuring it looks great on various devices with a minimum resolution of 390px.
 
-Key pages in the application include:
+## Key pages in the application include:
 
 - Login and Registration pages 🖥️
 - Main page 🏠
@@ -30,6 +30,18 @@ The application is powered by CommerceTools 🌐, a leading provider of commerce
 ### Mentor
 
 - **[KaterinaKachann](https://github.com/katerinakachann)**
+
+## Technology stack
+
+- GitHub
+- Jira
+- CommerceTools
+- Vue
+- Primevue
+- TypeScript
+- ESLint
+- Prettier
+- Husky
 
 ## Recommended IDE Setup
 
