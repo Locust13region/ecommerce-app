@@ -112,6 +112,12 @@ npm run type-check
 npm run lint
 ```
 
+### Lint CSS styling with [StyleLint](https://stylelint.io/)
+
+```sh
+npm run stylelint
+```
+
 ### Format all code in the src/ folder using [Prettier](https://prettier.io/)
 
 ```sh
