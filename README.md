@@ -1,5 +1,21 @@
 # eCommerce application - final task of RSSchool stage2
 
+Welcome to our eCommerce application! This platform replicates real-world shopping experiences in a digital environment 🏪. It's a comprehensive online shopping portal that provides an interactive and seamless experience to users. From product discovery to checkout, the application ensures a smooth journey for the user, enhancing their engagement and boosting their purchasing confidence 🚀.
+
+An important aspect of our application is that it's responsive 📲, ensuring it looks great on various devices with a minimum resolution of 390px.
+
+Key pages in the application include:
+
+- Login and Registration pages 🖥️
+- Main page 🏠
+- Catalog Product page 📋
+- Detailed Product page 🔎
+- User Profile page 👤
+- Basket page 🛒
+- About Us page 🙋‍♂️🙋‍♀️
+
+The application is powered by CommerceTools 🌐, a leading provider of commerce solutions for B2C and B2B enterprises.
+
 ## Team
 
 ### Frontend Team Lead
@@ -38,10 +54,34 @@ npm run dev
 npm run build
 ```
 
+### Compile without preview and type-checking for Production
+
+```sh
+npm run build-only
+```
+
+### Start a local web server that serves the built solution from ./dist for previewing
+
+```sh
+npm run preview
+```
+
 ### Run Unit Tests with [Vitest](https://vitest.dev/)
 
 ```sh
 npm run test:unit
+```
+
+### Install [Husky](https://typicode.github.io/husky/)
+
+```sh
+npm run prepare
+```
+
+### Install [Cypress](https://www.cypress.io/)
+
+```sh
+npm run prepare-test
 ```
 
 ### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
@@ -60,14 +100,26 @@ npm run build
 npm run test:e2e
 ```
 
+### Run type checking
+
+```sh
+npm run type-check
+```
+
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh
 npm run lint
 ```
 
-### Lint with [StyleLint](https://stylelint.io/)
+### Lint CSS styling with [StyleLint](https://stylelint.io/)
 
 ```sh
 npm run stylelint
+```
+
+### Format all code in the src/ folder using [Prettier](https://prettier.io/)
+
+```sh
+npm run format
 ```
