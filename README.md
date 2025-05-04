@@ -65,3 +65,9 @@ npm run test:e2e
 ```sh
 npm run lint
 ```
+
+### Lint with [StyleLint](https://stylelint.io/)
+
+```sh
+npm run stylelint
+```
