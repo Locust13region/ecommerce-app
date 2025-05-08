@@ -1,5 +1,5 @@
-import { formData, formErrors } from '@/consts/signUpFormConsts'
-import type { ValidationResult } from '@/interfaces/signUpFormInterfaces'
+import { countriesSelect, formData, formErrors } from '@/consts/signUpFormConsts'
+import type { CountrySelect, ValidationResult } from '@/interfaces/signUpFormInterfaces'
 
 export const validateInput = (name: string, fieldName: string): ValidationResult => {
   if (!name) {
@@ -35,12 +35,23 @@ export const validateName = (name: string, fieldName: string): ValidationResult 
   return { valid: true }
 }
 
+export const validatePostalCode = (postalCode: string): ValidationResult => {
+  if (!postalCode) {
+    return { valid: false, message: 'Postal code is required' }
+  }
+  const postalCodeRegex = /^[0-9]{5}(?:-[0-9]{4})?$|^[A-Za-z]\d[A-Za-z0-9] \d[A-Za-z0-9]\d$/
+  if (!postalCodeRegex.test(postalCode)) {
+    return { valid: false, message: 'Please enter a valid postal code' }
+  }
+  return { valid: true }
+}
+
 export const validatePassword = (password: string): ValidationResult => {
   if (!password) {
     return { valid: false, message: 'Password is required' }
   }
 
-  if (password.length < 6) {
+  if (password.length < 8) {
     return { valid: false, message: 'Password must be at least 6 characters long' }
   }
 
@@ -56,6 +67,26 @@ export const validatePassword = (password: string): ValidationResult => {
     return { valid: false, message: 'Password must contain at least one special character' }
   }
 
+  return { valid: true }
+}
+
+export const validateCountry = (countryName: string | CountrySelect): ValidationResult => {
+  if (!countryName) {
+    return { valid: false, message: 'Country is required' }
+  }
+
+  if (typeof countryName === 'object') {
+    countryName = countryName.name
+  }
+
+  if (countriesSelect.value.filter((count) => count.name === countryName).length === 0) {
+    return { valid: false, message: `${countryName} is not a valid country` }
+  }
+
+  const countryRegex = /^[a-zA-Zа-яА-ЯёЁ]+$/
+  if (!countryRegex.test(countryName)) {
+    return { valid: false, message: 'Country should contain only letters' }
+  }
   return { valid: true }
 }
 
@@ -95,14 +126,14 @@ export const validateStreet = () => {
   return streetValidation.valid
 }
 
-export const validatePostalCode = () => {
-  const postalCodeValidation = validateInput(formData.value.postalCode, 'Postal code')
+export const postalCodeValidation = () => {
+  const postalCodeValidation = validatePostalCode(formData.value.postalCode)
   formErrors.value.postalCode = postalCodeValidation.message || ''
   return postalCodeValidation.valid
 }
 
-export const validateCountry = () => {
-  const countryValidation = validateInput(formData.value.country, 'Country')
+export const countryValidation = () => {
+  const countryValidation = validateCountry(formData.value.country)
   formErrors.value.country = countryValidation.message || ''
   return countryValidation.valid
 }
@@ -114,8 +145,8 @@ export const validateForm = (): boolean => {
   const isPasswordValid = passwordValidation()
   const isStreetValid = validateStreet()
   const isCityValid = validateCity()
-  const isPostalCodeValid = validatePostalCode()
-  const isCountryValid = validateCountry()
+  const isPostalCodeValid = postalCodeValidation()
+  const isCountryValid = countryValidation()
 
   return (
     isEmailValid &&

@@ -31,6 +31,11 @@ export interface FormErrors {
   country?: string
 }
 
+export interface CountrySelect {
+  name: string
+  code: string
+}
+
 export type FieldValidator = (value: string, fieldName?: string) => ValidationResult
 
 export type FormErrorsType = Partial<Record<keyof FormData, string>>

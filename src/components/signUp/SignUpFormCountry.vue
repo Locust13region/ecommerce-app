@@ -4,6 +4,10 @@ import { Select } from 'primevue'
 import { countriesSelect } from '@/consts/signUpFormConsts'
 
 const selectedCountry = ref('')
+
+defineProps<{
+  error?: string
+}>()
 </script>
 
 <template>
@@ -15,6 +19,7 @@ const selectedCountry = ref('')
     optionLabel="name"
     placeholder="Select a Country"
     class="w-full md:w-56"
+    :class="{ 'p-invalid': error }"
   />
 </template>
 
@@ -26,5 +31,8 @@ const selectedCountry = ref('')
 .p-select-label::placeholder {
   font-size: 1rem;
   color: var(--p-select-placeholder-color);
+}
+.p-select input {
+  border-color: var(--p-inputtext-invalid-border-color);
 }
 </style>

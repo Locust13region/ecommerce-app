@@ -11,8 +11,8 @@ import {
   validateStreet,
   validateForm,
   validateCity,
-  validateCountry,
-  validatePostalCode,
+  countryValidation,
+  postalCodeValidation,
 } from '@/services/signUp-validation/signUp-validation'
 import { formData, formErrors } from '@/consts/signUpFormConsts'
 import countrySelect from '@/components/signUp/SignUpFormCountry.vue'
@@ -45,7 +45,7 @@ function onFormSubmit() {
         <FormInputField
           name="firstName"
           label="First Name"
-          class="firstName"
+          inputClass="firstName"
           :error="formErrors.firstName"
           v-model:modelValue="formData.firstName"
           type="text"
@@ -55,7 +55,7 @@ function onFormSubmit() {
       </div>
       <div class="last-name-wrapper">
         <FormInputField
-          class="lastName"
+          inputClass="lastName"
           name="lastName"
           label="Last Name"
           :error="formErrors.lastName"
@@ -78,7 +78,7 @@ function onFormSubmit() {
     />
 
     <FormInputField
-      name="steet"
+      name="street"
       label="Address"
       :error="formErrors.street"
       v-model:modelValue="formData.street"
@@ -101,10 +101,14 @@ function onFormSubmit() {
       v-model:modelValue="formData.postalCode"
       type="text"
       placeholder="Postal Code"
-      :validate="validatePostalCode"
+      :validate="postalCodeValidation"
     />
 
-    <countrySelect @change="validateCountry" v-model="formData.country" />
+    <countrySelect
+      @change="countryValidation"
+      v-model="formData.country"
+      :error="formErrors.country"
+    />
     <Message v-if="formErrors.country" severity="error" size="small" variant="simple">{{
       formErrors.country
     }}</Message>
