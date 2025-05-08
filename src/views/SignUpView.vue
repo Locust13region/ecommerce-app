@@ -8,7 +8,7 @@ import { RouterLink } from 'vue-router'
     <h1>You are new here? Create your account!</h1>
     <p>
       After creating your account, you'll be able to log in on the
-      <RouterLink to="/">login</RouterLink> page.
+      <RouterLink to="/login">login</RouterLink> page.
     </p>
 
     <signUp />
