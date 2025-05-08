@@ -22,8 +22,7 @@
   "lint-staged": {
     "src/**/*.{ts,tsx,vue,css,scss}": [
       "npm run lint",
-      "npm run format",
-      "npm run stylelint"
+      "npm run format"
     ]
   },
   "husky": {

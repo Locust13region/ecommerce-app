@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import signUp from '@/components/signUp/signUp-component.vue'
+import signUp from '@/components/signUp/SignUpForm.vue'
 import { RouterLink } from 'vue-router'
 </script>
 
