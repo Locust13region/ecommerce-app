@@ -17,12 +17,14 @@
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
     "test": "npx eslint . && npx prettier --check .",
-    "stylelint": "stylelint \"**/*.{css,scss}\""
+    "prettier ": "stylelint \"**/*.{css,scss}\""
   },
   "lint-staged": {
-    "src/**/*.{ts,tsx,vue,css,scss}": [
+    "src/**/*.{ts,tsx,vue}": [
       "npm run lint",
-      "npm run format",
+      "npm run format"
+    ],
+    "src/**/*.{css,scss,vue}": [
       "npm run stylelint"
     ]
   },
