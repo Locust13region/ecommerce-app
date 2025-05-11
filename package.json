@@ -20,11 +20,9 @@
     "stylelint ": "stylelint \"**/*.{css,scss}\""
   },
   "lint-staged": {
-    "src/**/*.{ts,tsx,vue}": [
+    "src/**/*.{ts,tsx,vue,css,scss}": [
       "npm run lint",
-      "npm run format"
-    ],
-    "src/**/*.{css,scss,vue}": [
+      "npm run format",
       "npm run stylelint"
     ]
   },
