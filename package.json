@@ -17,7 +17,7 @@
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
     "test": "npx eslint . && npx prettier --check .",
-    "prettier ": "stylelint \"**/*.{css,scss}\""
+    "stylelint ": "stylelint \"**/*.{css,scss}\""
   },
   "lint-staged": {
     "src/**/*.{ts,tsx,vue}": [
