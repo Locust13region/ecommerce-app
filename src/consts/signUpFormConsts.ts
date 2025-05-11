@@ -206,6 +206,7 @@ export const formData = ref<FormData>({
   street: '',
   postalCode: '',
   country: '',
+  birthDate: '',
 })
 
 export const formErrors = ref<FormErrors>({})

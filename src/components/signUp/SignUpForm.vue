@@ -3,20 +3,26 @@ import Button from 'primevue/button'
 import { Message } from 'primevue'
 import { Form } from '@primevue/forms'
 import FormInputField from '../FormInputField/FormInputField.vue'
-import {
-  validateEmailField,
-  firstNameValidation,
-  lastNameValidation,
-  passwordValidation,
-  validateStreet,
-  validateForm,
-  validateCity,
-  countryValidation,
-  postalCodeValidation,
-} from '@/services/signUp-validation/signUp-validation'
-import { formData, formErrors } from '@/consts/signUpFormConsts'
+import SignUpBirthDate from '@/components/signUp/SignUpBirthDate.vue'
 import countrySelect from '@/components/signUp/SignUpFormCountry.vue'
 import SignUpPassword from '@/components/signUp/SignUpPassword.vue'
+
+import { useSignUpForm } from '@/services/signUp-validation/SignUpValidation'
+
+const {
+  formData,
+  formErrors,
+  validateForm,
+  validateEmailField,
+  validateFirstName: firstNameValidation,
+  validateLastName: lastNameValidation,
+  validatePasswordField: passwordValidation,
+  validateStreetField: validateStreet,
+  validateCityField: validateCity,
+  validatePostalCodeField: postalCodeValidation,
+  validateCountryField: countryValidation,
+  validateBirthDateField: validateDateField,
+} = useSignUpForm()
 
 function onFormSubmit() {
   if (validateForm()) {
@@ -75,6 +81,14 @@ function onFormSubmit() {
       type="password"
       placeholder="Password"
       :validate="passwordValidation"
+    />
+
+    <SignUpBirthDate
+      name="birthDate"
+      label="Birth Date"
+      :error="formErrors.birthDate"
+      v-model:modelValue="formData.birthDate"
+      :validate="validateDateField"
     />
 
     <FormInputField

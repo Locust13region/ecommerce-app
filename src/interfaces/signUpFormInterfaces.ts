@@ -18,6 +18,7 @@ export interface FormData {
   street: string
   postalCode: string
   country: string
+  birthDate: string
 }
 
 export interface FormErrors {
@@ -29,6 +30,7 @@ export interface FormErrors {
   street?: string
   postalCode?: string
   country?: string
+  birthDate?: string
 }
 
 export interface CountrySelect {
