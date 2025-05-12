@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
-import { Message } from 'primevue'
 import { Form } from '@primevue/forms'
 import FormInputField from '../FormInputField/FormInputField.vue'
 import SignUpBirthDate from '@/components/signUp/SignUpBirthDate.vue'
@@ -119,13 +118,10 @@ function onFormSubmit() {
     />
 
     <countrySelect
-      @change="countryValidation"
-      v-model="formData.country"
+      v-model:modelValue="formData.country"
       :error="formErrors.country"
+      :validate="countryValidation"
     />
-    <Message v-if="formErrors.country" severity="error" size="small" variant="simple">{{
-      formErrors.country
-    }}</Message>
     <Button type="submit" severity="secondary" label="Sign Up" />
   </Form>
 </template>

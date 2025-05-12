@@ -2,12 +2,24 @@
 import { ref } from 'vue'
 import { Select } from 'primevue'
 import { countriesSelect } from '@/consts/signUpFormConsts'
+import Message from 'primevue/message'
 
 const selectedCountry = ref('')
 
-defineProps<{
+const props = defineProps<{
   error?: string
+  modelValue: string
+  validate?: () => boolean
 }>()
+
+const emit = defineEmits(['update:modelValue'])
+
+function handleCountryChange(value: string) {
+  emit('update:modelValue', value)
+  if (props.validate) {
+    props.validate()
+  }
+}
 </script>
 
 <template>
@@ -19,8 +31,12 @@ defineProps<{
     optionLabel="name"
     placeholder="Select a Country"
     class="w-full md:w-56"
-    :class="{ 'p-invalid': error }"
+    :class="{ 'p-invalid': props.error }"
+    @change="handleCountryChange(selectedCountry)"
   />
+  <Message v-if="props.error" severity="error" size="small" variant="simple">{{
+    props.error
+  }}</Message>
 </template>
 
 <style>
