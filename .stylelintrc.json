@@ -1,0 +1,16 @@
+{
+  "customSyntax": "postcss-html",
+  "extends": ["stylelint-config-recommended-vue"],
+  "rules": {
+    "selector-class-pattern": null,
+    "alpha-value-notation": null,
+    "custom-property-empty-line-before": null,
+    "color-function-alias-notation": null,
+    "color-function-notation": null,
+    "no-duplicate-selectors": null,
+    "value-keyword-case": null,
+    "import-notation": null,
+    "hue-degree-notation": null,
+    "media-feature-range-notation": null
+  }
+}
