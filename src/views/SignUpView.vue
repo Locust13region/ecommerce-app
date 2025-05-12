@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import signUp from '@/components/signUp/signUp-component.vue'
+import SignUpForm from '@/components/signUp/SignUpForm.vue'
 import { RouterLink } from 'vue-router'
 </script>
 
@@ -11,7 +11,7 @@ import { RouterLink } from 'vue-router'
       <RouterLink to="/">login</RouterLink> page.
     </p>
 
-    <signUp />
+    <SignUpForm />
   </div>
 </template>
 
