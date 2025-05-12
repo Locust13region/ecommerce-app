@@ -2,17 +2,17 @@
 
 ## Type of Changes
 
-- [ ] 🐛 Bug fix
-- [ ] ✨ New feature
-- [ ] 🛠 Refactoring
-- [ ] 🧪 Tests
-- [ ] 📚 Documentation
-- [ ] 🚀 Other
+-   [ ] 🐛 Bug fix
+-   [ ] ✨ New feature
+-   [ ] 🛠 Refactoring
+-   [ ] 🧪 Tests
+-   [ ] 📚 Documentation
+-   [ ] 🚀 Other
 
 ## Description
 
-- ## What was:
-  -
+-   ## What was:
+    -
 
 ## How to Test
 
@@ -22,7 +22,7 @@
 
 ## Checklist
 
-- [ ] Code has been tested locally
-- [ ] Tests have been added/updated
-- [ ] No linter warnings
-- [ ] Documentation has been updated
+-   [ ] Code has been tested locally
+-   [ ] Tests have been added/updated
+-   [ ] No linter warnings
+-   [ ] Documentation has been updated
