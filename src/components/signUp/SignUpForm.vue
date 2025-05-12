@@ -6,7 +6,7 @@ import SignUpBirthDate from '@/components/signUp/SignUpBirthDate.vue'
 import countrySelect from '@/components/signUp/SignUpFormCountry.vue'
 import SignUpPassword from '@/components/signUp/SignUpPassword.vue'
 
-import { useSignUpForm } from '@/services/signUp-validation/SignUpValidation'
+import { useSignUpForm } from '@/composables/signUpValidation/SignUpValidation'
 
 const {
   formData,

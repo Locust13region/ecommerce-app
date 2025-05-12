@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { countriesSelect } from '@/consts/signUpFormConsts'
 
-import { signUpSchema } from '../CustomerValidationScheme/CustomerValidationScheme'
+import { signUpSchema } from '../../services/CustomerValidationScheme/CustomerValidationScheme'
 
 export type SignUpFormData = z.infer<typeof signUpSchema>
 
