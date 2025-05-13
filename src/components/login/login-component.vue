@@ -5,11 +5,15 @@ import Button from 'primevue/button'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 
-import { Form, FormField } from '@primevue/forms'
+import { Form, FormField, type FormSubmitEvent } from '@primevue/forms'
 // import { useToast } from 'primevue'
 import { ref } from 'vue'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { z } from 'zod'
+import { Message } from 'primevue'
+
+const email = ref('')
+const password = ref('')
 
 const initialValues = ref({
   email: '',
@@ -42,6 +46,14 @@ const resolver = ref(
     }),
   ),
 )
+
+const formSubmit = (event: FormSubmitEvent) => {
+  if (event.valid) {
+    const email = event.states.email.value
+    const password = event.states.password.value
+    console.log(email, password)
+  }
+}
 </script>
 
 <template>
@@ -49,19 +61,26 @@ const resolver = ref(
     v-slot="$form"
     :resolver="resolver"
     :initialValues="initialValues"
+    @submit="formSubmit"
     class="flex flex-col gap-4 w-full sm:w-80"
   >
     <FormField>
       <IconField>
         <InputIcon class="pi pi-user" />
-        <InputText placeholder="Email" name="email" required />
+        <InputText placeholder="Email" name="email" v-model="email" />
       </IconField>
       <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
         $form.email.error?.message
       }}</Message>
     </FormField>
     <FormField>
-      <Password name="password" placeholder="Password" :feedback="false" toggleMask />
+      <Password
+        name="password"
+        placeholder="Password"
+        :feedback="false"
+        v-model="password"
+        toggleMask
+      />
       <div v-if="$form.password?.invalid" class="flex flex-col gap-1">
         <Message
           v-for="(error, index) of $form.password.errors"
@@ -73,9 +92,8 @@ const resolver = ref(
         /></Message>
       </div>
     </FormField>
+    <Button type="submit" label="Login" class="login-button">Log In</Button>
   </Form>
-
-  <Button type="submit" label="Login" class="login-button">Log In</Button>
 </template>
 
 <style>
@@ -85,7 +103,7 @@ const resolver = ref(
 
 @media (min-width: 1024px) {
   .login-button {
-    width: 55%;
+    width: 100%;
   }
 }
 </style>
