@@ -88,13 +88,14 @@ const formSubmit = async (event: FormSubmitEvent) => {
   width: 235px;
 }
 
+.message {
+  max-width: 235px;
+  word-break: normal;
+}
+
 @media (min-width: 1024px) {
   .login-button {
     width: 100%;
-  }
-  .message {
-    max-width: 235px;
-    word-break: normal;
   }
 }
 </style>
