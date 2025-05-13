@@ -1,10 +1,8 @@
-import { useAuth } from '@/composables/useAuth'
 import type { CreateCustomerData } from '@/interfaces/signUpFormInterfaces'
-
-const { getApiRoot } = useAuth()
+import { createApiRoot } from '@/api/client'
 
 export const createCustomer = async (signUpData: CreateCustomerData) => {
-  const apiRoot = getApiRoot()
+  const apiRoot = await createApiRoot()
   if (!apiRoot) {
     console.warn('apiRoot is not available')
     return
@@ -36,7 +34,6 @@ export const createCustomer = async (signUpData: CreateCustomerData) => {
 
     console.log('Successfully created user:', JSON.stringify((await response).body, null, 2))
     console.log('User created:', response.body)
-    return response
   } catch (error) {
     console.error('Failed to create user:', error)
   }
