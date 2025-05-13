@@ -1,4 +1,4 @@
-import type { CreateCustomerData } from '@/interfaces/signUpFormInterfaces'
+import type { CommerceToolsError, CreateCustomerData } from '@/interfaces/signUpFormInterfaces'
 import { createApiRoot } from '@/api/client'
 
 export const createCustomer = async (signUpData: CreateCustomerData) => {
@@ -34,7 +34,10 @@ export const createCustomer = async (signUpData: CreateCustomerData) => {
 
     console.log('Successfully created user:', JSON.stringify((await response).body, null, 2))
     console.log('User created:', response.body)
-  } catch (error) {
+    return response.body
+  } catch (err) {
+    const error = err as CommerceToolsError
     console.error('Failed to create user:', error)
+    throw error
   }
 }

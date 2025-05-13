@@ -10,6 +10,7 @@ import { useSignUpForm } from '@/composables/signUpValidation/SignUpValidation'
 
 import { parseSignUpFormData } from '@/services/SignUpFormParser/signUpFormParsers'
 import { createCustomer } from '@/services/CreateCustomer/createCustomer'
+import type { CommerceToolsError } from '@/interfaces/signUpFormInterfaces'
 
 const {
   formData,
@@ -26,17 +27,18 @@ const {
   validateBirthDateField: validateDateField,
 } = useSignUpForm()
 
-function onFormSubmit() {
+const onFormSubmit = async () => {
   if (validateForm()) {
-    console.log('Parsed form data:', parseSignUpFormData(formData.value))
-    // TODO: add sending data to server
-    createCustomer(parseSignUpFormData(formData.value))
-      .then((response) => {
-        console.log('Customer created successfully:', response)
-      })
-      .catch((error) => {
-        console.error('Error creating customer:', error)
-      })
+    try {
+      const response = await createCustomer(parseSignUpFormData(formData.value))
+      console.log('Customer created successfully:', response)
+      // TODO: show success message using Toast
+      //       redirect customer to main page
+    } catch (err) {
+      const error = err as CommerceToolsError
+      console.error('Error when creating customer:', error.body.message)
+      // TODO: show error message using Toast error.body.message
+    }
   } else {
     console.log('Form validation failed')
   }
