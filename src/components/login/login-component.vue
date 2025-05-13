@@ -5,11 +5,10 @@ import Button from 'primevue/button'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import router from '@/router'
+import { loginValidator } from '@/services/loginFormValidation'
 
 import { Form, FormField, type FormSubmitEvent } from '@primevue/forms'
 import { ref } from 'vue'
-import { zodResolver } from '@primevue/forms/resolvers/zod'
-import { z } from 'zod'
 import { Message, Toast } from 'primevue'
 import { useToast } from 'primevue/usetoast'
 import { useAuth } from '@/composables/useAuth'
@@ -19,33 +18,6 @@ const { login /*, logout*/ } = useAuth()
 const toast = useToast()
 const email = ref('')
 const password = ref('')
-
-const resolver = ref(
-  zodResolver(
-    z.object({
-      email: z
-        .string()
-        .min(1, { message: 'Email is required.' })
-        .email({ message: 'Invalid email address.' }),
-      password: z
-        .string()
-        .min(8, { message: 'Minimum 8 characters.' })
-        .max(12, { message: 'Maximum 12 characters.' })
-        .refine((value) => /[a-z]/.test(value), {
-          message: 'Must have a lowercase letter.',
-        })
-        .refine((value) => /[A-Z]/.test(value), {
-          message: 'Must have an uppercase letter.',
-        })
-        .refine((value) => /[0-9]/.test(value), {
-          message: 'Must have a number.',
-        })
-        .refine((value) => /^[^\s]+$/.test(value), {
-          message: 'Password cannot include spaces.',
-        }),
-    }),
-  ),
-)
 
 const formSubmit = async (event: FormSubmitEvent) => {
   if (event.valid) {
@@ -73,7 +45,7 @@ const formSubmit = async (event: FormSubmitEvent) => {
 <template>
   <Form
     v-slot="$form"
-    :resolver="resolver"
+    :resolver="loginValidator"
     @submit="formSubmit"
     class="flex flex-col gap-4 w-full sm:w-80"
   >
