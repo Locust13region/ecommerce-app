@@ -8,6 +8,7 @@ import Material from '@primeuix/themes/material'
 import App from './App.vue'
 import router from './router'
 import { definePreset } from '@primeuix/themes'
+import ToastService from 'primevue/toastservice'
 
 const app = createApp(App)
 const MainPreset = definePreset(Material, {
@@ -38,4 +39,5 @@ app.use(PrimeVue, {
 })
 app.use(createPinia())
 app.use(router)
+app.use(ToastService)
 app.mount('#app')

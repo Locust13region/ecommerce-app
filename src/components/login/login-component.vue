@@ -4,21 +4,21 @@ import Password from 'primevue/password'
 import Button from 'primevue/button'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
+import router from '@/router'
 
 import { Form, FormField, type FormSubmitEvent } from '@primevue/forms'
-// import { useToast } from 'primevue'
 import { ref } from 'vue'
 import { zodResolver } from '@primevue/forms/resolvers/zod'
 import { z } from 'zod'
-import { Message } from 'primevue'
+import { Message, Toast } from 'primevue'
+import { useToast } from 'primevue/usetoast'
+import { useAuth } from '@/composables/useAuth'
+import { returnCustomerByEmail } from '@/composables/getCustomerByEmail'
 
+const { login /*, logout*/ } = useAuth()
+const toast = useToast()
 const email = ref('')
 const password = ref('')
-
-const initialValues = ref({
-  email: '',
-  password: '',
-})
 
 const resolver = ref(
   zodResolver(
@@ -47,11 +47,25 @@ const resolver = ref(
   ),
 )
 
-const formSubmit = (event: FormSubmitEvent) => {
+const formSubmit = async (event: FormSubmitEvent) => {
   if (event.valid) {
     const email = event.states.email.value
     const password = event.states.password.value
-    console.log(email, password)
+    await login(email, password).catch((e) => {
+      toast.add({ severity: 'error', summary: `${e.message}`, life: 5000 })
+    })
+
+    const responseWithCustomerData = await returnCustomerByEmail(email)
+    if (
+      responseWithCustomerData &&
+      responseWithCustomerData.statusCode === 200 &&
+      responseWithCustomerData.body.results.length !== 0
+    ) {
+      console.log(responseWithCustomerData)
+      console.log(responseWithCustomerData.body.results)
+      router.push('/')
+      localStorage.setItem('commercetools-isLogined', 'true')
+    }
   }
 }
 </script>
@@ -60,7 +74,6 @@ const formSubmit = (event: FormSubmitEvent) => {
   <Form
     v-slot="$form"
     :resolver="resolver"
-    :initialValues="initialValues"
     @submit="formSubmit"
     class="flex flex-col gap-4 w-full sm:w-80"
   >
@@ -94,6 +107,7 @@ const formSubmit = (event: FormSubmitEvent) => {
     </FormField>
     <Button type="submit" label="Login" class="login-button">Log In</Button>
   </Form>
+  <Toast></Toast>
 </template>
 
 <style>
