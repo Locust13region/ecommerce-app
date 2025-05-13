@@ -1,19 +1,9 @@
 import { useAuth } from '@/composables/useAuth'
+import type { CreateCustomerData } from '@/interfaces/signUpFormInterfaces'
 
 const { getApiRoot } = useAuth()
 
-export const createCustomer = async (
-  email: string,
-  password: string,
-  firstName: string,
-  lastName: string,
-  streetName: string,
-  streetNumber: string,
-  city: string,
-  postalCode: string,
-  country: string,
-  dateOfBirth: string,
-) => {
+export const createCustomer = async (signUpData: CreateCustomerData) => {
   const apiRoot = getApiRoot()
   if (!apiRoot) {
     console.warn('apiRoot is not available')
@@ -25,18 +15,18 @@ export const createCustomer = async (
       .customers()
       .post({
         body: {
-          email: email,
-          password: password,
-          firstName: firstName,
-          lastName: lastName,
-          dateOfBirth: dateOfBirth,
+          email: signUpData.email,
+          password: signUpData.password,
+          firstName: signUpData.firstName,
+          lastName: signUpData.lastName,
+          dateOfBirth: signUpData.birthDate,
           addresses: [
             {
-              country: country,
-              streetName: streetName,
-              streetNumber: streetNumber,
-              postalCode: postalCode,
-              city: city,
+              country: signUpData.country,
+              streetName: signUpData.streetName,
+              streetNumber: signUpData.streetNumber,
+              postalCode: signUpData.postalCode,
+              city: signUpData.city,
             },
           ],
           defaultShippingAddress: 1,

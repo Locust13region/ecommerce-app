@@ -1,5 +1,10 @@
 import { ref } from 'vue'
-import type { FormData, FormErrors, FormFieldConfig } from '@/interfaces/signUpFormInterfaces'
+import type {
+  CreateCustomerData,
+  FormData,
+  FormErrors,
+  FormFieldConfig,
+} from '@/interfaces/signUpFormInterfaces'
 
 export const countriesSelect = ref([
   { name: 'Afghanistan', code: 'AF' },
@@ -220,3 +225,16 @@ export const formFieldsConfig: FormFieldConfig[] = [
   { key: 'city', label: 'City', type: 'text' },
   { key: 'postalCode', label: 'Postal Code', type: 'text' },
 ]
+
+export const signUpData = ref<CreateCustomerData>({
+  email: '',
+  firstName: '',
+  lastName: '',
+  password: '',
+  city: '',
+  postalCode: '',
+  country: '',
+  birthDate: '',
+  streetName: '',
+  streetNumber: '',
+})

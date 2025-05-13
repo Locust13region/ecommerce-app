@@ -38,6 +38,11 @@ export interface CountrySelect {
   code: string
 }
 
+export interface CreateCustomerData extends Omit<FormData, 'street'> {
+  streetName: string
+  streetNumber: string
+}
+
 export type FieldValidator = (value: string, fieldName?: string) => ValidationResult
 
 export type FormErrorsType = Partial<Record<keyof FormData, string>>
