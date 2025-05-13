@@ -29,26 +29,15 @@ export const createCustomer = async (signUpData: CreateCustomerData) => {
               city: signUpData.city,
             },
           ],
-          defaultShippingAddress: 1,
+          defaultShippingAddress: 0,
         },
       })
       .execute()
 
+    console.log('Successfully created user:', JSON.stringify((await response).body, null, 2))
     console.log('User created:', response.body)
+    return response
   } catch (error) {
     console.error('Failed to create user:', error)
   }
 }
-/*
-birthDate:"03/04/1996"
-city:"Tbilisi"
-country:"GE"
-email:"lewis@ecwid.com"
-firstName:"Roman"
-lastName:"Kargin"
-password:"123qwe!@#QWE"
-postalCode:"01023"
-streetName:"Dimitri Uznadze"
-streetNumber:"117"
-
-*/
