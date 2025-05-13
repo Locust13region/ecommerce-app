@@ -13,7 +13,7 @@ import { z } from 'zod'
 import { Message, Toast } from 'primevue'
 import { useToast } from 'primevue/usetoast'
 import { useAuth } from '@/composables/useAuth'
-import { returnCustomerByEmail } from '@/composables/getCustomerByEmail'
+import { getCustomerByEmail } from '@/composables/getCustomerByEmail'
 
 const { login /*, logout*/ } = useAuth()
 const toast = useToast()
@@ -55,7 +55,7 @@ const formSubmit = async (event: FormSubmitEvent) => {
       toast.add({ severity: 'error', summary: `${e.message}`, life: 5000 })
     })
 
-    const responseWithCustomerData = await returnCustomerByEmail(email)
+    const responseWithCustomerData = await getCustomerByEmail(email)
     if (
       responseWithCustomerData &&
       responseWithCustomerData.statusCode === 200 &&

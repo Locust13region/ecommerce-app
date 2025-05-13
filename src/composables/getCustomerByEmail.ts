@@ -2,7 +2,7 @@ import { useAuth } from './useAuth'
 
 const { getApiRoot } = useAuth()
 
-export const returnCustomerByEmail = (customerEmail: string) => {
+export const getCustomerByEmail = (customerEmail: string) => {
   const apiRoot = getApiRoot()
   if (apiRoot) {
     return apiRoot
