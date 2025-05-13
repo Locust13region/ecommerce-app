@@ -39,3 +39,16 @@ export const createCustomer = async (signUpData: CreateCustomerData) => {
     console.error('Failed to create user:', error)
   }
 }
+/*
+birthDate:"03/04/1996"
+city:"Tbilisi"
+country:"GE"
+email:"lewis@ecwid.com"
+firstName:"Roman"
+lastName:"Kargin"
+password:"123qwe!@#QWE"
+postalCode:"01023"
+streetName:"Dimitri Uznadze"
+streetNumber:"117"
+
+*/

@@ -8,7 +8,7 @@ import SignUpPassword from '@/components/signUp/SignUpPassword.vue'
 
 import { useSignUpForm } from '@/composables/signUpValidation/SignUpValidation'
 
-import { parseStreet } from '@/services/SignUpFormParser/signUpFormParsers'
+import { parseSignUpFormData } from '@/services/SignUpFormParser/signUpFormParsers'
 
 const {
   formData,
@@ -27,11 +27,11 @@ const {
 
 function onFormSubmit() {
   if (validateForm()) {
-    console.log('Form submitted:', formData)
+    console.log('Form submitted:', formData.value)
+    console.log('Parsed form data:', parseSignUpFormData(formData.value))
     // TODO: add sending data to server
   } else {
     console.log('Form validation failed')
-    console.log(parseStreet(formData.value.street))
   }
 }
 </script>

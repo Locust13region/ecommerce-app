@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import type { CountrySelect } from '@/interfaces/signUpFormInterfaces'
 import { countriesSelect } from '@/consts/signUpFormConsts'
-import { parseDate } from '../ParseDate/parseDate'
+import { parseSignUpInputDate } from '../SignUpFormParser/signUpFormParsers'
 
 export const signUpSchema = z.object({
   email: z
@@ -77,7 +77,7 @@ export const signUpSchema = z.object({
     // })
     .refine(
       (dateStr) => {
-        const date = parseDate(dateStr)
+        const date = parseSignUpInputDate(dateStr)
         return date instanceof Date && !isNaN(date.getTime())
       },
       {
@@ -86,7 +86,7 @@ export const signUpSchema = z.object({
     )
     .refine(
       (dateStr) => {
-        const date = parseDate(dateStr)
+        const date = parseSignUpInputDate(dateStr)
         const minAgeDate = new Date()
         minAgeDate.setFullYear(minAgeDate.getFullYear() - 13)
         return date <= minAgeDate
