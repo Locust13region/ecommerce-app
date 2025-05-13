@@ -22,8 +22,11 @@ export const loginValidator = ref(
         .refine((value) => /[0-9]/.test(value), {
           message: 'Must have a number.',
         })
+        .refine((value) => /[!@#$%^&*]/.test(value), {
+          message: 'Must have at least one special character (e.g., !@#$%^&*)',
+        })
         .refine((value) => /^[^\s]+$/.test(value), {
-          message: 'Password cannot include spaces.',
+          message: 'Password cannot contain spaces.',
         }),
     }),
   ),

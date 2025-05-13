@@ -73,6 +73,7 @@ const formSubmit = async (event: FormSubmitEvent) => {
           severity="error"
           size="small"
           variant="simple"
+          class="message"
           >{{ error.message }}<br
         /></Message>
       </div>
@@ -90,6 +91,10 @@ const formSubmit = async (event: FormSubmitEvent) => {
 @media (min-width: 1024px) {
   .login-button {
     width: 100%;
+  }
+  .message {
+    max-width: 235px;
+    word-break: normal;
   }
 }
 </style>
