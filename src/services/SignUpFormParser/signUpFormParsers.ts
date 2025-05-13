@@ -14,7 +14,7 @@ export function parseSignUpDate(dateStr: string): string {
     month: '2-digit',
     day: '2-digit',
   }
-  return date.toLocaleDateString('en-US', options).split('/').reverse().join('-')
+  return date.toLocaleDateString('en-GB', options).split('/').reverse().join('-')
 }
 
 export function parseStreet(street: string) {
