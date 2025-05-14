@@ -6,10 +6,8 @@ import { RouterLink } from 'vue-router'
 <template>
   <div class="about">
     <h1>You are new here? Create your account!</h1>
-    <p>
-      After creating your account, you'll be able to log in on the
-      <RouterLink to="/">login</RouterLink> page.
-    </p>
+    <p>After creating your account, you'll be logged into the store.</p>
+    <p>If you have an account, go to the <RouterLink to="/login">Login</RouterLink> page.</p>
 
     <SignUpForm />
   </div>

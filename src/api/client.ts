@@ -83,7 +83,7 @@ export const createApiRoot = () => {
       clientId,
       clientSecret,
     },
-    scopes: [`manage_project:${projectKey}`],
+    scopes,
     fetch,
   }
 
