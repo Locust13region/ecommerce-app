@@ -7,7 +7,7 @@ import { RouterLink } from 'vue-router'
   <div class="about">
     <h1>You are new here? Create your account!</h1>
     <p>After creating your account, you'll be logged into the store.</p>
-    <p>If you have an account, go to the <RouterLink to="/login">Login</RouterLink> page.</p>
+    <p>Already have an account? <RouterLink to="/login">Login</RouterLink></p>
 
     <SignUpForm />
   </div>
