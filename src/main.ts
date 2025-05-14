@@ -38,11 +38,11 @@ app.use(PrimeVue, {
   },
 })
 
-router.beforeEach((to, from) => {
+router.beforeEach(async (to) => {
   const isLogined = localStorage['commercetools-isLogined'] || false
   if (to.name === 'login' && isLogined) {
     return {
-      name: String(from.name),
+      name: 'home',
     }
   }
 })
