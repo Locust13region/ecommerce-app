@@ -2,6 +2,8 @@
 import Button from 'primevue/button'
 import { Form } from '@primevue/forms'
 import Toast from 'primevue/toast'
+import { useToast } from 'primevue'
+import { useRouter } from 'vue-router'
 
 import FormInputField from '../FormInputField/FormInputField.vue'
 import SignUpBirthDate from '@/components/signUp/SignUpBirthDate.vue'
@@ -13,8 +15,8 @@ import { useSignUpForm } from '@/composables/signUpValidation/SignUpValidation'
 import { parseSignUpFormData } from '@/services/SignUpFormParser/signUpFormParsers'
 import { createCustomer } from '@/services/CreateCustomer/createCustomer'
 import type { CommerceToolsError } from '@/interfaces/signUpFormInterfaces'
-import { useToast } from 'primevue'
 
+const router = useRouter()
 const toast = useToast()
 
 const {
@@ -39,6 +41,18 @@ const onFormSubmit = async () => {
       console.log('Customer created successfully:', response)
       // TODO: show success message using Toast
       //       redirect customer to main page
+      await toast.add({
+        severity: 'success',
+        summary: 'Success!',
+        detail: `Your account ${formData.value.email} has been created successfully!`,
+        life: 10000,
+      })
+
+      // TODO: log in the customer
+      //       redirect customer to main page
+      //       add login process through Andrey method
+
+      await router.push({ path: '/' })
     } catch (err) {
       const error = err as CommerceToolsError
       console.error('Error when creating customer:', error.body.message)
@@ -52,8 +66,8 @@ const onFormSubmit = async () => {
       toast.add({
         severity: 'error',
         summary: 'Error',
-        detail: error.body.message,
-        life: 3000,
+        detail: `${error.body.message} Go to login page to log in with this email.`,
+        life: 10000,
       })
     }
   } else {
