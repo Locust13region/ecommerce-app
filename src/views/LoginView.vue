@@ -5,7 +5,7 @@ import loginComponent from '@/components/login/login-component.vue'
 </script>
 
 <template>
-  <div class="about">
+  <div class="login">
     <h1>Login to your account</h1>
     <p>
       Have not an account yet? You can create it on
@@ -16,14 +16,17 @@ import loginComponent from '@/components/login/login-component.vue'
 </template>
 
 <style>
+.login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  align-self: flex-start;
+}
 @media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+  .login {
+    padding-top: 100px;
   }
 }
 </style>
