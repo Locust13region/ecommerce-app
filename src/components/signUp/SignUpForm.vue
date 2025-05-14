@@ -16,8 +16,12 @@ import { parseSignUpFormData } from '@/services/SignUpFormParser/signUpFormParse
 import { createCustomer } from '@/services/CreateCustomer/createCustomer'
 import type { CommerceToolsError } from '@/interfaces/signUpFormInterfaces'
 
+import { useAuth } from '@/composables/useAuth'
+
 const router = useRouter()
 const toast = useToast()
+
+const { login } = useAuth()
 
 const {
   formData,
@@ -51,6 +55,9 @@ const onFormSubmit = async () => {
       // TODO: log in the customer
       //       redirect customer to main page
       //       add login process through Andrey method
+
+      await login(formData.value.email, formData.value.password)
+      console.log('Customer logged in successfully:', response)
 
       await router.push({ path: '/' })
     } catch (err) {
