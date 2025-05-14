@@ -7,6 +7,7 @@ import Material from '@primeuix/themes/material'
 
 import App from './App.vue'
 import router from './router'
+import { ToastService } from 'primevue'
 
 const app = createApp(App)
 
@@ -24,3 +25,5 @@ app.use(createPinia())
 app.use(router)
 
 app.mount('#app')
+
+app.use(ToastService)

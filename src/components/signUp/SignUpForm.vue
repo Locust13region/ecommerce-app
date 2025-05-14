@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
 import { Form } from '@primevue/forms'
+import Toast from 'primevue/toast'
+
 import FormInputField from '../FormInputField/FormInputField.vue'
 import SignUpBirthDate from '@/components/signUp/SignUpBirthDate.vue'
 import countrySelect from '@/components/signUp/SignUpFormCountry.vue'
@@ -11,6 +13,9 @@ import { useSignUpForm } from '@/composables/signUpValidation/SignUpValidation'
 import { parseSignUpFormData } from '@/services/SignUpFormParser/signUpFormParsers'
 import { createCustomer } from '@/services/CreateCustomer/createCustomer'
 import type { CommerceToolsError } from '@/interfaces/signUpFormInterfaces'
+import { useToast } from 'primevue'
+
+const toast = useToast()
 
 const {
   formData,
@@ -37,7 +42,19 @@ const onFormSubmit = async () => {
     } catch (err) {
       const error = err as CommerceToolsError
       console.error('Error when creating customer:', error.body.message)
-      // TODO: show error message using Toast error.body.message
+
+      if (error.body.message === 'There is already an existing customer with the provided email.') {
+        formErrors.value.email = 'Email already exists'
+      } else {
+        formErrors.value.email = ''
+      }
+
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: error.body.message,
+        life: 3000,
+      })
     }
   } else {
     console.log('Form validation failed')
@@ -46,6 +63,7 @@ const onFormSubmit = async () => {
 </script>
 
 <template>
+  <Toast />
   <Form @submit="onFormSubmit" class="flex flex-col gap-4 w-full sm:w-80 registration-form">
     <FormInputField
       name="email"
