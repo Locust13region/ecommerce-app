@@ -45,21 +45,26 @@ const onFormSubmit = async () => {
       console.log('Customer created successfully:', response)
       // TODO: show success message using Toast
       //       redirect customer to main page
-      await toast.add({
+      toast.add({
         severity: 'success',
         summary: 'Success!',
         detail: `Your account ${formData.value.email} has been created successfully!`,
         life: 10000,
       })
 
-      // TODO: log in the customer
-      //       redirect customer to main page
-      //       add login process through Andrey method
-
       await login(formData.value.email, formData.value.password)
       console.log('Customer logged in successfully:', response)
 
-      await router.push({ path: '/' })
+      toast.add({
+        severity: 'info',
+        summary: 'Info Message',
+        detail: 'You are logged in. Redirecting to the main page...',
+        life: 3000,
+      })
+
+      setTimeout(() => {
+        router.push({ path: '/' })
+      }, 3000)
     } catch (err) {
       const error = err as CommerceToolsError
       console.error('Error when creating customer:', error.body.message)
