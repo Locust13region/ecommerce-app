@@ -43,12 +43,7 @@ const formSubmit = async (event: FormSubmitEvent) => {
 </script>
 
 <template>
-  <Form
-    v-slot="$form"
-    :resolver="loginValidator"
-    @submit="formSubmit"
-    class="flex flex-col gap-4 w-full sm:w-80"
-  >
+  <Form v-slot="$form" :resolver="loginValidator" @submit="formSubmit" class="login-form">
     <FormField>
       <IconField>
         <InputIcon class="pi pi-user" />
@@ -84,6 +79,12 @@ const formSubmit = async (event: FormSubmitEvent) => {
 </template>
 
 <style>
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .login-button {
   width: 235px;
 }
