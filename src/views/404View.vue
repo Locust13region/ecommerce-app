@@ -1,11 +1,14 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import router from '@/router'
+import { Button } from 'primevue'
+</script>
 
 <template>
   <div class="page404">
     <img alt="page not found image" class="img-404" src="../assets/404-icon.png" />
     <h1>Oooops!...</h1>
     <h3>We couldn’t find that page — maybe the address is wrong or it’s been moved.</h3>
-    <RouterLink to="/" class="p-button p-component button-to-home">Back to Home</RouterLink>
+    <Button class="button-to-home" @click="router.push('/')"> </Button>
   </div>
 </template>
 
