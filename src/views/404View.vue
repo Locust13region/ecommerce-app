@@ -8,7 +8,7 @@ import { Button } from 'primevue'
     <img alt="page not found image" class="img-404" src="../assets/404-icon.png" />
     <h1>Oooops!...</h1>
     <h3>We couldn’t find that page — maybe the address is wrong or it’s been moved.</h3>
-    <Button class="button-to-home" @click="router.push('/')"> </Button>
+    <Button class="button-to-home" @click="router.push('/')"> Back to home </Button>
   </div>
 </template>
 
