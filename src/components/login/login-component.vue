@@ -12,9 +12,8 @@ import { ref } from 'vue'
 import { Message, Toast } from 'primevue'
 import { useToast } from 'primevue/usetoast'
 import { useAuth } from '@/composables/useAuth'
-import { getCustomerByEmail } from '@/composables/getCustomerByEmail'
 
-const { login /*, logout*/ } = useAuth()
+const { login, /*, logout*/ isAuthenticated } = useAuth()
 const toast = useToast()
 const email = ref('')
 const password = ref('')
@@ -23,20 +22,16 @@ const formSubmit = async (event: FormSubmitEvent) => {
   if (event.valid) {
     const email = event.states.email.value
     const password = event.states.password.value
-    await login(email, password).catch((e) => {
-      toast.add({ severity: 'error', summary: `${e.message}`, life: 5000 })
-    })
-
-    const responseWithCustomerData = await getCustomerByEmail(email)
-    if (
-      responseWithCustomerData &&
-      responseWithCustomerData.statusCode === 200 &&
-      responseWithCustomerData.body.results.length !== 0
-    ) {
-      console.log(responseWithCustomerData)
-      console.log(responseWithCustomerData.body.results)
-      router.push('/')
-      localStorage.setItem('commercetools-isLogined', 'true')
+    try {
+      await login(email, password)
+      if (isAuthenticated()) {
+        router.push('/')
+        localStorage.setItem('commercetools-isLogined', 'true')
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
+      }
     }
   }
 }
