@@ -7,6 +7,9 @@ import Material from '@primeuix/themes/material'
 
 import App from './App.vue'
 import router from './router'
+import { createAnonymousClient } from './api/api-root'
+
+createAnonymousClient()
 
 const app = createApp(App)
 
