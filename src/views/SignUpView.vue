@@ -4,7 +4,7 @@ import { RouterLink } from 'vue-router'
 </script>
 
 <template>
-  <div class="about">
+  <div class="signup">
     <h1>You are new here? Create your account!</h1>
     <p>
       After creating your account, you'll be able to log in on the
@@ -17,8 +17,7 @@ import { RouterLink } from 'vue-router'
 
 <style>
 @media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
+  .signup {
     display: flex;
     flex-direction: column;
     align-items: center;
