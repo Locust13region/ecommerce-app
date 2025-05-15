@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { formData } from '@/consts/signUpFormConsts'
 import { setBillingAddressIfSameAsShipping } from '@/services/SetBillingAddress/setBillingAddressIfSameAsShipping'
 import { Checkbox } from 'primevue'
 import { ref, watch } from 'vue'
@@ -11,8 +10,6 @@ const props = defineProps<{
   label: string
 }>()
 
-// const model = defineModel('modelValue');
-
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
 }>()
@@ -21,7 +18,6 @@ const modelValue = ref<boolean>(props.modelValue)
 
 watch(modelValue, (val) => {
   emit('update:modelValue', val)
-  console.log('Checkbox value changed:', formData.value)
   setBillingAddressIfSameAsShipping()
 })
 
