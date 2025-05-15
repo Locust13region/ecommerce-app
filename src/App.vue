@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import { Button } from 'primevue'
+import router from './router'
+import 'primeicons/primeicons.css'
 </script>
 
 <template>
@@ -8,11 +11,22 @@ import { RouterLink, RouterView } from 'vue-router'
 
     <div class="wrapper">
       <nav>
-        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/" class="pi pi-home"> Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/signup">Sign Up</RouterLink>
-        <RouterLink to="/login">Login</RouterLink>
       </nav>
+      <div class="auth">
+        <Button class="button-to-signup" severity="secondary" @click="router.push('/signup')">
+          Sign Up
+        </Button>
+        <Button class="button-to-login" @click="router.push('/login')">
+          <span class="pi pi-sign-in"></span>
+          Login
+        </Button>
+        <Button class="button-to-logout" @click="router.push('/login')">
+          <span class="pi pi-sign-out"></span>
+          Logout
+        </Button>
+      </div>
     </div>
   </header>
   <RouterView />
@@ -24,13 +38,19 @@ header {
   max-height: 100vh;
 }
 
+header .wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .logo {
   display: block;
   margin: 0 auto 2rem;
 }
 
 nav {
-  width: 100%;
+  width: 50%;
   font-size: 12px;
   text-align: center;
   margin-top: 2rem;
@@ -46,7 +66,7 @@ nav a.router-link-exact-active:hover {
 
 nav a {
   display: inline-block;
-  padding: 0 1rem;
+  padding: 0.5rem 1rem;
   border-left: 1px solid var(--color-border);
 }
 
@@ -54,11 +74,15 @@ nav a:first-of-type {
   border: 0;
 }
 
+.auth {
+  display: flex;
+  /* min-width: 170px; */
+}
+
 @media (min-width: 1024px) {
   header {
     display: flex;
     place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
     margin-top: 1rem;
     max-height: max-content;
   }
@@ -68,11 +92,11 @@ nav a:first-of-type {
   }
 
   header .wrapper {
-    display: flex;
-    place-items: flex-start;
     flex-wrap: wrap;
-    width: 50%;
+    width: 80%;
     align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
   }
 
   nav {
@@ -82,6 +106,13 @@ nav a:first-of-type {
 
     padding: 1rem 0;
     margin-top: 0;
+  }
+
+  .auth {
+    justify-content: space-between;
+    align-items: center;
+    /* width: 20%; */
+    width: 35%;
   }
 }
 </style>
