@@ -125,7 +125,27 @@ export const signUpSchema = z.object({
     .regex(/^[0-9]{5}(?:-[0-9]{4})?$|^[A-Za-z]\d[A-Za-z0-9] \d[A-Za-z0-9]\d$/, {
       message: 'Please enter a valid postal code',
     })
-    .min(1, { message: 'Postal code is required' }),
+    .min(1, { message: 'Postal code is required' })
+    .refine(
+      (data) => {
+        let selectedCountry = formData.value.billingCountry
+        if (
+          typeof selectedCountry === 'object' &&
+          countriesSelect.value.includes(selectedCountry)
+        ) {
+          selectedCountry = countriesSelect.value[selectedCountry].name
+        }
+        const countryCode = countriesSelect.value.find(
+          (country) => country.name === selectedCountry,
+        )?.code
+        console.log(formData.value.billingCountry, 'formData country')
+        console.log('countryCode', countryCode)
+        return postcodeValidator(data, countryCode || 'INTL')
+      },
+      {
+        message: 'Please enter a valid postal code for the selected country',
+      },
+    ),
 
   billingCountry: z
     .string()

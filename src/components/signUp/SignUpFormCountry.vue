@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Select } from 'primevue'
-import { countriesSelect } from '@/consts/signUpFormConsts'
+import { countriesSelect, formData } from '@/consts/signUpFormConsts'
 import Message from 'primevue/message'
 import { useSignUpForm } from '@/composables/signUpValidation/SignUpValidation'
 
@@ -16,14 +16,20 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:modelValue'])
 
-const { validatePostalCodeField } = useSignUpForm()
+const { validatePostalCodeField, validateBillingPostalCodeField } = useSignUpForm()
 
 function handleCountryChange(value: string) {
   emit('update:modelValue', value)
-  // validatePostalCodeField()
+  console.log('Selected country', selectedCountry.value)
+  console.log('Form data', formData.value)
+  console.log(props.id, 'id')
   if (props.validate) {
     props.validate()
-    validatePostalCodeField()
+    if (props.id === 'billingCountry') {
+      validateBillingPostalCodeField()
+    } else if (props.id === 'country') {
+      validatePostalCodeField()
+    }
   }
 }
 </script>
