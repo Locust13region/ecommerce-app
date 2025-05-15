@@ -48,10 +48,7 @@ const onFormSubmit = async () => {
     try {
       const response = await createCustomer(parseSignUpFormData(formData.value))
       console.log('Customer created successfully:', response)
-      console.log('Form data:', formData.value)
-      console.log('Parsed form data:', parseSignUpFormData(formData.value))
-      // TODO: show success message using Toast
-      //       redirect customer to main page
+
       toast.add({
         severity: 'success',
         summary: 'Success!',
