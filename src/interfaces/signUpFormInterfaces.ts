@@ -19,18 +19,12 @@ export interface FormData {
   postalCode: string
   country: string
   birthDate: string
-}
-
-export interface FormErrors {
-  email?: string
-  firstName?: string
-  lastName?: string
-  password?: string
-  city?: string
-  street?: string
-  postalCode?: string
-  country?: string
-  birthDate?: string
+  isDefaultShippingAddress: boolean
+  isBillingSameAsShipping: boolean
+  billingCity: string
+  billingStreet: string
+  billingPostalCode: string
+  billingCountry: string
 }
 
 export interface CountrySelect {
@@ -38,9 +32,32 @@ export interface CountrySelect {
   code: string
 }
 
-export interface CreateCustomerData extends Omit<FormData, 'street'> {
+export interface CreateCustomerData extends Omit<FormData, 'street' | 'billingStreet'> {
   streetName: string
   streetNumber: string
+  billingStreetName: string
+  billingStreetNumber: string
+  defaultShippingAddress: number
+  defaultBillingAddress: number
+}
+
+export interface Address {
+  country: string
+  streetName: string
+  streetNumber: string
+  postalCode: string
+  city: string
+}
+
+export interface CreateCustomerBodyRequest {
+  email: string
+  password: string
+  firstName: string
+  lastName: string
+  dateOfBirth: string
+  addresses: Address[]
+  defaultShippingAddress?: number
+  defaultBillingAddress?: number
 }
 
 export type FieldValidator = (value: string, fieldName?: string) => ValidationResult

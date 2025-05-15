@@ -7,6 +7,7 @@ import Message from 'primevue/message'
 const selectedCountry = ref('')
 
 const props = defineProps<{
+  id: string
   error?: string
   modelValue: string
   validate?: () => boolean
@@ -24,7 +25,7 @@ function handleCountryChange(value: string) {
 
 <template>
   <Select
-    id="country"
+    :id="id"
     v-model="selectedCountry"
     editable
     :options="countriesSelect"

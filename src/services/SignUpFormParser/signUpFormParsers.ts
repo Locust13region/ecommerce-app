@@ -37,6 +37,23 @@ export function parseSignUpFormData(signUpFormData: FormData): CreateCustomerDat
   const { streetName, streetNumber } = parseStreet(formData.value.street)
   const countryCode = getCountryCode(signUpFormData.country) || ''
   const dateOfBirth = parseSignUpDate(signUpFormData.birthDate)
+  const defaultShippingAddress = signUpFormData.isDefaultShippingAddress ? 0 : 10
+  const defaultBillingAddress = signUpFormData.isBillingSameAsShipping ? 0 : 10
+  const billingCity = signUpFormData.isBillingSameAsShipping
+    ? signUpFormData.city
+    : signUpFormData.billingCity
+  const billingPostalCode = signUpFormData.isBillingSameAsShipping
+    ? signUpFormData.postalCode
+    : signUpFormData.billingPostalCode
+  const billingCountry = signUpFormData.isBillingSameAsShipping
+    ? countryCode
+    : getCountryCode(signUpFormData.billingCountry) || ''
+  const billingStreetName = signUpFormData.isBillingSameAsShipping
+    ? streetName
+    : parseStreet(signUpFormData.billingStreet).streetName
+  const billingStreetNumber = signUpFormData.isBillingSameAsShipping
+    ? streetNumber
+    : parseStreet(signUpFormData.billingStreet).streetNumber
   return {
     email: signUpFormData.email,
     firstName: signUpFormData.firstName,
@@ -48,5 +65,14 @@ export function parseSignUpFormData(signUpFormData: FormData): CreateCustomerDat
     birthDate: dateOfBirth,
     streetName,
     streetNumber,
+    defaultShippingAddress,
+    defaultBillingAddress,
+    billingCity,
+    billingPostalCode,
+    billingCountry,
+    billingStreetName,
+    billingStreetNumber,
+    isBillingSameAsShipping: signUpFormData.isBillingSameAsShipping,
+    isDefaultShippingAddress: signUpFormData.isDefaultShippingAddress,
   }
 }

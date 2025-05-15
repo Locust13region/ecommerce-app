@@ -9,6 +9,7 @@ import FormInputField from '../FormInputField/FormInputField.vue'
 import SignUpBirthDate from '@/components/signUp/SignUpBirthDate.vue'
 import countrySelect from '@/components/signUp/SignUpFormCountry.vue'
 import SignUpPassword from '@/components/signUp/SignUpPassword.vue'
+import CheckboxComponent from '../Checkbox/CheckboxComponent.vue'
 
 import { useSignUpForm } from '@/composables/signUpValidation/SignUpValidation'
 
@@ -36,6 +37,10 @@ const {
   validatePostalCodeField: postalCodeValidation,
   validateCountryField: countryValidation,
   validateBirthDateField: validateDateField,
+  validateBillingCityField,
+  validateBillingStreetField,
+  validateBillingPostalCodeField,
+  validateBillingCountryField,
 } = useSignUpForm()
 
 const onFormSubmit = async () => {
@@ -43,6 +48,8 @@ const onFormSubmit = async () => {
     try {
       const response = await createCustomer(parseSignUpFormData(formData.value))
       console.log('Customer created successfully:', response)
+      console.log('Form data:', formData.value)
+      console.log('Parsed form data:', parseSignUpFormData(formData.value))
       // TODO: show success message using Toast
       //       redirect customer to main page
       toast.add({
@@ -148,7 +155,7 @@ const onFormSubmit = async () => {
 
     <FormInputField
       name="street"
-      label="Address"
+      label="Shipping Address"
       :error="formErrors.street"
       v-model:modelValue="formData.street"
       type="text"
@@ -174,10 +181,62 @@ const onFormSubmit = async () => {
     />
 
     <countrySelect
+      id="country"
       v-model:modelValue="formData.country"
       :error="formErrors.country"
       :validate="countryValidation"
     />
+
+    <CheckboxComponent
+      name="isDefaultAddress"
+      v-model:modelValue="formData.isDefaultShippingAddress"
+      value="true"
+      label="Set as default address"
+    />
+
+    <CheckboxComponent
+      name="isBillingSameAsShipping"
+      v-model:modelValue="formData.isBillingSameAsShipping"
+      value="true"
+      label="Billing address same as shipping address"
+    />
+
+    <div v-if="!formData.isBillingSameAsShipping" class="billing-address">
+      <FormInputField
+        name="billingStreet"
+        label="Billing Address"
+        :error="formErrors.billingStreet"
+        v-model:modelValue="formData.billingStreet"
+        type="text"
+        placeholder="Street"
+        :validate="validateBillingStreetField"
+      />
+
+      <FormInputField
+        name="billingCity"
+        :error="formErrors.billingCity"
+        v-model:modelValue="formData.billingCity"
+        type="text"
+        placeholder="City"
+        :validate="validateBillingCityField"
+      />
+      <FormInputField
+        name="billingPostalCode"
+        :error="formErrors.billingPostalCode"
+        v-model:modelValue="formData.billingPostalCode"
+        type="text"
+        placeholder="Postal Code"
+        :validate="validateBillingPostalCodeField"
+      />
+
+      <countrySelect
+        id="billingCountry"
+        v-model:modelValue="formData.billingCountry"
+        :error="formErrors.billingCountry"
+        :validate="validateBillingCountryField"
+      />
+    </div>
+
     <Button type="submit" severity="secondary" label="Sign Up" />
   </Form>
 </template>
@@ -188,6 +247,11 @@ const onFormSubmit = async () => {
   flex-direction: column;
   gap: 8px;
   width: 80%;
+}
+.billing-address {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 .name-wrapper {
   display: flex;

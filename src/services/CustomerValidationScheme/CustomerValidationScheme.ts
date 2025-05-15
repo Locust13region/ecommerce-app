@@ -72,9 +72,6 @@ export const signUpSchema = z.object({
   birthDate: z
     .string()
     .min(1, { message: 'Birth date is required' })
-    // .regex(/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d{2}$/, {
-    //   message: 'Please enter a valid date in DD/MM/YYYY format'
-    // })
     .refine(
       (dateStr) => {
         const date = parseSignUpInputDate(dateStr)
@@ -95,4 +92,142 @@ export const signUpSchema = z.object({
         message: 'You must be at least 13 years old',
       },
     ),
+
+  billingStreet: z.string().min(1, { message: 'Street is required' }),
+
+  billingCity: z
+    .string()
+    .regex(/^[a-zA-Zа-яА-ЯёЁ]+$/, {
+      message: 'City should contain only letters',
+    })
+    .min(1, { message: 'City is required' }),
+
+  billingPostalCode: z
+    .string()
+    .regex(/^[0-9]{5}(?:-[0-9]{4})?$|^[A-Za-z]\d[A-Za-z0-9] \d[A-Za-z0-9]\d$/, {
+      message: 'Please enter a valid postal code',
+    })
+    .min(1, { message: 'Postal code is required' }),
+
+  billingCountry: z
+    .string()
+    .min(1, { message: 'Country is required' })
+    .refine(
+      (val: string | CountrySelect) => {
+        if (typeof val === 'object') {
+          val = val.name
+        }
+
+        return countriesSelect.value.some((country) => country.name === val)
+      },
+      {
+        message: 'Not a valid country',
+      },
+    ),
 })
+// billingStreet: isBillingAddressSameAsShipping
+//   ? z.string().optional()
+//   : z.string().min(1, { message: 'Street is required' }),
+
+// billingCity: isBillingAddressSameAsShipping
+//   ? z.string().optional()
+//   : z
+//       .string()
+//       .regex(/^[a-zA-Zа-яА-ЯёЁ]+$/, {
+//         message: 'City should contain only letters',
+//       })
+//       .min(1, { message: 'City is required' }),
+
+// billingPostalCode: isBillingAddressSameAsShipping
+//   ? z.string().optional()
+//   : z
+//       .string()
+//       .regex(/^[0-9]{5}(?:-[0-9]{4})?$|^[A-Za-z]\d[A-Za-z0-9] \d[A-Za-z0-9]\d$/, {
+//         message: 'Please enter a valid postal code',
+//       })
+//       .min(1, { message: 'Postal code is required' }),
+
+// billingCountry: isBillingAddressSameAsShipping
+//   ? z.string().optional()
+//   : z
+//       .string()
+//       .min(1, { message: 'Country is required' })
+//       .refine(
+//         (val: string | CountrySelect) => {
+//           if (typeof val === 'object') {
+//             val = val.name
+//           }
+
+//           return countriesSelect.value.some((country) => country.name === val)
+//         },
+//         {
+//           message: 'Not a valid country',
+//         },
+//       ),
+
+// .superRefine((data, ctx) => {
+//   if (!data.isBillingSameAsShipping) {
+//     if (!data.billingCity) {
+//       ctx.addIssue({
+//         path: ['billingCity'],
+//         code: z.ZodIssueCode.custom,
+//         message: 'Город для платежного адреса обязателен',
+//       })
+//     }
+//     if (!data.billingStreet) {
+//       ctx.addIssue({
+//         path: ['billingStreet'],
+//         code: z.ZodIssueCode.custom,
+//         message: 'Улица для платежного адреса обязательна',
+//       })
+//     }
+//     if (!data.billingPostalCode) {
+//       ctx.addIssue({
+//         path: ['billingPostalCode'],
+//         code: z.ZodIssueCode.custom,
+//         message: 'Почтовый индекс для платежного адреса обязателен',
+//       })
+//     }
+//     if (!data.billingCountry) {
+//       ctx.addIssue({
+//         path: ['billingCountry'],
+//         code: z.ZodIssueCode.custom,
+//         message: 'Страна для платежного адреса обязательна',
+//       })
+//     }
+//   }
+// })
+
+/*
+billingStreet: z.string().min(1, { message: 'Street is required' }),
+
+  billingCity: z
+  .string()
+  .regex(/^[a-zA-Zа-яА-ЯёЁ]+$/, {
+    message: 'City should contain only letters',
+  })
+  .min(1, { message: 'City is required' }),
+
+  billingPostalCode: z
+  .string()
+  .regex(/^[0-9]{5}(?:-[0-9]{4})?$|^[A-Za-z]\d[A-Za-z0-9] \d[A-Za-z0-9]\d$/, {
+    message: 'Please enter a valid postal code',
+  })
+  .min(1, { message: 'Postal code is required' }),
+
+  billingCountry: z
+    .string()
+    .min(1, { message: 'Country is required' })
+    .refine(
+      (val: string | CountrySelect) => {
+        if (typeof val === 'object') {
+          val = val.name
+        }
+
+        return countriesSelect.value.some((country) => country.name === val)
+      },
+      {
+        message: 'Not a valid country',
+      },
+    ),
+*/

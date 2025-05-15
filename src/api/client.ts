@@ -75,7 +75,7 @@ export const buildClient = (username: string, password: string) => {
   )
 }
 
-export const createApiRoot = () => {
+export const createApiRootWithClientCredentialsFlow = () => {
   const authMiddlewareOptions: AuthMiddlewareOptions = {
     host: authUrl,
     projectKey,
