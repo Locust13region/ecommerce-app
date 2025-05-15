@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import type { CountrySelect } from '@/interfaces/signUpFormInterfaces'
-import { countriesSelect } from '@/consts/signUpFormConsts'
+import { countriesSelect, formData } from '@/consts/signUpFormConsts'
 import { parseSignUpInputDate } from '../SignUpFormParser/signUpFormParsers'
+import { postcodeValidator } from 'postcode-validator'
 
 export const signUpSchema = z.object({
   email: z
@@ -48,10 +49,27 @@ export const signUpSchema = z.object({
 
   postalCode: z
     .string()
-    .regex(/^[0-9]{5}(?:-[0-9]{4})?$|^[A-Za-z]\d[A-Za-z0-9] \d[A-Za-z0-9]\d$/, {
-      message: 'Please enter a valid postal code',
-    })
-    .min(1, { message: 'Postal code is required' }),
+    .min(1, { message: 'Postal code is required' })
+    .refine(
+      (data) => {
+        let selectedCountry = formData.value.country
+        if (
+          typeof selectedCountry === 'object' &&
+          countriesSelect.value.includes(selectedCountry)
+        ) {
+          selectedCountry = countriesSelect.value[selectedCountry].name
+        }
+        const countryCode = countriesSelect.value.find(
+          (country) => country.name === selectedCountry,
+        )?.code
+        console.log(formData.value.country, 'formData country')
+        console.log('countryCode', countryCode)
+        return postcodeValidator(data, countryCode || 'INTL')
+      },
+      {
+        message: 'Please enter a valid postal code for the selected country',
+      },
+    ),
 
   country: z
     .string()
@@ -125,109 +143,3 @@ export const signUpSchema = z.object({
       },
     ),
 })
-// billingStreet: isBillingAddressSameAsShipping
-//   ? z.string().optional()
-//   : z.string().min(1, { message: 'Street is required' }),
-
-// billingCity: isBillingAddressSameAsShipping
-//   ? z.string().optional()
-//   : z
-//       .string()
-//       .regex(/^[a-zA-Zа-яА-ЯёЁ]+$/, {
-//         message: 'City should contain only letters',
-//       })
-//       .min(1, { message: 'City is required' }),
-
-// billingPostalCode: isBillingAddressSameAsShipping
-//   ? z.string().optional()
-//   : z
-//       .string()
-//       .regex(/^[0-9]{5}(?:-[0-9]{4})?$|^[A-Za-z]\d[A-Za-z0-9] \d[A-Za-z0-9]\d$/, {
-//         message: 'Please enter a valid postal code',
-//       })
-//       .min(1, { message: 'Postal code is required' }),
-
-// billingCountry: isBillingAddressSameAsShipping
-//   ? z.string().optional()
-//   : z
-//       .string()
-//       .min(1, { message: 'Country is required' })
-//       .refine(
-//         (val: string | CountrySelect) => {
-//           if (typeof val === 'object') {
-//             val = val.name
-//           }
-
-//           return countriesSelect.value.some((country) => country.name === val)
-//         },
-//         {
-//           message: 'Not a valid country',
-//         },
-//       ),
-
-// .superRefine((data, ctx) => {
-//   if (!data.isBillingSameAsShipping) {
-//     if (!data.billingCity) {
-//       ctx.addIssue({
-//         path: ['billingCity'],
-//         code: z.ZodIssueCode.custom,
-//         message: 'Город для платежного адреса обязателен',
-//       })
-//     }
-//     if (!data.billingStreet) {
-//       ctx.addIssue({
-//         path: ['billingStreet'],
-//         code: z.ZodIssueCode.custom,
-//         message: 'Улица для платежного адреса обязательна',
-//       })
-//     }
-//     if (!data.billingPostalCode) {
-//       ctx.addIssue({
-//         path: ['billingPostalCode'],
-//         code: z.ZodIssueCode.custom,
-//         message: 'Почтовый индекс для платежного адреса обязателен',
-//       })
-//     }
-//     if (!data.billingCountry) {
-//       ctx.addIssue({
-//         path: ['billingCountry'],
-//         code: z.ZodIssueCode.custom,
-//         message: 'Страна для платежного адреса обязательна',
-//       })
-//     }
-//   }
-// })
-
-/*
-billingStreet: z.string().min(1, { message: 'Street is required' }),
-
-  billingCity: z
-  .string()
-  .regex(/^[a-zA-Zа-яА-ЯёЁ]+$/, {
-    message: 'City should contain only letters',
-  })
-  .min(1, { message: 'City is required' }),
-
-  billingPostalCode: z
-  .string()
-  .regex(/^[0-9]{5}(?:-[0-9]{4})?$|^[A-Za-z]\d[A-Za-z0-9] \d[A-Za-z0-9]\d$/, {
-    message: 'Please enter a valid postal code',
-  })
-  .min(1, { message: 'Postal code is required' }),
-
-  billingCountry: z
-    .string()
-    .min(1, { message: 'Country is required' })
-    .refine(
-      (val: string | CountrySelect) => {
-        if (typeof val === 'object') {
-          val = val.name
-        }
-
-        return countriesSelect.value.some((country) => country.name === val)
-      },
-      {
-        message: 'Not a valid country',
-      },
-    ),
-*/

@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { Select } from 'primevue'
 import { countriesSelect } from '@/consts/signUpFormConsts'
 import Message from 'primevue/message'
+import { useSignUpForm } from '@/composables/signUpValidation/SignUpValidation'
 
 const selectedCountry = ref('')
 
@@ -15,10 +16,14 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:modelValue'])
 
+const { validatePostalCodeField } = useSignUpForm()
+
 function handleCountryChange(value: string) {
   emit('update:modelValue', value)
+  // validatePostalCodeField()
   if (props.validate) {
     props.validate()
+    validatePostalCodeField()
   }
 }
 </script>
