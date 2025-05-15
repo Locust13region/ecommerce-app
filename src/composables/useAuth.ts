@@ -22,8 +22,11 @@ export function useAuth() {
       apiRoot.value = createApiBuilderFromCtpClient(builtClient)
       isLoggedIn.value = true
     } catch (e) {
-      console.error('Login failed:', e)
       logout()
+      if (e instanceof Error) {
+        throw new Error(`Login failed: ${e.message}`)
+      }
+      // console.error('Login failed:', e)
     }
   }
 

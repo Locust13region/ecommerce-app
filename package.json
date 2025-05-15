@@ -17,7 +17,7 @@
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
     "test": "npx eslint . && npx prettier --check .",
-    "stylelint ": "stylelint \"**/*.{css,scss}\""
+    "stylelint": "stylelint \"**/*.{css,scss}\""
   },
   "lint-staged": {
     "src/**/*.{ts,tsx,vue,css,scss}": [
@@ -36,14 +36,16 @@
     "@commercetools/platform-sdk": "^8.9.0",
     "@commercetools/sdk-auth": "^5.0.1",
     "@commercetools/sdk-client-v2": "^3.0.0",
-    "@primeuix/themes": "^1.0.3",
+    "@primeuix/themes": "^1.1.1",
     "@primevue/forms": "^4.3.3",
     "node-fetch": "^2.7.0",
     "@vueuse/core": "^13.1.0",
     "pinia": "^3.0.1",
-    "primevue": "^4.3.3",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.3.4",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.0",
+    "zod": "^3.24.4"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.1",
