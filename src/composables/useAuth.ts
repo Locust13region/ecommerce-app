@@ -1,26 +1,37 @@
 // src/composables/useAuth.ts
 import { ref } from 'vue'
-import { buildClient } from '@/api/client'
-import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
-import type { Client } from '@commercetools/sdk-client-v2'
-import type { ApiRoot } from '@commercetools/platform-sdk'
 
-const client = ref<Client | null>(null)
-const apiRoot = ref<ApiRoot | null>(null)
+import { apiRoot, createAnonymousClient, createPasswordClient } from '@/api/api-root'
+
 const isLoggedIn = ref<boolean>(false)
 
 export function useAuth() {
+  const register = async () => {
+    try {
+      const customerResponse = await apiRoot.value
+        .customers()
+        .post({
+          body: {
+            email: 'user@proton.com',
+            password: '1qaz2wsx',
+            firstName: 'John',
+            lastName: 'Lennon',
+          },
+        })
+        .execute()
+
+      console.log('Register new customer with ID:', customerResponse.body.customer.id)
+    } catch (error) {
+      console.error('Error registering new customer:', error)
+    }
+  }
+
   const login = async (username: string, password: string) => {
     try {
-      const builtClient = buildClient(username, password)
-      await builtClient.execute({
-        uri: `/${import.meta.env.VITE_API_PROJECT_KEY}/me`,
-        method: 'GET',
-      })
-
-      client.value = builtClient
-      apiRoot.value = createApiBuilderFromCtpClient(builtClient)
       isLoggedIn.value = true
+      createPasswordClient(username, password)
+      const customer = await apiRoot.value.me().get().execute()
+      console.log('LoggedIn:', customer.body)
     } catch (e) {
       console.error('Login failed:', e)
       logout()
@@ -29,25 +40,16 @@ export function useAuth() {
 
   const logout = () => {
     localStorage.removeItem('commercetools-token')
-    client.value = null
-    apiRoot.value = null
+    createAnonymousClient()
     isLoggedIn.value = false
   }
 
-  const getClient = () => client.value
   const isAuthenticated = () => isLoggedIn.value
-  const getApiRoot = () => {
-    if (!client.value) return null
-    return createApiBuilderFromCtpClient(client.value).withProjectKey({
-      projectKey: import.meta.env.VITE_API_PROJECT_KEY!,
-    })
-  }
 
   return {
+    register,
     login,
     logout,
-    getClient,
-    getApiRoot,
     isAuthenticated,
   }
 }
