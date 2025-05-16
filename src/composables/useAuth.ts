@@ -1,7 +1,7 @@
 // src/composables/useAuth.ts
 import { ref } from 'vue'
 
-import { apiRoot, createAnonymousClient, refreshClient, tokenCache } from '@/api/api-root'
+import { apiRoot, createAnonymousClient, createPasswordClient } from '@/api/api-root'
 
 const isLoggedIn = ref<boolean>(false)
 
@@ -26,7 +26,7 @@ export function useAuth() {
         .execute()
       console.log('Register new customer with ID:', customerResponse.body.customer.id)
 
-      login(signUPData.email, signUPData.password)
+      await login(signUPData.email, signUPData.password)
     } catch (error) {
       console.error('Error registering new customer:', error)
     }
@@ -50,8 +50,7 @@ export function useAuth() {
       console.log('Cart:', loginResponse.body.cart?.lineItems)
       isLoggedIn.value = true
 
-      const tokenStore = tokenCache.get()
-      refreshClient(tokenStore)
+      createPasswordClient(username, password)
     } catch (error) {
       console.error('Login failed:', error)
 
@@ -69,13 +68,13 @@ export function useAuth() {
   }
 
   const isAuthenticated = () => isLoggedIn.value
-  const getApi = () => apiRoot.value
+  const getApiRoot = () => apiRoot.value
 
   return {
     register,
     login,
     logout,
     isAuthenticated,
-    getApi,
+    getApiRoot,
   }
 }
