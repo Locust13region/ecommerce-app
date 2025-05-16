@@ -1,7 +1,7 @@
 // src/composables/useAuth.ts
 import { ref } from 'vue'
 
-import { apiRoot, createAnonymousClient, createPasswordClient } from '@/api/api-root'
+import { apiRoot, createAnonymousClient } from '@/api/api-root'
 
 const isLoggedIn = ref<boolean>(false)
 
@@ -28,28 +28,40 @@ export function useAuth() {
 
   const login = async (username: string, password: string) => {
     try {
+      const loginResponse = await apiRoot.value
+        .me()
+        .login()
+        .post({
+          body: {
+            email: username,
+            password: password,
+            activeCartSignInMode: 'UseAsNewActiveCustomerCart',
+          },
+        })
+        .execute()
+      console.log('Logged in customer', loginResponse.body.customer)
+      console.log('Cart:', loginResponse.body.cart?.lineItems)
       isLoggedIn.value = true
-      createPasswordClient(username, password)
-      const customer = await apiRoot.value.me().get().execute()
-      console.log('LoggedIn:', customer.body)
-    } catch (e) {
-      console.error('Login failed:', e)
+    } catch (error) {
+      console.error('Login failed:', error)
       logout()
     }
   }
 
   const logout = () => {
     localStorage.removeItem('commercetools-token')
-    createAnonymousClient()
     isLoggedIn.value = false
+    createAnonymousClient()
   }
 
   const isAuthenticated = () => isLoggedIn.value
+  const getApi = () => apiRoot.value
 
   return {
     register,
     login,
     logout,
     isAuthenticated,
+    getApi,
   }
 }
