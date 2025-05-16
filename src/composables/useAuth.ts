@@ -1,26 +1,32 @@
 // src/composables/useAuth.ts
 import { ref } from 'vue'
 
-import { apiRoot, createAnonymousClient } from '@/api/api-root'
+import { apiRoot, createAnonymousClient, refreshClient, tokenCache } from '@/api/api-root'
 
 const isLoggedIn = ref<boolean>(false)
 
+import { type FormData } from '@/interfaces/signUpFormInterfaces'
+interface CreateCustomerData extends Omit<FormData, 'street' | 'billingStreet'> {
+  streetName: string
+  streetNumber: string
+  billingStreetName: string
+  billingStreetNumber: string
+  defaultShippingAddress: number
+  defaultBillingAddress: number
+}
+
 export function useAuth() {
-  const register = async () => {
+  const register = async (signUPData: CreateCustomerData) => {
     try {
       const customerResponse = await apiRoot.value
         .customers()
         .post({
-          body: {
-            email: 'user@proton.com',
-            password: '1qaz2wsx',
-            firstName: 'John',
-            lastName: 'Lennon',
-          },
+          body: signUPData,
         })
         .execute()
-
       console.log('Register new customer with ID:', customerResponse.body.customer.id)
+
+      login(signUPData.email, signUPData.password)
     } catch (error) {
       console.error('Error registering new customer:', error)
     }
@@ -35,6 +41,7 @@ export function useAuth() {
           body: {
             email: username,
             password: password,
+
             activeCartSignInMode: 'UseAsNewActiveCustomerCart',
           },
         })
@@ -42,8 +49,12 @@ export function useAuth() {
       console.log('Logged in customer', loginResponse.body.customer)
       console.log('Cart:', loginResponse.body.cart?.lineItems)
       isLoggedIn.value = true
+
+      const tokenStore = tokenCache.get()
+      refreshClient(tokenStore)
     } catch (error) {
       console.error('Login failed:', error)
+
       logout()
       if (error instanceof Error) {
         throw new Error(`Login failed: ${error.message}`)

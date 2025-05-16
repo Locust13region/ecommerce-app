@@ -9,6 +9,9 @@ import App from './App.vue'
 import router from './router'
 import { definePreset } from '@primeuix/themes'
 import ToastService from 'primevue/toastservice'
+import { initializeClient } from './api/api-root'
+
+initializeClient()
 
 const app = createApp(App)
 const MainPreset = definePreset(Material, {
