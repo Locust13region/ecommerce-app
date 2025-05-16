@@ -37,8 +37,8 @@ export function parseSignUpFormData(signUpFormData: FormData): CreateCustomerDat
   const { streetName, streetNumber } = parseStreet(formData.value.street)
   const countryCode = getCountryCode(signUpFormData.country) || ''
   const dateOfBirth = parseSignUpDate(signUpFormData.birthDate)
-  const defaultShippingAddress = signUpFormData.isDefaultShippingAddress ? 0 : 10
-  const defaultBillingAddress = signUpFormData.isBillingSameAsShipping ? 0 : 10
+  const defaultShippingAddress = signUpFormData.isDefaultShippingAddress ? 0 : 1
+  const defaultBillingAddress = signUpFormData.isBillingSameAsShipping ? 0 : 1
   const billingCity = signUpFormData.isBillingSameAsShipping
     ? signUpFormData.city
     : signUpFormData.billingCity
