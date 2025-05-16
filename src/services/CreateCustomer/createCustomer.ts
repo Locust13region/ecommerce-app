@@ -59,8 +59,6 @@ export const createCustomer = async (signUpData: CreateCustomerData) => {
         body: body,
       })
       .execute()
-
-    console.log('Successfully created user:', JSON.stringify((await response).body, null, 2))
     console.log('User created:', response.body)
     return response.body
   } catch (err) {
