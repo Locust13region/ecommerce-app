@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { Button } from 'primevue'
 import router from '@/router'
-// import { ref } from 'vue'
 import { useAuth } from '@/composables/useAuth'
+import { useUserStateStore } from '@/stores/userState'
 
-const { logout, isAuthenticated } = useAuth()
+const { logout } = useAuth()
+const user = useUserStateStore()
 
 function logoutHandler() {
-  if (isAuthenticated()) {
+  if (true) {
     logout()
     localStorage.removeItem('commercetools-isLogined')
+    user.logout()
     router.push('/login')
   }
 }
@@ -30,15 +32,15 @@ function logoutHandler() {
           class="button-to-signup"
           severity="secondary"
           @click="router.push('/signup')"
-          v-if="!isAuthenticated()"
+          v-if="!user.isLoggedIn"
         >
           Sign Up
         </Button>
-        <Button class="button-to-login" @click="router.push('/login')" v-if="!isAuthenticated()">
+        <Button class="button-to-login" @click="router.push('/login')" v-if="!user.isLoggedIn">
           <span class="pi pi-sign-in"></span>
           Login
         </Button>
-        <Button class="button-to-logout" @click="logoutHandler" v-if="isAuthenticated()">
+        <Button class="button-to-logout" @click="logoutHandler" v-if="user.isLoggedIn">
           <span class="pi pi-sign-out"></span>
           Logout
         </Button>

@@ -40,8 +40,8 @@ app.use(PrimeVue, {
 
 router.beforeEach(async (to /*, from*/) => {
   //TODO: replace isLogined with state
-  const isLogined = localStorage['commercetools-isLogined'] || false
-  if (to.name === 'login' && isLogined) {
+  const isLogined = Boolean(localStorage['commercetools-isLogined']) || false
+  if ((to.name === 'login' || to.name === 'signup') && isLogined) {
     return {
       name: 'home',
     }
