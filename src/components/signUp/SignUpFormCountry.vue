@@ -25,6 +25,7 @@ function handleCountryChange(value: string) {
     props.validate()
     if (props.id === 'billingCountry') {
       validateBillingPostalCodeField()
+      console.log('validateBillingPostalCodeField')
     } else if (props.id === 'country') {
       validatePostalCodeField()
     }

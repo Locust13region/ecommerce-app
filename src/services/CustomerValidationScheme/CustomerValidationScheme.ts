@@ -122,9 +122,6 @@ export const signUpSchema = z.object({
 
   billingPostalCode: z
     .string()
-    .regex(/^[0-9]{5}(?:-[0-9]{4})?$|^[A-Za-z]\d[A-Za-z0-9] \d[A-Za-z0-9]\d$/, {
-      message: 'Please enter a valid postal code',
-    })
     .min(1, { message: 'Postal code is required' })
     .refine(
       (data) => {
