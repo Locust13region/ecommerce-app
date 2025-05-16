@@ -45,6 +45,10 @@ export function useAuth() {
     } catch (error) {
       console.error('Login failed:', error)
       logout()
+      if (e instanceof Error) {
+        throw new Error(`Login failed: ${e.message}`)
+      }
+      // console.error('Login failed:', e)
     }
   }
 
