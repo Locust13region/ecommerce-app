@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import Toast from 'primevue/toast'
 </script>
 
 <template>
   <header>
+    <Toast />
     <img alt="logo" class="logo" src="@/assets/books.png" width="50" height="50" />
 
     <div class="wrapper">

@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import type { CountrySelect } from '@/interfaces/signUpFormInterfaces'
-import { countriesSelect } from '@/consts/signUpFormConsts'
-import { parseDate } from '../ParseDate/parseDate'
+import { countriesSelect, formData } from '@/consts/signUpFormConsts'
+import { parseSignUpInputDate } from '../SignUpFormParser/signUpFormParsers'
+import { postcodeValidator } from 'postcode-validator'
 
 export const signUpSchema = z.object({
   email: z
@@ -48,10 +49,27 @@ export const signUpSchema = z.object({
 
   postalCode: z
     .string()
-    .regex(/^[0-9]{5}(?:-[0-9]{4})?$|^[A-Za-z]\d[A-Za-z0-9] \d[A-Za-z0-9]\d$/, {
-      message: 'Please enter a valid postal code',
-    })
-    .min(1, { message: 'Postal code is required' }),
+    .min(1, { message: 'Postal code is required' })
+    .refine(
+      (data) => {
+        let selectedCountry = formData.value.country
+        if (
+          typeof selectedCountry === 'object' &&
+          countriesSelect.value.includes(selectedCountry)
+        ) {
+          selectedCountry = countriesSelect.value[selectedCountry].name
+        }
+        const countryCode = countriesSelect.value.find(
+          (country) => country.name === selectedCountry,
+        )?.code
+        console.log(formData.value.country, 'formData country')
+        console.log('countryCode', countryCode)
+        return postcodeValidator(data, countryCode || 'INTL')
+      },
+      {
+        message: 'Please enter a valid postal code for the selected country',
+      },
+    ),
 
   country: z
     .string()
@@ -72,12 +90,9 @@ export const signUpSchema = z.object({
   birthDate: z
     .string()
     .min(1, { message: 'Birth date is required' })
-    // .regex(/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d{2}$/, {
-    //   message: 'Please enter a valid date in DD/MM/YYYY format'
-    // })
     .refine(
       (dateStr) => {
-        const date = parseDate(dateStr)
+        const date = parseSignUpInputDate(dateStr)
         return date instanceof Date && !isNaN(date.getTime())
       },
       {
@@ -86,13 +101,62 @@ export const signUpSchema = z.object({
     )
     .refine(
       (dateStr) => {
-        const date = parseDate(dateStr)
+        const date = parseSignUpInputDate(dateStr)
         const minAgeDate = new Date()
         minAgeDate.setFullYear(minAgeDate.getFullYear() - 13)
         return date <= minAgeDate
       },
       {
         message: 'You must be at least 13 years old',
+      },
+    ),
+
+  billingStreet: z.string().min(1, { message: 'Street is required' }),
+
+  billingCity: z
+    .string()
+    .regex(/^[a-zA-Zа-яА-ЯёЁ]+$/, {
+      message: 'City should contain only letters',
+    })
+    .min(1, { message: 'City is required' }),
+
+  billingPostalCode: z
+    .string()
+    .min(1, { message: 'Postal code is required' })
+    .refine(
+      (data) => {
+        let selectedCountry = formData.value.billingCountry
+        if (
+          typeof selectedCountry === 'object' &&
+          countriesSelect.value.includes(selectedCountry)
+        ) {
+          selectedCountry = countriesSelect.value[selectedCountry].name
+        }
+        const countryCode = countriesSelect.value.find(
+          (country) => country.name === selectedCountry,
+        )?.code
+        console.log(formData.value.billingCountry, 'formData country')
+        console.log('countryCode', countryCode)
+        return postcodeValidator(data, countryCode || 'INTL')
+      },
+      {
+        message: 'Please enter a valid postal code for the selected country',
+      },
+    ),
+
+  billingCountry: z
+    .string()
+    .min(1, { message: 'Country is required' })
+    .refine(
+      (val: string | CountrySelect) => {
+        if (typeof val === 'object') {
+          val = val.name
+        }
+
+        return countriesSelect.value.some((country) => country.name === val)
+      },
+      {
+        message: 'Not a valid country',
       },
     ),
 })

@@ -3,6 +3,8 @@ import { countriesSelect } from '@/consts/signUpFormConsts'
 
 import { signUpSchema } from '../../services/CustomerValidationScheme/CustomerValidationScheme'
 
+import { setBillingAddressIfSameAsShipping } from '@/services/SetBillingAddress/setBillingAddressIfSameAsShipping'
+
 export type SignUpFormData = z.infer<typeof signUpSchema>
 
 import {
@@ -16,6 +18,7 @@ export function useSignUpForm() {
 
   const validateField = (field: keyof SignUpFormData) => {
     try {
+      setBillingAddressIfSameAsShipping()
       if (
         typeof formData.value[field] === 'object' &&
         countriesSelect.value.includes(formData.value[field])
@@ -64,6 +67,10 @@ export function useSignUpForm() {
   const validatePostalCodeField = () => validateField('postalCode')
   const validateCountryField = () => validateField('country')
   const validateBirthDateField = () => validateField('birthDate')
+  const validateBillingCityField = () => validateField('billingCity')
+  const validateBillingStreetField = () => validateField('billingStreet')
+  const validateBillingPostalCodeField = () => validateField('billingPostalCode')
+  const validateBillingCountryField = () => validateField('billingCountry')
 
   return {
     formData,
@@ -79,5 +86,9 @@ export function useSignUpForm() {
     validatePostalCodeField,
     validateCountryField,
     validateBirthDateField,
+    validateBillingCityField,
+    validateBillingStreetField,
+    validateBillingPostalCodeField,
+    validateBillingCountryField,
   }
 }
