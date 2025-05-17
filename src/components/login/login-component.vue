@@ -26,9 +26,10 @@ const formSubmit = async (event: FormSubmitEvent) => {
     try {
       await login(email, password)
       if (isAuthenticated()) {
+        //user.isLoggined
         router.push('/')
         localStorage.setItem('commercetools-isLogined', 'true')
-        user.login()
+        user.loginState()
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -44,7 +45,7 @@ const formSubmit = async (event: FormSubmitEvent) => {
     <FormField>
       <IconField>
         <InputIcon class="pi pi-user" />
-        <InputText placeholder="Email" name="email" v-model="email" />
+        <InputText placeholder="Email" name="email" v-model.trim="email" />
       </IconField>
       <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
         $form.email.error?.message

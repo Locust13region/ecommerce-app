@@ -6,10 +6,10 @@ export const useUserStateStore = defineStore('user', {
     isLoggedIn: Boolean(localStorage['commercetools-isLogined']) || false,
   }),
   actions: {
-    login() {
+    loginState() {
       this.isLoggedIn = true
     },
-    logout() {
+    logoutState() {
       this.isLoggedIn = false
     },
   },

@@ -11,7 +11,7 @@ function logoutHandler() {
   if (true) {
     logout()
     localStorage.removeItem('commercetools-isLogined')
-    user.logout()
+    user.logoutState()
     router.push('/login')
   }
 }
