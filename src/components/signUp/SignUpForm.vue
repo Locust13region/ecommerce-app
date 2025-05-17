@@ -1,12 +1,28 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
 import { Form } from '@primevue/forms'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue'
+import { useRouter } from 'vue-router'
+
 import FormInputField from '../FormInputField/FormInputField.vue'
 import SignUpBirthDate from '@/components/signUp/SignUpBirthDate.vue'
 import countrySelect from '@/components/signUp/SignUpFormCountry.vue'
 import SignUpPassword from '@/components/signUp/SignUpPassword.vue'
+import CheckboxComponent from '../Checkbox/CheckboxComponent.vue'
 
 import { useSignUpForm } from '@/composables/signUpValidation/SignUpValidation'
+
+import { parseSignUpFormData } from '@/services/SignUpFormParser/signUpFormParsers'
+import { createCustomer } from '@/services/CreateCustomer/createCustomer'
+import type { CommerceToolsError } from '@/interfaces/signUpFormInterfaces'
+
+import { useAuth } from '@/composables/useAuth'
+
+const router = useRouter()
+const toast = useToast()
+
+const { login } = useAuth()
 
 const {
   formData,
@@ -21,12 +37,53 @@ const {
   validatePostalCodeField: postalCodeValidation,
   validateCountryField: countryValidation,
   validateBirthDateField: validateDateField,
+  validateBillingCityField,
+  validateBillingStreetField,
+  validateBillingPostalCodeField,
+  validateBillingCountryField,
 } = useSignUpForm()
 
-function onFormSubmit() {
+const onFormSubmit = async () => {
   if (validateForm()) {
-    console.log('Form submitted:', formData)
-    // TODO: add sending data to server
+    try {
+      const response = await createCustomer(parseSignUpFormData(formData.value))
+      console.log('Customer created successfully:', response)
+
+      toast.add({
+        severity: 'success',
+        summary: 'Success!',
+        detail: `Your account ${formData.value.email} has been created successfully!`,
+        life: 10000,
+      })
+
+      await login(formData.value.email, formData.value.password)
+      console.log('Customer logged in successfully:', response)
+
+      toast.add({
+        severity: 'info',
+        summary: 'Info Message',
+        detail: 'You are logged in. Redirecting to the main page...',
+        life: 3000,
+      })
+
+      router.push({ path: '/' })
+    } catch (err) {
+      const error = err as CommerceToolsError
+      console.error('Error when creating customer:', error.body.message)
+
+      if (error.body.message === 'There is already an existing customer with the provided email.') {
+        formErrors.value.email = 'Email already exists'
+      } else {
+        formErrors.value.email = ''
+      }
+
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: `${error.body.message} Go to login page to log in with this email.`,
+        life: 10000,
+      })
+    }
   } else {
     console.log('Form validation failed')
   }
@@ -34,6 +91,7 @@ function onFormSubmit() {
 </script>
 
 <template>
+  <Toast />
   <Form @submit="onFormSubmit" class="flex flex-col gap-4 w-full sm:w-80 registration-form">
     <FormInputField
       name="email"
@@ -92,7 +150,7 @@ function onFormSubmit() {
 
     <FormInputField
       name="street"
-      label="Address"
+      label="Shipping Address"
       :error="formErrors.street"
       v-model:modelValue="formData.street"
       type="text"
@@ -118,10 +176,62 @@ function onFormSubmit() {
     />
 
     <countrySelect
+      id="country"
       v-model:modelValue="formData.country"
       :error="formErrors.country"
       :validate="countryValidation"
     />
+
+    <CheckboxComponent
+      name="isDefaultAddress"
+      v-model:modelValue="formData.isDefaultShippingAddress"
+      value="true"
+      label="Set as default address"
+    />
+
+    <CheckboxComponent
+      name="isBillingSameAsShipping"
+      v-model:modelValue="formData.isBillingSameAsShipping"
+      value="true"
+      label="Billing address same as shipping address"
+    />
+
+    <div v-if="!formData.isBillingSameAsShipping" class="billing-address">
+      <FormInputField
+        name="billingStreet"
+        label="Billing Address"
+        :error="formErrors.billingStreet"
+        v-model:modelValue="formData.billingStreet"
+        type="text"
+        placeholder="Street"
+        :validate="validateBillingStreetField"
+      />
+
+      <FormInputField
+        name="billingCity"
+        :error="formErrors.billingCity"
+        v-model:modelValue="formData.billingCity"
+        type="text"
+        placeholder="City"
+        :validate="validateBillingCityField"
+      />
+      <FormInputField
+        name="billingPostalCode"
+        :error="formErrors.billingPostalCode"
+        v-model:modelValue="formData.billingPostalCode"
+        type="text"
+        placeholder="Postal Code"
+        :validate="validateBillingPostalCodeField"
+      />
+
+      <countrySelect
+        id="billingCountry"
+        v-model:modelValue="formData.billingCountry"
+        :error="formErrors.billingCountry"
+        :validate="validateBillingCountryField"
+      />
+    </div>
+
     <Button type="submit" severity="secondary" label="Sign Up" />
   </Form>
 </template>
@@ -131,7 +241,11 @@ function onFormSubmit() {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 80%;
+}
+.billing-address {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 .name-wrapper {
   display: flex;

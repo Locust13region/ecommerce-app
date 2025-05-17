@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAuth } from '@/composables/useAuth'
 import Button from 'primevue/button'
+import { useToast } from 'primevue'
 
 const { register, login, logout, isAuthenticated, getApiRoot } = useAuth()
 
@@ -39,11 +40,33 @@ const getUserInfo = async () => {
     console.warn('apiRoot is not available')
   }
 }
+
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const toast = useToast()
+const goToMain = async () => {
+  await toast.add({
+    severity: 'info',
+    summary: 'Info',
+    detail: 'Redirecting to main page...',
+    life: 3000,
+  })
+  await router.push({ path: '/' })
+}
 </script>
 
 <template>
   <div class="about">
     <h1>This is an about page</h1>
+    <Button
+      variant="outlined"
+      size="small"
+      severity="info"
+      label="Go to main page"
+      @click="goToMain"
+    />
   </div>
   <Button
     variant="outlined"

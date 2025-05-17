@@ -54,3 +54,5 @@ app.use(createPinia())
 app.use(router)
 app.use(ToastService)
 app.mount('#app')
+
+app.use(ToastService)
