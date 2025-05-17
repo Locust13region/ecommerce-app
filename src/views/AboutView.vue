@@ -17,6 +17,17 @@ const mockRegisterCustomer = {
   city: 'Bremen',
   postalCode: '430016',
   birthDate: '08/05/1996',
+  streetName: '',
+  streetNumber: '',
+  billingStreetName: '',
+  billingStreetNumber: '',
+  billingCity: '',
+  billingPostalCode: '',
+  billingCountry: '',
+  isBillingSameAsShipping: false,
+  isDefaultShippingAddress: true,
+  defaultShippingAddress: 0,
+  defaultBillingAddress: 0,
 }
 
 const tryRegister = async () => {

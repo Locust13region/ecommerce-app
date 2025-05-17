@@ -1,19 +1,9 @@
 // src/composables/useAuth.ts
 import { ref } from 'vue'
-
 import { apiRoot, createAnonymousClient, createPasswordClient } from '@/api/api-root'
+import type { CreateCustomerData } from '@/interfaces/signUpFormInterfaces'
 
 const isLoggedIn = ref<boolean>(false)
-
-import { type FormData } from '@/interfaces/signUpFormInterfaces'
-interface CreateCustomerData extends Omit<FormData, 'street' | 'billingStreet'> {
-  streetName?: string
-  streetNumber?: string
-  billingStreetName?: string
-  billingStreetNumber?: string
-  defaultShippingAddress?: number
-  defaultBillingAddress?: number
-}
 
 export function useAuth() {
   const register = async (signUPData: CreateCustomerData) => {
