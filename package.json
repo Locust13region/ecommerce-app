@@ -38,12 +38,11 @@
     "@commercetools/sdk-client-v2": "^3.0.0",
     "@primeuix/themes": "^1.1.1",
     "@primevue/forms": "^4.3.3",
-    "@vueuse/core": "^13.1.0",
     "node-fetch": "^2.7.0",
+    "@vueuse/core": "^13.1.0",
     "pinia": "^3.0.1",
     "primeicons": "^7.0.0",
     "primevue": "^4.3.4",
-    "rollup": "^4.40.2",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",
     "zod": "^3.24.4"
