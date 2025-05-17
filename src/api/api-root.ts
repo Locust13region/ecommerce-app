@@ -1,3 +1,4 @@
+// src/api/api-root.ts
 import { ref } from 'vue'
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
 import {
@@ -57,6 +58,7 @@ export function initializeClient() {
   const stored = localStorage.getItem(localStorageKey)
 
   if (!stored) {
+    console.log('init: token not exist')
     createAnonymousClient()
     return
   }
@@ -66,7 +68,9 @@ export function initializeClient() {
     const { token, expirationTime } = parsed
 
     if (token && expirationTime > Date.now()) {
+      console.log('init: token exist & expired => refresh')
       refreshClient(parsed)
+      // ToDo при использовании .withExistingTokenFlow токен не рефрешится SDK автоматически, в отличие от .withPasswordFlow
     } else {
       localStorage.removeItem(localStorageKey)
       createAnonymousClient()
@@ -79,7 +83,11 @@ export function initializeClient() {
 }
 
 export function createAnonymousClient() {
-  const anonymousId = generatorUuid()
+  let anonymousId = localStorage.getItem('anonymous-id')
+  if (!anonymousId) {
+    anonymousId = generatorUuid()
+    localStorage.setItem('anonymous-id', anonymousId)
+  }
 
   const anonymousOptions: AnonymousAuthMiddlewareOptions = {
     host: authUrl,
@@ -99,6 +107,7 @@ export function createAnonymousClient() {
     .build()
 
   apiRoot.value = createApiBuilderFromCtpClient(client).withProjectKey({ projectKey })
+  console.log('Create anonymous APIRoot')
 }
 
 export function refreshClient(token: TokenStore) {
@@ -113,6 +122,7 @@ export function refreshClient(token: TokenStore) {
     .build()
 
   apiRoot.value = createApiBuilderFromCtpClient(client).withProjectKey({ projectKey })
+  console.log('Refresh APIRoot with existing token')
 }
 
 export function createPasswordClient(username: string, password: string) {
@@ -136,4 +146,5 @@ export function createPasswordClient(username: string, password: string) {
     .build()
 
   apiRoot.value = createApiBuilderFromCtpClient(client).withProjectKey({ projectKey })
+  console.log('Create APIRoot with password')
 }

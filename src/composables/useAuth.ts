@@ -7,12 +7,12 @@ const isLoggedIn = ref<boolean>(false)
 
 import { type FormData } from '@/interfaces/signUpFormInterfaces'
 interface CreateCustomerData extends Omit<FormData, 'street' | 'billingStreet'> {
-  streetName: string
-  streetNumber: string
-  billingStreetName: string
-  billingStreetNumber: string
-  defaultShippingAddress: number
-  defaultBillingAddress: number
+  streetName?: string
+  streetNumber?: string
+  billingStreetName?: string
+  billingStreetNumber?: string
+  defaultShippingAddress?: number
+  defaultBillingAddress?: number
 }
 
 export function useAuth() {
@@ -48,9 +48,10 @@ export function useAuth() {
         .execute()
       console.log('Logged in customer', loginResponse.body.customer)
       console.log('Cart:', loginResponse.body.cart?.lineItems)
-      isLoggedIn.value = true
 
+      isLoggedIn.value = true
       createPasswordClient(username, password)
+      localStorage.removeItem('anonymous-id')
     } catch (error) {
       console.error('Login failed:', error)
 
