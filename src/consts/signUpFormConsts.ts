@@ -1,5 +1,9 @@
 import { ref } from 'vue'
-import type { FormData, FormErrors, FormFieldConfig } from '@/interfaces/signUpFormInterfaces'
+import type {
+  CreateCustomerData,
+  FormData,
+  FormFieldConfig,
+} from '@/interfaces/signUpFormInterfaces'
 
 export const countriesSelect = ref([
   { name: 'Afghanistan', code: 'AF' },
@@ -207,9 +211,15 @@ export const formData = ref<FormData>({
   postalCode: '',
   country: '',
   birthDate: '',
+  isDefaultShippingAddress: false,
+  isBillingSameAsShipping: true,
+  billingCity: '',
+  billingStreet: '',
+  billingPostalCode: '',
+  billingCountry: '',
 })
 
-export const formErrors = ref<FormErrors>({})
+export const formErrors = ref<Partial<FormData>>({})
 
 export const formFieldsConfig: FormFieldConfig[] = [
   { key: 'email', label: 'Email', type: 'text' },
@@ -220,3 +230,25 @@ export const formFieldsConfig: FormFieldConfig[] = [
   { key: 'city', label: 'City', type: 'text' },
   { key: 'postalCode', label: 'Postal Code', type: 'text' },
 ]
+
+export const signUpData = ref<CreateCustomerData>({
+  email: '',
+  firstName: '',
+  lastName: '',
+  password: '',
+  city: '',
+  postalCode: '',
+  country: '',
+  birthDate: '',
+  streetName: '',
+  streetNumber: '',
+  billingCity: '',
+  billingStreetName: '',
+  billingStreetNumber: '',
+  billingPostalCode: '',
+  billingCountry: '',
+  defaultShippingAddress: 10,
+  defaultBillingAddress: 0,
+  isBillingSameAsShipping: true,
+  isDefaultShippingAddress: false,
+})

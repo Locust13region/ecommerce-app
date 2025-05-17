@@ -3,6 +3,13 @@
 <template>
   <div class="about">
     <h1>This is an about page</h1>
+    <Button
+      variant="outlined"
+      size="small"
+      severity="info"
+      label="Go to main page"
+      @click="goToMain"
+    />
   </div>
 </template>
 

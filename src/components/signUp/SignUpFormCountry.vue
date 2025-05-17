@@ -3,28 +3,39 @@ import { ref } from 'vue'
 import { Select } from 'primevue'
 import { countriesSelect } from '@/consts/signUpFormConsts'
 import Message from 'primevue/message'
-
-const selectedCountry = ref('')
+import { useSignUpForm } from '@/composables/signUpValidation/SignUpValidation'
 
 const props = defineProps<{
+  id: string
   error?: string
   modelValue: string
   validate?: () => boolean
 }>()
 
+const selectedCountry = ref(props.modelValue)
+
 const emit = defineEmits(['update:modelValue'])
+
+const { validatePostalCodeField, validateBillingPostalCodeField } = useSignUpForm()
 
 function handleCountryChange(value: string) {
   emit('update:modelValue', value)
+
   if (props.validate) {
     props.validate()
+    if (props.id === 'billingCountry') {
+      validateBillingPostalCodeField()
+      console.log('validateBillingPostalCodeField')
+    } else if (props.id === 'country') {
+      validatePostalCodeField()
+    }
   }
 }
 </script>
 
 <template>
   <Select
-    id="country"
+    :id="id"
     v-model="selectedCountry"
     editable
     :options="countriesSelect"
