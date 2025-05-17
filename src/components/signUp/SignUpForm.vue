@@ -66,9 +66,7 @@ const onFormSubmit = async () => {
         life: 3000,
       })
 
-      setTimeout(() => {
-        router.push({ path: '/' })
-      }, 3000)
+      router.push({ path: '/' })
     } catch (err) {
       const error = err as CommerceToolsError
       console.error('Error when creating customer:', error.body.message)
@@ -243,7 +241,6 @@ const onFormSubmit = async () => {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 80%;
 }
 .billing-address {
   display: flex;
