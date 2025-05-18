@@ -69,7 +69,6 @@ const goToMain = async () => {
 <style>
 @media (min-width: 1024px) {
   .about {
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
