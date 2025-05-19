@@ -8,6 +8,9 @@ import { MainPreset } from './services/theme/preset'
 import App from './App.vue'
 import router from './router'
 import ToastService from 'primevue/toastservice'
+import { initializeClient } from './api/api-root'
+
+initializeClient()
 
 const app = createApp(App)
 

@@ -1,56 +1,71 @@
 // src/composables/useAuth.ts
 import { ref } from 'vue'
-import { buildClient } from '@/api/client'
-import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
-import type { Client } from '@commercetools/sdk-client-v2'
-import type { ApiRoot } from '@commercetools/platform-sdk'
+import { apiRoot, createAnonymousClient, createPasswordClient } from '@/api/api-root'
+import type { CreateCustomerData } from '@/interfaces/signUpFormInterfaces'
 
-const client = ref<Client | null>(null)
-const apiRoot = ref<ApiRoot | null>(null)
 const isLoggedIn = ref<boolean>(false)
 
 export function useAuth() {
+  const register = async (signUPData: CreateCustomerData) => {
+    try {
+      const customerResponse = await apiRoot.value
+        .customers()
+        .post({
+          body: signUPData,
+        })
+        .execute()
+      console.log('Register new customer with ID:', customerResponse.body.customer.id)
+
+      await login(signUPData.email, signUPData.password)
+    } catch (error) {
+      console.error('Error registering new customer:', error)
+    }
+  }
+
   const login = async (username: string, password: string) => {
     try {
-      const builtClient = buildClient(username, password)
-      await builtClient.execute({
-        uri: `/${import.meta.env.VITE_API_PROJECT_KEY}/me`,
-        method: 'GET',
-      })
+      const loginResponse = await apiRoot.value
+        .me()
+        .login()
+        .post({
+          body: {
+            email: username,
+            password: password,
 
-      client.value = builtClient
-      apiRoot.value = createApiBuilderFromCtpClient(builtClient)
+            activeCartSignInMode: 'UseAsNewActiveCustomerCart',
+          },
+        })
+        .execute()
+      console.log('Logged in customer', loginResponse.body.customer)
+      console.log('Cart:', loginResponse.body.cart?.lineItems)
+
       isLoggedIn.value = true
-    } catch (e) {
+      createPasswordClient(username, password)
+      localStorage.removeItem('anonymous-id')
+    } catch (error) {
+      console.error('Login failed:', error)
+
       logout()
-      if (e instanceof Error) {
-        throw new Error(`Login failed: ${e.message}`)
+      if (error instanceof Error) {
+        throw new Error(`Login failed: ${error.message}`)
       }
-      // console.error('Login failed:', e)
     }
   }
 
   const logout = () => {
     localStorage.removeItem('commercetools-token')
-    client.value = null
-    apiRoot.value = null
     isLoggedIn.value = false
+    createAnonymousClient()
   }
 
-  const getClient = () => client.value
   const isAuthenticated = () => isLoggedIn.value
-  const getApiRoot = () => {
-    if (!client.value) return null
-    return createApiBuilderFromCtpClient(client.value).withProjectKey({
-      projectKey: import.meta.env.VITE_API_PROJECT_KEY!,
-    })
-  }
+  const getApiRoot = () => apiRoot.value
 
   return {
+    register,
     login,
     logout,
-    getClient,
-    getApiRoot,
     isAuthenticated,
+    getApiRoot,
   }
 }
