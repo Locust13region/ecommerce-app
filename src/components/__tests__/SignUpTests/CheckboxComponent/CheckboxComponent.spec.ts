@@ -1,12 +1,7 @@
 import { mount } from '@vue/test-utils'
 import CheckboxComponent from '/Users/roman.kargin/Documents/GitHub/ecommerce-app/src/components/Checkbox/CheckboxComponent.vue'
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { Checkbox } from 'primevue'
-
-// Мокаем функцию setBillingAddressIfSameAsShipping
-vi.mock('@/services/SetBillingAddress/setBillingAddressIfSameAsShipping', () => ({
-  setBillingAddressIfSameAsShipping: vi.fn(),
-}))
 
 describe('CheckboxComponent', () => {
   it('renders label correctly', () => {
