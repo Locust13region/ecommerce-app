@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 export const useUserStateStore = defineStore('user', {
   state: () => ({
-    isLoggedIn: Boolean(localStorage['commercetools-isLogined']) || false,
+    isLoggedIn: Boolean(localStorage['commercetools-isLogggedIn']) || false,
   }),
   actions: {
     loginState() {

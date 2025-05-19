@@ -4,10 +4,11 @@ import { buildClient } from '@/api/client'
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
 import type { Client } from '@commercetools/sdk-client-v2'
 import type { ApiRoot } from '@commercetools/platform-sdk'
+import { user } from '../main.ts'
 
 const client = ref<Client | null>(null)
 const apiRoot = ref<ApiRoot | null>(null)
-const isLoggedIn = ref<boolean>(false)
+// const isLoggedIn = ref<boolean>(false)
 
 export function useAuth() {
   const login = async (username: string, password: string) => {
@@ -20,7 +21,10 @@ export function useAuth() {
 
       client.value = builtClient
       apiRoot.value = createApiBuilderFromCtpClient(builtClient)
-      isLoggedIn.value = true
+      // isLoggedIn.value = true
+
+      localStorage.setItem('commercetools-isLogggedIn', 'true')
+      user.loginState()
     } catch (e) {
       logout()
       if (e instanceof Error) {
@@ -34,11 +38,11 @@ export function useAuth() {
     localStorage.removeItem('commercetools-token')
     client.value = null
     apiRoot.value = null
-    isLoggedIn.value = false
+    // isLoggedIn.value = false
   }
 
   const getClient = () => client.value
-  const isAuthenticated = () => isLoggedIn.value
+  // const isAuthenticated = () => isLoggedIn.value
   const getApiRoot = () => {
     if (!client.value) return null
     return createApiBuilderFromCtpClient(client.value).withProjectKey({
@@ -51,6 +55,6 @@ export function useAuth() {
     logout,
     getClient,
     getApiRoot,
-    isAuthenticated,
+    // isAuthenticated,
   }
 }

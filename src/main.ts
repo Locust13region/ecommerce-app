@@ -8,13 +8,17 @@ import { MainPreset } from './services/theme/preset'
 import App from './App.vue'
 import router from './router'
 import ToastService from 'primevue/toastservice'
+import { useUserStateStore } from '@/stores/userState'
 
+const pinia = createPinia()
 const app = createApp(App)
+app.use(pinia)
+export const user = useUserStateStore()
 
 router.beforeEach(async (to /*, from*/) => {
   //TODO: replace isLogined with state
-  const isLogined = Boolean(localStorage['commercetools-isLogined']) || false
-  if ((to.name === 'login' || to.name === 'signup') && isLogined) {
+  const isLoggedIn = Boolean(localStorage['commercetools-isLogined']) || false
+  if ((to.name === 'login' || to.name === 'signup') && isLoggedIn) {
     return {
       name: 'home',
     }
@@ -30,7 +34,6 @@ app.use(PrimeVue, {
   },
 })
 
-app.use(createPinia())
 app.use(router)
 app.use(ToastService)
 app.mount('#app')

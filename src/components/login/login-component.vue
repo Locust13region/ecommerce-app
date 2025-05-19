@@ -6,31 +6,24 @@ import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import router from '@/router'
 import { loginValidator } from '@/services/loginFormValidation'
-
 import { Form, FormField, type FormSubmitEvent } from '@primevue/forms'
 import { ref } from 'vue'
 import { Message, Toast } from 'primevue'
 import { useToast } from 'primevue/usetoast'
 import { useAuth } from '@/composables/useAuth'
-import { useUserStateStore } from '@/stores/userState'
 
-const { login, isAuthenticated } = useAuth()
-const toast = useToast()
+const { login } = useAuth()
 const email = ref('')
 const password = ref('')
-const user = useUserStateStore()
+
 const formSubmit = async (event: FormSubmitEvent) => {
+  const toast = useToast()
   if (event.valid) {
     const email = event.states.email.value
     const password = event.states.password.value
     try {
       await login(email, password)
-      if (isAuthenticated()) {
-        //user.isLoggined
-        router.push('/')
-        localStorage.setItem('commercetools-isLogined', 'true')
-        user.loginState()
-      }
+      router.push('/')
     } catch (error) {
       if (error instanceof Error) {
         toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
