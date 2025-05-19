@@ -185,7 +185,7 @@ const onFormSubmit = async () => {
     <CheckboxComponent
       name="isDefaultAddress"
       v-model:modelValue="formData.isDefaultShippingAddress"
-      value="true"
+      value="false"
       label="Set as default address"
     />
 
