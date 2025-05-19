@@ -3,19 +3,17 @@ import type { CreateCustomerData } from '@/interfaces/signUpFormInterfaces'
 import { useApiState } from '@/stores/apiState'
 import { useUserStateStore } from '@/stores/userState'
 
-const user = useUserStateStore()
-const api = useApiState()
-
 export function useAuth() {
+  const user = useUserStateStore()
+  const api = useApiState()
   const register = async (signUPData: CreateCustomerData) => {
     try {
-      const customerResponse = await api.root
+      await api.root
         .customers()
         .post({
           body: signUPData,
         })
         .execute()
-      console.log('Register new customer with ID:', customerResponse.body.customer.id)
 
       await login(signUPData.email, signUPData.password)
     } catch (error) {
@@ -25,7 +23,7 @@ export function useAuth() {
 
   const login = async (username: string, password: string) => {
     try {
-      const loginResponse = await api.root
+      await api.root
         .me()
         .login()
         .post({
@@ -37,8 +35,6 @@ export function useAuth() {
           },
         })
         .execute()
-      console.log('Logged in customer', loginResponse.body.customer)
-      console.log('Cart:', loginResponse.body.cart?.lineItems)
 
       user.loginState()
       createPasswordClient(username, password)

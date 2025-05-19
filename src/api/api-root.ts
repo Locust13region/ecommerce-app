@@ -18,10 +18,6 @@ const apiUrl = import.meta.env.VITE_API_URL!
 const scopes = [`manage_project:${projectKey}`]
 const localStorageKey = 'commercetools-token'
 
-const api = useApiState()
-
-// export const apiRoot = ref(createApiBuilderFromCtpClient({}).withProjectKey({ projectKey }))
-
 export const tokenCache: TokenCache = {
   get: () => {
     try {
@@ -58,7 +54,6 @@ export function initializeClient() {
   const stored = localStorage.getItem(localStorageKey)
 
   if (!stored) {
-    console.log('init: token not exist')
     createAnonymousClient()
     return
   }
@@ -68,7 +63,6 @@ export function initializeClient() {
     const { token, expirationTime } = parsed
 
     if (token && expirationTime > Date.now()) {
-      console.log('init: token exist & expired => refresh')
       refreshClient(parsed)
       // ToDo при использовании .withExistingTokenFlow токен не рефрешится SDK автоматически, в отличие от .withPasswordFlow
     } else {
@@ -83,11 +77,9 @@ export function initializeClient() {
 }
 
 export function createAnonymousClient() {
-  let anonymousId = localStorage.getItem('anonymous-id')
-  if (!anonymousId) {
-    anonymousId = generatorUuid()
-    localStorage.setItem('anonymous-id', anonymousId)
-  }
+  const api = useApiState()
+  const anonymousId = generatorUuid()
+  localStorage.setItem('anonymous-id', anonymousId)
 
   const anonymousOptions: AnonymousAuthMiddlewareOptions = {
     host: authUrl,
@@ -107,11 +99,10 @@ export function createAnonymousClient() {
     .build()
 
   api.setRoot(client)
-  // apiRoot.value = createApiBuilderFromCtpClient(client).withProjectKey({ projectKey })
-  console.log('Create anonymous APIRoot')
 }
 
 export function refreshClient(token: TokenStore) {
+  const api = useApiState()
   const authorization: string = `Bearer ${token.refreshToken}`
   const options: ExistingTokenMiddlewareOptions = {
     force: true,
@@ -123,11 +114,10 @@ export function refreshClient(token: TokenStore) {
     .build()
 
   api.setRoot(client)
-  //   apiRoot.value = createApiBuilderFromCtpClient(client).withProjectKey({ projectKey })
-  console.log('Refresh APIRoot with existing token')
 }
 
 export function createPasswordClient(username: string, password: string) {
+  const api = useApiState()
   const authOptions: PasswordAuthMiddlewareOptions = {
     host: authUrl,
     projectKey,
@@ -148,6 +138,4 @@ export function createPasswordClient(username: string, password: string) {
     .build()
 
   api.setRoot(client)
-  //   apiRoot.value = createApiBuilderFromCtpClient(client).withProjectKey({ projectKey })
-  console.log('Create APIRoot with password')
 }
