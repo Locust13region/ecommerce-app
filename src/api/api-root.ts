@@ -1,6 +1,3 @@
-// src/api/api-root.ts
-import { ref } from 'vue'
-import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
 import {
   ClientBuilder,
   type HttpMiddlewareOptions,
@@ -11,6 +8,7 @@ import {
   type TokenStore,
 } from '@commercetools/sdk-client-v2'
 import generatorUuid from '@/services/Generator UUID/generator-uuid'
+import { useApiState } from '@/stores/apiState'
 
 const projectKey = import.meta.env.VITE_API_PROJECT_KEY!
 const clientId = import.meta.env.VITE_API_CLIENT_ID!
@@ -20,7 +18,9 @@ const apiUrl = import.meta.env.VITE_API_URL!
 const scopes = [`manage_project:${projectKey}`]
 const localStorageKey = 'commercetools-token'
 
-export const apiRoot = ref(createApiBuilderFromCtpClient({}).withProjectKey({ projectKey }))
+const api = useApiState()
+
+// export const apiRoot = ref(createApiBuilderFromCtpClient({}).withProjectKey({ projectKey }))
 
 export const tokenCache: TokenCache = {
   get: () => {
@@ -106,7 +106,8 @@ export function createAnonymousClient() {
     .withHttpMiddleware(httpMiddlewareOptions)
     .build()
 
-  apiRoot.value = createApiBuilderFromCtpClient(client).withProjectKey({ projectKey })
+  api.setRoot(client)
+  // apiRoot.value = createApiBuilderFromCtpClient(client).withProjectKey({ projectKey })
   console.log('Create anonymous APIRoot')
 }
 
@@ -121,7 +122,8 @@ export function refreshClient(token: TokenStore) {
     .withHttpMiddleware(httpMiddlewareOptions)
     .build()
 
-  apiRoot.value = createApiBuilderFromCtpClient(client).withProjectKey({ projectKey })
+  api.setRoot(client)
+  //   apiRoot.value = createApiBuilderFromCtpClient(client).withProjectKey({ projectKey })
   console.log('Refresh APIRoot with existing token')
 }
 
@@ -145,6 +147,7 @@ export function createPasswordClient(username: string, password: string) {
     .withHttpMiddleware(httpMiddlewareOptions)
     .build()
 
-  apiRoot.value = createApiBuilderFromCtpClient(client).withProjectKey({ projectKey })
+  api.setRoot(client)
+  //   apiRoot.value = createApiBuilderFromCtpClient(client).withProjectKey({ projectKey })
   console.log('Create APIRoot with password')
 }

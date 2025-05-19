@@ -15,9 +15,9 @@ initializeClient()
 const app = createApp(App)
 
 router.beforeEach(async (to /*, from*/) => {
-  //TODO: replace isLogined with state
-  const isLogined = Boolean(localStorage['commercetools-isLogined']) || false
-  if ((to.name === 'login' || to.name === 'signup') && isLogined) {
+  //TODO: replace isLoggedIn with state
+  const isLoggedIn = Boolean(localStorage['commercetools-isLoggedIn']) || false
+  if ((to.name === 'login' || to.name === 'signup') && isLoggedIn) {
     return {
       name: 'home',
     }

@@ -28,7 +28,7 @@ const formSubmit = async (event: FormSubmitEvent) => {
       if (isAuthenticated()) {
         //user.isLoggined
         router.push('/')
-        localStorage.setItem('commercetools-isLogined', 'true')
+        localStorage.setItem('commercetools-isLoggedIn', 'true')
         user.loginState()
       }
     } catch (error) {

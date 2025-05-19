@@ -1,14 +1,15 @@
-// src/composables/useAuth.ts
-import { ref } from 'vue'
-import { apiRoot, createAnonymousClient, createPasswordClient } from '@/api/api-root'
+import { createAnonymousClient, createPasswordClient } from '@/api/api-root'
 import type { CreateCustomerData } from '@/interfaces/signUpFormInterfaces'
+import { useApiState } from '@/stores/apiState'
+import { useUserStateStore } from '@/stores/userState'
 
-const isLoggedIn = ref<boolean>(false)
+const user = useUserStateStore()
+const api = useApiState()
 
 export function useAuth() {
   const register = async (signUPData: CreateCustomerData) => {
     try {
-      const customerResponse = await apiRoot.value
+      const customerResponse = await api.root
         .customers()
         .post({
           body: signUPData,
@@ -24,7 +25,7 @@ export function useAuth() {
 
   const login = async (username: string, password: string) => {
     try {
-      const loginResponse = await apiRoot.value
+      const loginResponse = await api.root
         .me()
         .login()
         .post({
@@ -39,7 +40,7 @@ export function useAuth() {
       console.log('Logged in customer', loginResponse.body.customer)
       console.log('Cart:', loginResponse.body.cart?.lineItems)
 
-      isLoggedIn.value = true
+      user.loginState()
       createPasswordClient(username, password)
       localStorage.removeItem('anonymous-id')
     } catch (error) {
@@ -54,12 +55,12 @@ export function useAuth() {
 
   const logout = () => {
     localStorage.removeItem('commercetools-token')
-    isLoggedIn.value = false
+    user.logoutState()
     createAnonymousClient()
   }
 
-  const isAuthenticated = () => isLoggedIn.value
-  const getApiRoot = () => apiRoot.value
+  const isAuthenticated = () => user.isLoggedIn
+  const getApiRoot = () => api.root
 
   return {
     register,

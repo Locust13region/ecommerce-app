@@ -10,7 +10,7 @@ const user = useUserStateStore()
 function logoutHandler() {
   if (true) {
     logout()
-    localStorage.removeItem('commercetools-isLogined')
+    localStorage.removeItem('commercetools-isLoggedIn')
     user.logoutState()
     router.push('/login')
   }
