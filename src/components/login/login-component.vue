@@ -12,12 +12,13 @@ import { ref } from 'vue'
 import { Message, Toast } from 'primevue'
 import { useToast } from 'primevue/usetoast'
 import { useAuth } from '@/composables/useAuth'
+import { useUserStateStore } from '@/stores/userState'
 
-const { login, /*, logout*/ isAuthenticated } = useAuth()
+const { login, isAuthenticated } = useAuth()
 const toast = useToast()
 const email = ref('')
 const password = ref('')
-
+const user = useUserStateStore()
 const formSubmit = async (event: FormSubmitEvent) => {
   if (event.valid) {
     const email = event.states.email.value
@@ -25,8 +26,10 @@ const formSubmit = async (event: FormSubmitEvent) => {
     try {
       await login(email, password)
       if (isAuthenticated()) {
+        //user.isLoggined
         router.push('/')
         localStorage.setItem('commercetools-isLogined', 'true')
+        user.loginState()
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -42,7 +45,7 @@ const formSubmit = async (event: FormSubmitEvent) => {
     <FormField>
       <IconField>
         <InputIcon class="pi pi-user" />
-        <InputText placeholder="Email" name="email" v-model="email" />
+        <InputText placeholder="Email" name="email" v-model.trim="email" />
       </IconField>
       <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
         $form.email.error?.message
