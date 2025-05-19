@@ -4,7 +4,7 @@ import './assets/main.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
-import { MainPreset } from './composables/preset'
+import { MainPreset } from './services/theme/preset'
 import App from './App.vue'
 import router from './router'
 import ToastService from 'primevue/toastservice'
@@ -34,5 +34,3 @@ app.use(createPinia())
 app.use(router)
 app.use(ToastService)
 app.mount('#app')
-
-app.use(ToastService)
