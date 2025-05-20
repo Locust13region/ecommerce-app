@@ -38,28 +38,38 @@ const formSubmit = async (event: FormSubmitEvent) => {
     <FormField>
       <IconField>
         <InputIcon class="pi pi-user" />
-        <InputText placeholder="Email" name="email" v-model.trim="email" />
+        <InputText class="input-email" placeholder="Email" name="email" v-model.trim="email" />
       </IconField>
-      <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">{{
-        $form.email.error?.message
-      }}</Message>
+      <Message
+        class="email-validation-error-message"
+        v-if="$form.email?.invalid"
+        severity="error"
+        size="small"
+        variant="simple"
+      >
+        {{ $form.email.error?.message }}
+      </Message>
     </FormField>
     <FormField>
       <Password
+        class="input-password"
         name="password"
         placeholder="Password"
         :feedback="false"
         v-model="password"
         toggleMask
       />
-      <div v-if="$form.password?.invalid" class="flex flex-col gap-1">
+      <div
+        v-if="$form.password?.invalid"
+        class="flex flex-col gap-1 password-validation-error-block"
+      >
         <Message
+          class="password-validation-error-message"
           v-for="(error, index) of $form.password.errors"
           :key="index"
           severity="error"
           size="small"
           variant="simple"
-          class="message"
           >{{ error.message }}<br
         /></Message>
       </div>
@@ -80,7 +90,7 @@ const formSubmit = async (event: FormSubmitEvent) => {
   width: 235px;
 }
 
-.message {
+.password-validation-error-message {
   max-width: 235px;
   word-break: normal;
 }
