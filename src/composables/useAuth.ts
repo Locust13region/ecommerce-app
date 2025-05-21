@@ -1,5 +1,6 @@
 import { createAnonymousClient, createPasswordClient } from '@/api/api-root'
 import type { CreateCustomerData } from '@/interfaces/signUpFormInterfaces'
+import router from '@/router'
 import { useApiState } from '@/stores/apiState'
 import { useUserStateStore } from '@/stores/userState'
 
@@ -36,9 +37,12 @@ export function useAuth() {
         })
         .execute()
 
-      user.loginState()
       createPasswordClient(username, password)
+
+      user.loginState()
       localStorage.removeItem('anonymous-id')
+
+      await router.push({ path: '/' })
     } catch (error) {
       console.error('Login failed:', error)
 
