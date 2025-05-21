@@ -8,9 +8,11 @@ export const useUserStateStore = defineStore('user', {
   actions: {
     loginState() {
       this.isLoggedIn = true
+      localStorage.setItem('commercetools-isLoggedIn', 'true')
     },
     logoutState() {
       this.isLoggedIn = false
+      localStorage.removeItem('commercetools-isLoggedIn')
     },
   },
 })
