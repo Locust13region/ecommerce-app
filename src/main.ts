@@ -17,7 +17,6 @@ setActivePinia(pinia)
 initializeClient()
 
 router.beforeEach(async (to /*, from*/) => {
-  //TODO: replace isLoggedIn with state
   const isLoggedIn = Boolean(localStorage['commercetools-isLoggedIn']) || false
   if ((to.name === 'login' || to.name === 'signup') && isLoggedIn) {
     return {

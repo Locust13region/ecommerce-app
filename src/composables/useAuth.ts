@@ -54,8 +54,8 @@ export function useAuth() {
   }
 
   const logout = () => {
-    localStorage.removeItem('commercetools-token')
     user.logoutState()
+    localStorage.removeItem('commercetools-token')
     createAnonymousClient()
   }
 
