@@ -1,9 +1,9 @@
 import { mount, flushPromises } from '@vue/test-utils'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import LoginComponent from '../login/login-component.vue'
+import LoginComponent from '../../login/login-component.vue'
 import PrimeVue from 'primevue/config'
 import { ToastService } from 'primevue'
-import router from '@/router'
+import router from '../../../router'
 
 describe('LoginComponent', () => {
   beforeEach(() => {
