@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
 import { Form } from '@primevue/forms'
-import Toast from 'primevue/toast'
-import { useToast } from 'primevue'
+import { Toast } from 'primevue'
+import { useToast } from 'primevue/usetoast'
 import FormInputField from '../FormInputField/FormInputField.vue'
 import SignUpBirthDate from '@/components/signUp/SignUpBirthDate.vue'
 import countrySelect from '@/components/signUp/SignUpFormCountry.vue'
@@ -46,7 +46,7 @@ const onFormSubmit = async () => {
         severity: 'success',
         summary: 'Success!',
         detail: `Your account ${formData.value.email} has been created successfully!`,
-        life: 10000,
+        life: 5000,
       })
 
       await login(formData.value.email, formData.value.password)
@@ -74,12 +74,12 @@ const onFormSubmit = async () => {
       })
     }
   } else {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: `Form validation failed`,
-      life: 10000,
-    })
+    // toast.add({
+    //   severity: 'error',
+    //   summary: 'Error',
+    //   detail: `Form validation failed`,
+    //   life: 10000,
+    // })
   }
 }
 </script>
