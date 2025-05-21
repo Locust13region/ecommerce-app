@@ -10,8 +10,8 @@ import router from './router'
 import ToastService from 'primevue/toastservice'
 import { initializeClient } from './api/api-root'
 
-const app = createApp(App)
 const pinia = createPinia()
+const app = createApp(App)
 app.use(pinia)
 setActivePinia(pinia)
 initializeClient()

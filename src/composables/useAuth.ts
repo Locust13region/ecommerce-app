@@ -45,7 +45,6 @@ export function useAuth() {
       await router.push({ path: '/' })
     } catch (error) {
       console.error('Login failed:', error)
-
       logout()
       if (error instanceof Error) {
         throw new Error(`Login failed: ${error.message}`)

@@ -4,8 +4,8 @@ import router from '@/router'
 import { useAuth } from '@/composables/useAuth'
 import { useUserStateStore } from '@/stores/userState'
 
-const { logout } = useAuth()
 const user = useUserStateStore()
+const { logout } = useAuth()
 
 function logoutHandler() {
   logout()
