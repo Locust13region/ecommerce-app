@@ -7,12 +7,8 @@ import { user } from '../../main.ts'
 const { logout } = useAuth()
 
 function logoutHandler() {
-  if (true) {
-    logout()
-    localStorage.removeItem('commercetools-isLogined')
-    user.logoutState()
-    router.push('/login')
-  }
+  logout()
+  router.push('/login')
 }
 </script>
 
@@ -26,7 +22,6 @@ function logoutHandler() {
         <RouterLink to="/about">About</RouterLink>
       </nav>
       <div class="auth">
-        <!-- TODO: show signUp and login when user unauthorized, if else - hide them and show logout -->
         <Button
           class="button-to-signup"
           severity="secondary"

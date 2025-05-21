@@ -62,8 +62,6 @@ export const signUpSchema = z.object({
         const countryCode = countriesSelect.value.find(
           (country) => country.name === selectedCountry,
         )?.code
-        console.log(formData.value.country, 'formData country')
-        console.log('countryCode', countryCode)
         return postcodeValidator(data, countryCode || 'INTL')
       },
       {

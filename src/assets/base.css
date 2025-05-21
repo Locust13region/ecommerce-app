@@ -21,6 +21,7 @@
   --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
   --vt-c-colored-text: var(--p-purple-500);
   --vt-c-hovered-text: var(--p-purple-200);
+  --p-datepicker-panel-background: rgba(60, 60, 60);
 }
 
 /* semantic color variables for this project */

@@ -2,22 +2,23 @@ import 'primeicons/primeicons.css'
 import './assets/base.css'
 import './assets/main.css'
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createPinia, setActivePinia } from 'pinia'
 import PrimeVue from 'primevue/config'
 import { MainPreset } from './services/theme/preset'
 import App from './App.vue'
 import router from './router'
 import ToastService from 'primevue/toastservice'
-import { useUserStateStore } from '@/stores/userState'
+import { initializeClient } from './api/api-root'
 
 const pinia = createPinia()
 const app = createApp(App)
+const pinia = createPinia()
 app.use(pinia)
-export const user = useUserStateStore()
+setActivePinia(pinia)
+initializeClient()
 
 router.beforeEach(async (to /*, from*/) => {
-  //TODO: replace isLogined with state
-  const isLoggedIn = Boolean(localStorage['commercetools-isLogined']) || false
+  const isLoggedIn = Boolean(localStorage['commercetools-isLoggedIn']) || false
   if ((to.name === 'login' || to.name === 'signup') && isLoggedIn) {
     return {
       name: 'home',

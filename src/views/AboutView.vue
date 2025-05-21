@@ -1,4 +1,22 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Button from 'primevue/button'
+import { useToast } from 'primevue'
+
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const toast = useToast()
+const goToMain = async () => {
+  await toast.add({
+    severity: 'info',
+    summary: 'Info',
+    detail: 'Redirecting to main page...',
+    life: 3000,
+  })
+  await router.push({ path: '/' })
+}
+</script>
 
 <template>
   <div class="about">

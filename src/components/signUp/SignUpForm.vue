@@ -1,27 +1,20 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
 import { Form } from '@primevue/forms'
-import Toast from 'primevue/toast'
-import { useToast } from 'primevue'
-import { useRouter } from 'vue-router'
-
+import { Toast } from 'primevue'
+import { useToast } from 'primevue/usetoast'
 import FormInputField from '../FormInputField/FormInputField.vue'
 import SignUpBirthDate from '@/components/signUp/SignUpBirthDate.vue'
 import countrySelect from '@/components/signUp/SignUpFormCountry.vue'
 import SignUpPassword from '@/components/signUp/SignUpPassword.vue'
 import CheckboxComponent from '../Checkbox/CheckboxComponent.vue'
-
 import { useSignUpForm } from '@/composables/signUpValidation/SignUpValidation'
-
 import { parseSignUpFormData } from '@/services/SignUpFormParser/signUpFormParsers'
 import { createCustomer } from '@/services/CreateCustomer/createCustomer'
 import type { CommerceToolsError } from '@/interfaces/signUpFormInterfaces'
-
 import { useAuth } from '@/composables/useAuth'
 
-const router = useRouter()
 const toast = useToast()
-
 const { login } = useAuth()
 
 const {
@@ -53,11 +46,10 @@ const onFormSubmit = async () => {
         severity: 'success',
         summary: 'Success!',
         detail: `Your account ${formData.value.email} has been created successfully!`,
-        life: 10000,
+        life: 5000,
       })
 
       await login(formData.value.email, formData.value.password)
-      console.log('Customer logged in successfully:', response)
 
       toast.add({
         severity: 'info',
@@ -65,11 +57,8 @@ const onFormSubmit = async () => {
         detail: 'You are logged in. Redirecting to the main page...',
         life: 3000,
       })
-
-      router.push({ path: '/' })
     } catch (err) {
       const error = err as CommerceToolsError
-      console.error('Error when creating customer:', error.body.message)
 
       if (error.body.message === 'There is already an existing customer with the provided email.') {
         formErrors.value.email = 'Email already exists'
@@ -85,7 +74,12 @@ const onFormSubmit = async () => {
       })
     }
   } else {
-    console.log('Form validation failed')
+    // toast.add({
+    //   severity: 'error',
+    //   summary: 'Error',
+    //   detail: `Form validation failed`,
+    //   life: 10000,
+    // })
   }
 }
 </script>
@@ -185,7 +179,7 @@ const onFormSubmit = async () => {
     <CheckboxComponent
       name="isDefaultAddress"
       v-model:modelValue="formData.isDefaultShippingAddress"
-      value="true"
+      value="false"
       label="Set as default address"
     />
 

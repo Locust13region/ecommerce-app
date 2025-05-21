@@ -4,8 +4,7 @@ import Password from 'primevue/password'
 import Button from 'primevue/button'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
-import router from '@/router'
-import { loginValidator } from '@/services/loginFormValidation'
+import { loginValidator } from '@/services/loginValidator/loginFormValidation'
 import { Form, FormField, type FormSubmitEvent } from '@primevue/forms'
 import { ref } from 'vue'
 import { Message, Toast } from 'primevue'
@@ -13,9 +12,9 @@ import { useToast } from 'primevue/usetoast'
 import { useAuth } from '@/composables/useAuth'
 
 const { login } = useAuth()
+const toast = useToast()
 const email = ref('')
 const password = ref('')
-
 const formSubmit = async (event: FormSubmitEvent) => {
   const toast = useToast()
   if (event.valid) {
@@ -23,7 +22,6 @@ const formSubmit = async (event: FormSubmitEvent) => {
     const password = event.states.password.value
     try {
       await login(email, password)
-      router.push('/')
     } catch (error) {
       if (error instanceof Error) {
         toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
