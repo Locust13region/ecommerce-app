@@ -59,14 +59,12 @@ export function useAuth() {
     createAnonymousClient()
   }
 
-  const isAuthenticated = () => user.isLoggedIn
   const getApiRoot = () => api.root
 
   return {
     register,
     login,
     logout,
-    isAuthenticated,
     getApiRoot,
   }
 }
