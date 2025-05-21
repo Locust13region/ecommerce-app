@@ -5,7 +5,7 @@ import Button from 'primevue/button'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import router from '@/router'
-import { loginValidator } from '@/services/loginFormValidation'
+import { loginValidator } from '@/services/loginValidator/loginFormValidation'
 
 import { Form, FormField, type FormSubmitEvent } from '@primevue/forms'
 import { ref } from 'vue'
