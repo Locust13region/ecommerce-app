@@ -2,8 +2,9 @@
 import { Button } from 'primevue'
 import router from '@/router'
 import { useAuth } from '@/composables/useAuth'
-import { user } from '../../main.ts'
+import { useUserStateStore } from '@/stores/userState'
 
+const user = useUserStateStore()
 const { logout } = useAuth()
 
 function logoutHandler() {

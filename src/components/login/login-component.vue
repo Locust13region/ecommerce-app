@@ -15,8 +15,8 @@ const { login } = useAuth()
 const toast = useToast()
 const email = ref('')
 const password = ref('')
+
 const formSubmit = async (event: FormSubmitEvent) => {
-  const toast = useToast()
   if (event.valid) {
     const email = event.states.email.value
     const password = event.states.password.value

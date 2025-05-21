@@ -12,7 +12,6 @@ import { initializeClient } from './api/api-root'
 
 const pinia = createPinia()
 const app = createApp(App)
-const pinia = createPinia()
 app.use(pinia)
 setActivePinia(pinia)
 initializeClient()
