@@ -1,20 +1,20 @@
-// src/composables/useAuth.ts
-import { ref } from 'vue'
-import { apiRoot, createAnonymousClient, createPasswordClient } from '@/api/api-root'
+import { createAnonymousClient, createPasswordClient } from '@/api/api-root'
 import type { CreateCustomerData } from '@/interfaces/signUpFormInterfaces'
-
-const isLoggedIn = ref<boolean>(false)
+import router from '@/router'
+import { useApiState } from '@/stores/apiState'
+import { useUserStateStore } from '@/stores/userState'
 
 export function useAuth() {
+  const user = useUserStateStore()
+  const api = useApiState()
   const register = async (signUPData: CreateCustomerData) => {
     try {
-      const customerResponse = await apiRoot.value
+      await api.root
         .customers()
         .post({
           body: signUPData,
         })
         .execute()
-      console.log('Register new customer with ID:', customerResponse.body.customer.id)
 
       await login(signUPData.email, signUPData.password)
     } catch (error) {
@@ -24,7 +24,7 @@ export function useAuth() {
 
   const login = async (username: string, password: string) => {
     try {
-      const loginResponse = await apiRoot.value
+      await api.root
         .me()
         .login()
         .post({
@@ -36,12 +36,13 @@ export function useAuth() {
           },
         })
         .execute()
-      console.log('Logged in customer', loginResponse.body.customer)
-      console.log('Cart:', loginResponse.body.cart?.lineItems)
 
-      isLoggedIn.value = true
       createPasswordClient(username, password)
+
+      user.loginState()
       localStorage.removeItem('anonymous-id')
+
+      await router.push({ path: '/' })
     } catch (error) {
       console.error('Login failed:', error)
 
@@ -54,18 +55,16 @@ export function useAuth() {
 
   const logout = () => {
     localStorage.removeItem('commercetools-token')
-    isLoggedIn.value = false
+    user.logoutState()
     createAnonymousClient()
   }
 
-  const isAuthenticated = () => isLoggedIn.value
-  const getApiRoot = () => apiRoot.value
+  const getApiRoot = () => api.root
 
   return {
     register,
     login,
     logout,
-    isAuthenticated,
     getApiRoot,
   }
 }

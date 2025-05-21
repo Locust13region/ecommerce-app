@@ -1,6 +1,3 @@
-// src/api/api-root.ts
-import { ref } from 'vue'
-import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk'
 import {
   ClientBuilder,
   type HttpMiddlewareOptions,
@@ -11,6 +8,7 @@ import {
   type TokenStore,
 } from '@commercetools/sdk-client-v2'
 import generatorUuid from '@/services/Generator UUID/generator-uuid'
+import { useApiState } from '@/stores/apiState'
 
 const projectKey = import.meta.env.VITE_API_PROJECT_KEY!
 const clientId = import.meta.env.VITE_API_CLIENT_ID!
@@ -19,8 +17,6 @@ const authUrl = import.meta.env.VITE_API_AUTH_URL!
 const apiUrl = import.meta.env.VITE_API_URL!
 const scopes = [`manage_project:${projectKey}`]
 const localStorageKey = 'commercetools-token'
-
-export const apiRoot = ref(createApiBuilderFromCtpClient({}).withProjectKey({ projectKey }))
 
 export const tokenCache: TokenCache = {
   get: () => {
@@ -58,7 +54,6 @@ export function initializeClient() {
   const stored = localStorage.getItem(localStorageKey)
 
   if (!stored) {
-    console.log('init: token not exist')
     createAnonymousClient()
     return
   }
@@ -68,7 +63,6 @@ export function initializeClient() {
     const { token, expirationTime } = parsed
 
     if (token && expirationTime > Date.now()) {
-      console.log('init: token exist & expired => refresh')
       refreshClient(parsed)
       // ToDo при использовании .withExistingTokenFlow токен не рефрешится SDK автоматически, в отличие от .withPasswordFlow
     } else {
@@ -83,11 +77,9 @@ export function initializeClient() {
 }
 
 export function createAnonymousClient() {
-  let anonymousId = localStorage.getItem('anonymous-id')
-  if (!anonymousId) {
-    anonymousId = generatorUuid()
-    localStorage.setItem('anonymous-id', anonymousId)
-  }
+  const api = useApiState()
+  const anonymousId = generatorUuid()
+  localStorage.setItem('anonymous-id', anonymousId)
 
   const anonymousOptions: AnonymousAuthMiddlewareOptions = {
     host: authUrl,
@@ -106,11 +98,11 @@ export function createAnonymousClient() {
     .withHttpMiddleware(httpMiddlewareOptions)
     .build()
 
-  apiRoot.value = createApiBuilderFromCtpClient(client).withProjectKey({ projectKey })
-  console.log('Create anonymous APIRoot')
+  api.setRoot(client)
 }
 
 export function refreshClient(token: TokenStore) {
+  const api = useApiState()
   const authorization: string = `Bearer ${token.refreshToken}`
   const options: ExistingTokenMiddlewareOptions = {
     force: true,
@@ -121,11 +113,11 @@ export function refreshClient(token: TokenStore) {
     .withHttpMiddleware(httpMiddlewareOptions)
     .build()
 
-  apiRoot.value = createApiBuilderFromCtpClient(client).withProjectKey({ projectKey })
-  console.log('Refresh APIRoot with existing token')
+  api.setRoot(client)
 }
 
 export function createPasswordClient(username: string, password: string) {
+  const api = useApiState()
   const authOptions: PasswordAuthMiddlewareOptions = {
     host: authUrl,
     projectKey,
@@ -145,6 +137,5 @@ export function createPasswordClient(username: string, password: string) {
     .withHttpMiddleware(httpMiddlewareOptions)
     .build()
 
-  apiRoot.value = createApiBuilderFromCtpClient(client).withProjectKey({ projectKey })
-  console.log('Create APIRoot with password')
+  api.setRoot(client)
 }
