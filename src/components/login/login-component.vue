@@ -7,7 +7,7 @@ import InputIcon from 'primevue/inputicon'
 import { loginValidator } from '@/services/loginValidator/loginFormValidation'
 import { Form, FormField, type FormSubmitEvent } from '@primevue/forms'
 import { ref } from 'vue'
-import { Message, Toast } from 'primevue'
+import { Message } from 'primevue'
 import { useToast } from 'primevue/usetoast'
 import { useAuth } from '@/composables/useAuth'
 
@@ -74,7 +74,6 @@ const formSubmit = async (event: FormSubmitEvent) => {
     </FormField>
     <Button type="submit" label="Login" class="login-button">Log In</Button>
   </Form>
-  <Toast></Toast>
 </template>
 
 <style>
