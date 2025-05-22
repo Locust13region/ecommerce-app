@@ -41,8 +41,7 @@ export function useAuth() {
 
       user.loginState()
       localStorage.removeItem('anonymous-id')
-
-      await router.push({ path: '/' })
+      await router.push('/')
     } catch (error) {
       console.error('Login failed:', error)
       logout()
