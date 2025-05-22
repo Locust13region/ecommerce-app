@@ -23,6 +23,11 @@ router.beforeEach(async (to /*, from*/) => {
       name: 'home',
     }
   }
+  if (to.name === 'profile' && !isLoggedIn) {
+    return {
+      name: 'home',
+    }
+  }
 })
 
 app.use(PrimeVue, {
