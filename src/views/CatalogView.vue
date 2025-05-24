@@ -6,7 +6,6 @@ import {
   // getUserInfo,
   createCategoryTree,
 } from '@/services/Catalog/GetCategories/fetchCategories'
-import MegaMenu from '@/components/MegaMenu/MegaMenu.vue'
 // import { useAuth } from '@/composables/useAuth'
 // import { useApiState } from '@/stores/apiState'
 
@@ -17,7 +16,6 @@ const user = useUserStateStore()
 
 <template>
   <div class="catalog">
-    <MegaMenu />
     <h1>Catalog</h1>
     <p>Welcome to the catalog page!</p>
 
