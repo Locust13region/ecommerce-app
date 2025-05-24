@@ -4,6 +4,10 @@ import router from '@/router'
 import { useAuth } from '@/composables/useAuth'
 import { useUserStateStore } from '@/stores/userState'
 import MegaMenu from '@/components/MegaMenu/MegaMenu.vue'
+import type { MegaMenuItem } from '@/interfaces/catalogInterfaces'
+import { onMounted, ref } from 'vue'
+import { fetchCategories } from '@/services/Catalog/GetCategories/fetchCategories'
+import { transformCategoriesToMegaMenu } from '@/services/Catalog/ParseCategoriesToMegaMenu/parseCategoriesToMegaMenu'
 
 const user = useUserStateStore()
 const { logout } = useAuth()
@@ -12,6 +16,13 @@ function logoutHandler() {
   logout()
   router.push('/login')
 }
+
+const navMenuItems = ref<MegaMenuItem[]>([])
+
+onMounted(async () => {
+  const categories = await fetchCategories()
+  navMenuItems.value = transformCategoriesToMegaMenu(categories, 'en-US', false)
+})
 </script>
 
 <template>
@@ -23,7 +34,7 @@ function logoutHandler() {
         <RouterLink to="/" class="pi pi-home"> Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
         <!-- <RouterLink to="/catalog">Catalog</RouterLink> -->
-        <MegaMenu />
+        <MegaMenu :model="navMenuItems" :class="'header'" />
       </nav>
       <div class="auth">
         <Button

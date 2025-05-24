@@ -4,6 +4,7 @@ import type { Category } from '@commercetools/platform-sdk'
 export function transformCategoriesToMegaMenu(
   categories: Category[],
   locale: string = 'en-US',
+  isHorizontal: boolean,
 ): MegaMenuItem[] {
   const categoryMap = new Map<string, Category[]>()
 
@@ -28,19 +29,40 @@ export function transformCategoriesToMegaMenu(
 
   const topLevelCategories = categoryMap.get('root') || []
 
-  const categoriesGroup: MegaMenuItem = {
-    label: 'Catalog',
-    url: `/catalog`,
-    items: [
-      topLevelCategories.map((cat) => ({
+  if (isHorizontal) {
+    const result: MegaMenuItem[] = topLevelCategories.map((cat) => {
+      const subcategories = buildSubcategories(cat.id)
+
+      return {
         label: cat.name[locale],
         url: `/catalog/${cat.slug[locale]}`,
-        items: buildSubcategories(cat.id),
-      })),
-    ],
+        items: subcategories.length
+          ? [
+              [
+                {
+                  label: '',
+                  items: subcategories,
+                },
+              ],
+            ]
+          : [],
+      }
+    })
+
+    return result
+  } else {
+    const categoriesGroup: MegaMenuItem = {
+      label: 'Catalog',
+      url: `/catalog`,
+      items: [
+        topLevelCategories.map((cat) => ({
+          label: cat.name[locale],
+          url: `/catalog/${cat.slug[locale]}`,
+          items: buildSubcategories(cat.id),
+        })),
+      ],
+    }
+
+    return [categoriesGroup]
   }
-
-  console.log(categoriesGroup)
-
-  return [categoriesGroup]
 }

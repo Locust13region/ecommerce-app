@@ -1,21 +1,36 @@
 <template>
-  <MegaMenu :model="menuItems" orientation="horizontal" class="custom-megamenu" />
+  <MegaMenu
+    :model="menuItems"
+    orientation="horizontal"
+    class="custom-megamenu"
+    :class="props.classProp"
+  />
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, watch, onUpdated } from 'vue'
 import MegaMenu from 'primevue/megamenu'
 import type { MegaMenuItem } from '@/interfaces/catalogInterfaces'
-import { fetchCategories } from '@/services/Catalog/GetCategories/fetchCategories'
-import { transformCategoriesToMegaMenu } from '@/services/Catalog/ParseCategoriesToMegaMenu/parseCategoriesToMegaMenu'
 import router from '@/router'
 
-const menuItems = ref<MegaMenuItem[]>([])
+const props = defineProps<{
+  model: MegaMenuItem[]
+  classProp?: string
+}>()
 
-onMounted(async () => {
-  const categories = await fetchCategories()
-  menuItems.value = await transformCategoriesToMegaMenu(categories, 'en-US')
-  await console.log()
+const menuItems = ref<MegaMenuItem[]>(props.model)
+
+watch(
+  () => props.model,
+  (newVal) => {
+    menuItems.value = newVal
+  },
+)
+
+onUpdated(async () => {
+  // const categories = await fetchCategories()
+  // menuItems.value = await transformCategoriesToMegaMenuForNavigation(categories, 'en-US')
+  // await console.log()
 
   const menuListItems = document.querySelectorAll('.p-megamenu-root-list > .p-megamenu-item')
 
@@ -31,18 +46,18 @@ onMounted(async () => {
   const subMenus = document.querySelectorAll('.p-megamenu-submenu .p-megamenu-submenu-label')
   subMenus.forEach((item) => {
     const labelContent = item.textContent
-
-    const link = document.createElement('a')
-    link.classList.add('p-megamenu-item-link')
-    const href = labelContent?.toLowerCase().split(' ').join('-') || ''
-    link.href = `/catalog/${href}`
-    link.textContent = labelContent
-    item.textContent = ''
-    item.append(link)
+    if (labelContent) {
+      const link = document.createElement('a')
+      link.classList.add('p-megamenu-item-link')
+      const href = labelContent?.toLowerCase().split(' ').join('-') || ''
+      link.href = `/catalog/${href}`
+      link.textContent = labelContent
+      item.textContent = ''
+      item.append(link)
+    }
   })
 
   const megaMenuLinks = document.querySelectorAll('.p-megamenu-root-list a')
-  console.log(megaMenuLinks)
 
   megaMenuLinks.forEach((item) => {
     item.addEventListener('click', (event) => {
@@ -64,5 +79,9 @@ onMounted(async () => {
 
 li.p-megamenu-submenu-label .p-megamenu-item-link:hover {
   color: white;
+}
+
+nav .p-megamenu-submenu .p-megamenu-item .p-megamenu-item-link .p-megamenu-item-label {
+  margin-left: 10%;
 }
 </style>
