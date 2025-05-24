@@ -3,6 +3,7 @@ import { Button } from 'primevue'
 import router from '@/router'
 import { useAuth } from '@/composables/useAuth'
 import { useUserStateStore } from '@/stores/userState'
+import MegaMenu from '@/components/MegaMenu/MegaMenu.vue'
 
 const user = useUserStateStore()
 const { logout } = useAuth()
@@ -21,6 +22,8 @@ function logoutHandler() {
       <nav>
         <RouterLink to="/" class="pi pi-home"> Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+        <!-- <RouterLink to="/catalog">Catalog</RouterLink> -->
+        <MegaMenu />
       </nav>
       <div class="auth">
         <Button
@@ -66,6 +69,9 @@ nav {
   font-size: 12px;
   text-align: center;
   margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 nav a.router-link-exact-active {

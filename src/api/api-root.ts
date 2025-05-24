@@ -137,5 +137,9 @@ export function createPasswordClient(username: string, password: string) {
     .withHttpMiddleware(httpMiddlewareOptions)
     .build()
 
+  console.log('create customer with password')
+  console.log(api.root, 'api.root BEFORE setting')
+  console.log(client, 'client')
   api.setRoot(client)
+  console.log(api.root, 'api.root AFTER setting')
 }
