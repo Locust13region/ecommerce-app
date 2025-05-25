@@ -5,12 +5,15 @@ import {
   fetchCategories,
   // getUserInfo,
   createCategoryTree,
-} from '@/services/Catalog/GetCategories/fetchCategories'
-import type { MegaMenuItem } from '@/interfaces/catalogInterfaces'
+} from '@/services/Catalog/FetchCategories/fetchCategories'
+import { fetchProducts } from '@/services/Catalog/FetchProducts/fetchProducts.ts'
+import type { MegaMenuItem, ProductCardItem } from '@/interfaces/catalogInterfaces'
 import MegaMenu from '@/components/MegaMenu/MegaMenu.vue'
 import BreadCrumbs from '@/components/BreadCrumbs/BreadCrumbs.vue'
 import { onMounted, onUpdated, ref } from 'vue'
 import { transformCategoriesToMegaMenu } from '@/services/Catalog/ParseCategoriesToMegaMenu/parseCategoriesToMegaMenu'
+import ProductCard from '@/components/ProductCard/ProductCard.vue'
+import { parseProductsForCards } from '@/services/Catalog/parseProductsForCard/parseProductsForCard.ts'
 // import { useAuth } from '@/composables/useAuth'
 // import { useApiState } from '@/stores/apiState'
 
@@ -18,14 +21,18 @@ const user = useUserStateStore()
 
 const pageMenu = ref<MegaMenuItem[]>([])
 
+const pageProducts = ref<ProductCardItem[]>([])
+
 onMounted(async () => {
   const categories = await fetchCategories()
   pageMenu.value = transformCategoriesToMegaMenu(categories, 'en-US', true)
-  console.log('Catalog page mounted')
 })
 
-onUpdated(() => {
-  console.log('Catalog page updated')
+onUpdated(async () => {
+  const products = await fetchProducts()
+  pageProducts.value = await parseProductsForCards(products)
+
+  console.log(pageProducts.value, 'parsedProducts')
 })
 
 // const { getApiRoot } = useAuth();
@@ -39,12 +46,16 @@ onUpdated(() => {
     <div class="catalog-main">
       <h1>Catalog</h1>
       <p>Welcome to the catalog page!</p>
-      <BreadCrumbs />
-
+      <div class="catalog-main-breadcrumbs">
+        <BreadCrumbs />
+      </div>
+      <div class="catalog-main-product-list">
+        <ProductCard v-for="(product, index) in pageProducts" :key="index" v-bind="product" />
+      </div>
       <Button
         severity="secondary"
-        label="Get categories"
-        @click="console.log(fetchCategories())"
+        label="Get products"
+        @click="console.log(fetchProducts())"
         v-if="user.isLoggedIn"
       />
       <Button
@@ -63,7 +74,6 @@ onUpdated(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
 }
 .catalog-main {
   display: flex;
@@ -72,8 +82,19 @@ onUpdated(() => {
   justify-content: center;
   margin-bottom: auto;
 }
-
 .catalog-menu {
   margin-bottom: auto;
+}
+
+.catalog-main-product-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.catalog-main-breadcrumbs {
+  text-align: left;
+  width: 100%;
 }
 </style>

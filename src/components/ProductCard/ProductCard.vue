@@ -1,0 +1,38 @@
+<script setup lang="ts">
+import Card from 'primevue/card'
+import Button from 'primevue/button'
+import type { ProductCardItem } from '@/interfaces/catalogInterfaces.ts'
+
+const props = defineProps<ProductCardItem>()
+</script>
+
+<template>
+  <Card style="overflow: hidden">
+    <template #header>
+      <img :alt="props.title" :src="props.imageURL" />
+    </template>
+    <template #title> {{ props.title }}</template>
+    <template #subtitle>{{ props.price }}</template>
+    <template #content>
+      <p class="m-0">
+        {{ props.shortDescription }}
+      </p>
+    </template>
+    <template #footer>
+      <div class="flex gap-4 mt-1 justify-center align-center">
+        <Button label="Add to Bag" outlined class="w-full" />
+      </div>
+    </template>
+  </Card>
+</template>
+
+<style scoped>
+.p-card.p-component {
+  width: 20rem;
+}
+.p-card-header img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+</style>

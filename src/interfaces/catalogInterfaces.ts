@@ -9,3 +9,10 @@ export interface MegaMenuInnerItem {
   items: MegaMenuItem[]
   url?: string
 }
+
+export interface ProductCardItem {
+  title: string
+  price: string
+  shortDescription: string
+  imageURL: string
+}

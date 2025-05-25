@@ -26,8 +26,6 @@ function getCategoryNameBySlug(slug: string): string {
 function updateBreadcrumbs() {
   const path = route.path
 
-  console.log(path, 'path')
-
   const segments = path.split('/').filter(Boolean)
   const accumulatedPath: string[] = []
 
@@ -56,7 +54,7 @@ watch(
 </script>
 
 <template>
-  <div class="card flex justify-center">
+  <div class="card flex justify-start">
     <Breadcrumb :home="home" :model="items">
       <template #item="{ item, props }">
         <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>

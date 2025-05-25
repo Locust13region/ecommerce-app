@@ -6,7 +6,7 @@ import { useUserStateStore } from '@/stores/userState'
 import MegaMenu from '@/components/MegaMenu/MegaMenu.vue'
 import type { MegaMenuItem } from '@/interfaces/catalogInterfaces'
 import { onMounted, ref } from 'vue'
-import { fetchCategories } from '@/services/Catalog/GetCategories/fetchCategories'
+import { fetchCategories } from '@/services/Catalog/FetchCategories/fetchCategories'
 import { transformCategoriesToMegaMenu } from '@/services/Catalog/ParseCategoriesToMegaMenu/parseCategoriesToMegaMenu'
 
 const user = useUserStateStore()
