@@ -39,7 +39,7 @@ const props = defineProps<ProductCardItem>()
 }
 .p-card-header img {
   width: 100%;
-  height: 200px;
+  height: 500px;
   object-fit: cover;
 }
 </style>

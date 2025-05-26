@@ -20,7 +20,8 @@ export const fetchAllProducts = async (page: number = 0) => {
   try {
     const apiRoot = await createApiRootWithClientCredentialsFlow()
     const response = await apiRoot
-      .products()
+      .productProjections()
+      .search()
       .get({
         queryArgs: {
           limit,

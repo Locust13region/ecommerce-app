@@ -1,9 +1,9 @@
 import type { ProductCardItem } from '@/interfaces/catalogInterfaces'
-import type { Product } from '@commercetools/platform-sdk'
+import type { ProductProjection } from '@commercetools/platform-sdk'
 
-export function parseProductsForCards(productsData: Product[]): ProductCardItem[] {
+export function parseProductsForCards(productsData: ProductProjection[]): ProductCardItem[] {
   return productsData.map((product) => {
-    const currentProduct = product.masterData.current
+    const currentProduct = product
     const title = currentProduct.name?.['en-US'] ?? ''
     const price =
       currentProduct.masterVariant.prices?.find((item) => item.value.currencyCode === 'USD')?.value

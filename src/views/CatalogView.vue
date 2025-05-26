@@ -36,18 +36,24 @@ watch(
   async (newId) => {
     // react to route changes... Load correct products based on category slug
     const currentCategoryProducts = await fetchProductsByCategorySlug(newId as string)
-    //pageProducts.value = await parseProductsForCards(currentCategoryProducts)
-    console.log(currentCategoryProducts, 'parsedProducts for new category')
+    pageProducts.value = await parseProductsForCards(currentCategoryProducts)
+    console.log(pageProducts.value, 'parsedProducts for new category')
+    console.log(route.params.slug, 'route params slug')
   },
 )
 
 onMounted(async () => {
   await categoriesStore.loadCategories()
   pageMenu.value = transformCategoriesToMegaMenu(categoriesStore.categories, 'en-US', true)
-  const products = await fetchAllProducts()
-  pageProducts.value = await parseProductsForCards(products)
 
-  // console.log(pageProducts.value, 'parsedProducts')
+  if (route.params.slug) {
+    const currentCategoryProducts = await fetchProductsByCategorySlug(route.params.slug as string)
+    pageProducts.value = await parseProductsForCards(currentCategoryProducts)
+  } else {
+    const products = await fetchAllProducts()
+    pageProducts.value = parseProductsForCards(products)
+  }
+  console.log(route.params.slug, 'route params slug')
 })
 
 onUpdated(async () => {
@@ -114,7 +120,6 @@ onUpdated(async () => {
 
 .catalog-main-product-list {
   display: flex;
-  align-items: center;
   justify-content: center;
   flex-wrap: wrap;
   gap: 20px;
