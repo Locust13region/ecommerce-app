@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { Button } from 'primevue'
 import { useUserStateStore } from '@/stores/userState'
+import {} from //fetchCategories,
+// getUserInfo,
+// createCategoryTree,
+'@/services/Catalog/FetchCategories/fetchCategories'
 import {
-  fetchCategories,
-  // getUserInfo,
-  // createCategoryTree,
-} from '@/services/Catalog/FetchCategories/fetchCategories'
-import { fetchProducts } from '@/services/Catalog/FetchProducts/fetchProducts.ts'
+  fetchAllProducts,
+  fetchProductsByCategorySlug,
+} from '@/services/Catalog/FetchProducts/fetchProducts.ts'
 import type { MegaMenuItem, ProductCardItem } from '@/interfaces/catalogInterfaces'
 import MegaMenu from '@/components/MegaMenu/MegaMenu.vue'
 import BreadCrumbs from '@/components/BreadCrumbs/BreadCrumbs.vue'
@@ -15,6 +17,7 @@ import { transformCategoriesToMegaMenu } from '@/services/Catalog/ParseCategorie
 import ProductCard from '@/components/ProductCard/ProductCard.vue'
 import { parseProductsForCards } from '@/services/Catalog/parseProductsForCard/parseProductsForCard.ts'
 import { useRoute } from 'vue-router'
+import { useCategoriesStore } from '@/stores/categoryStore.ts'
 // import { useAuth } from '@/composables/useAuth'
 // import { useApiState } from '@/stores/apiState'
 
@@ -24,25 +27,27 @@ const pageMenu = ref<MegaMenuItem[]>([])
 
 const pageProducts = ref<ProductCardItem[]>([])
 
+const categoriesStore = useCategoriesStore()
+
 const route = useRoute()
 
 watch(
   () => route.params.slug,
-  (newId, oldId) => {
-    // react to route changes...
-    console.log(route.params.slug, 'route')
-    console.log(newId, 'new route')
-    console.log(oldId, 'old route')
+  async (newId) => {
+    // react to route changes... Load correct products based on category slug
+    const currentCategoryProducts = await fetchProductsByCategorySlug(newId as string)
+    //pageProducts.value = await parseProductsForCards(currentCategoryProducts)
+    console.log(currentCategoryProducts, 'parsedProducts for new category')
   },
 )
 
 onMounted(async () => {
-  const categories = await fetchCategories()
-  pageMenu.value = transformCategoriesToMegaMenu(categories, 'en-US', true)
-  const products = await fetchProducts()
+  await categoriesStore.loadCategories()
+  pageMenu.value = transformCategoriesToMegaMenu(categoriesStore.categories, 'en-US', true)
+  const products = await fetchAllProducts()
   pageProducts.value = await parseProductsForCards(products)
 
-  console.log(pageProducts.value, 'parsedProducts')
+  // console.log(pageProducts.value, 'parsedProducts')
 })
 
 onUpdated(async () => {
@@ -72,13 +77,17 @@ onUpdated(async () => {
       <Button
         severity="secondary"
         label="Get products"
-        @click="console.log(fetchProducts())"
+        @click="console.log(fetchAllProducts())"
         v-if="user.isLoggedIn"
       />
       <Button
         severity="secondary"
-        label="Get Categories"
-        @click="console.log(fetchCategories())"
+        label="Get current category products"
+        @click="
+          fetchProductsByCategorySlug(route.params.slug as string).then((products) =>
+            console.log(products),
+          )
+        "
         v-if="user.isLoggedIn"
       />
     </div>

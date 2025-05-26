@@ -6,7 +6,6 @@ import { useUserStateStore } from '@/stores/userState'
 import MegaMenu from '@/components/MegaMenu/MegaMenu.vue'
 import type { MegaMenuItem } from '@/interfaces/catalogInterfaces'
 import { onMounted, ref } from 'vue'
-import { fetchCategories } from '@/services/Catalog/FetchCategories/fetchCategories'
 import { transformCategoriesToMegaMenu } from '@/services/Catalog/ParseCategoriesToMegaMenu/parseCategoriesToMegaMenu'
 import { useCategoriesStore } from '@/stores/categoryStore.ts'
 
@@ -23,9 +22,8 @@ const categoriesStore = useCategoriesStore()
 const navMenuItems = ref<MegaMenuItem[]>([])
 
 onMounted(async () => {
-  const categories = await fetchCategories()
-  navMenuItems.value = transformCategoriesToMegaMenu(categories, 'en-US', false)
-  categoriesStore.loadCategories()
+  await categoriesStore.loadCategories()
+  navMenuItems.value = transformCategoriesToMegaMenu(categoriesStore.categories, 'en-US', false)
 })
 </script>
 
