@@ -6,7 +6,7 @@ import { useCategoriesStore } from '@/stores/categoryStore'
 
 const home = ref({
   icon: 'pi pi-home',
-  route: '/',
+  route: '/catalog',
 })
 
 const route = useRoute()
@@ -18,6 +18,9 @@ const breadcrumbItems = ref<{ label: string; route: string }[]>([])
 
 const updateBreadcrumbs = () => {
   const path = categoriesStore.getBreadcrumbPathBySlug(currentSlug.value)
+
+  // TODO: add Catalog to the breadcrumb path
+
   breadcrumbItems.value = path.map((cat) => ({
     label: cat.name['en-US'],
     route: `/catalog/${cat.slug['en-US']}`,

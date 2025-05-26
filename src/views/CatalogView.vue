@@ -40,10 +40,14 @@ onMounted(async () => {
   await categoriesStore.loadCategories()
   pageMenu.value = transformCategoriesToMegaMenu(categoriesStore.categories, 'en-US', true)
 
-  if (route.params.slug) {
+  const isCategoryExists = categoriesStore.categoryMapBySlug.has(route.params.slug as string)
+  console.log(categoriesStore.categories, 'categories')
+  console.log(route.query, 'ROUTE QUERY PARAMS')
+
+  if (route.params.slug && isCategoryExists) {
     const currentCategoryProducts = await fetchProducts(0, route.params.slug as string)
     pageProducts.value = await parseProductsForCards(currentCategoryProducts)
-  } else {
+  } else if (route.path === '/catalog') {
     const products = await fetchProducts()
     pageProducts.value = parseProductsForCards(products)
   }
