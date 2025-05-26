@@ -142,8 +142,8 @@ nav a:first-of-type {
   .auth {
     justify-content: space-between;
     align-items: center;
-    /* width: 20%; */
-    width: 35%;
+    /* width: 20%;
+    width: 35%; */
   }
 }
 </style>

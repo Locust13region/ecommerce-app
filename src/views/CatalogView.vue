@@ -5,10 +5,7 @@ import {} from //fetchCategories,
 // getUserInfo,
 // createCategoryTree,
 '@/services/Catalog/FetchCategories/fetchCategories'
-import {
-  fetchAllProducts,
-  fetchProductsByCategorySlug,
-} from '@/services/Catalog/FetchProducts/fetchProducts.ts'
+import { fetchProducts } from '@/services/Catalog/FetchProducts/fetchProducts.ts'
 import type { MegaMenuItem, ProductCardItem } from '@/interfaces/catalogInterfaces'
 import MegaMenu from '@/components/MegaMenu/MegaMenu.vue'
 import BreadCrumbs from '@/components/BreadCrumbs/BreadCrumbs.vue'
@@ -34,11 +31,8 @@ const route = useRoute()
 watch(
   () => route.params.slug,
   async (newId) => {
-    // react to route changes... Load correct products based on category slug
-    const currentCategoryProducts = await fetchProductsByCategorySlug(newId as string)
+    const currentCategoryProducts = await fetchProducts(0, newId as string)
     pageProducts.value = await parseProductsForCards(currentCategoryProducts)
-    console.log(pageProducts.value, 'parsedProducts for new category')
-    console.log(route.params.slug, 'route params slug')
   },
 )
 
@@ -47,13 +41,12 @@ onMounted(async () => {
   pageMenu.value = transformCategoriesToMegaMenu(categoriesStore.categories, 'en-US', true)
 
   if (route.params.slug) {
-    const currentCategoryProducts = await fetchProductsByCategorySlug(route.params.slug as string)
+    const currentCategoryProducts = await fetchProducts(0, route.params.slug as string)
     pageProducts.value = await parseProductsForCards(currentCategoryProducts)
   } else {
-    const products = await fetchAllProducts()
+    const products = await fetchProducts()
     pageProducts.value = parseProductsForCards(products)
   }
-  console.log(route.params.slug, 'route params slug')
 })
 
 onUpdated(async () => {
@@ -83,16 +76,14 @@ onUpdated(async () => {
       <Button
         severity="secondary"
         label="Get products"
-        @click="console.log(fetchAllProducts())"
+        @click="console.log(fetchProducts())"
         v-if="user.isLoggedIn"
       />
       <Button
         severity="secondary"
         label="Get current category products"
         @click="
-          fetchProductsByCategorySlug(route.params.slug as string).then((products) =>
-            console.log(products),
-          )
+          fetchProducts(0, route.params.slug as string).then((products) => console.log(products))
         "
         v-if="user.isLoggedIn"
       />

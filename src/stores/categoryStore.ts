@@ -53,18 +53,12 @@ export const useCategoriesStore = defineStore('categories', () => {
     isLoaded.value = true
   }
 
-  const getCategories = () => {
-    if (isLoaded.value) return categories.value
-    return categories.value
-  }
-
   return {
     categories,
     loadCategories,
     getBreadcrumbPathBySlug,
     categoryMapById,
     categoryMapBySlug,
-    getCategories,
     isLoaded,
   }
 })

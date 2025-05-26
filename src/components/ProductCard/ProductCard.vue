@@ -12,7 +12,7 @@ const props = defineProps<ProductCardItem>()
 </script>
 
 <template>
-  <RouterLink :to="props.slug">
+  <RouterLink :to="props.slug" class="product-card-link">
     <Card style="overflow: hidden">
       <template #header>
         <img :alt="props.title" :src="props.imageURL" />
@@ -26,7 +26,7 @@ const props = defineProps<ProductCardItem>()
       </template>
       <template #footer>
         <div class="flex gap-4 mt-1 justify-center align-center">
-          <Button label="Add to Bag" outlined class="w-full" />
+          <Button label="Add to Bag" outlined class="w-full product-card-button" />
         </div>
       </template>
     </Card>
@@ -41,5 +41,11 @@ const props = defineProps<ProductCardItem>()
   width: 100%;
   height: 500px;
   object-fit: cover;
+}
+.product-card-link {
+  z-index: 1;
+}
+.product-card-button {
+  z-index: 6;
 }
 </style>
