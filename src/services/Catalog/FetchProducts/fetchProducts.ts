@@ -2,18 +2,25 @@
 //import { useAuth } from '@/composables/useAuth'
 // TODO: Get Api root from useApiRoot() method
 import { createApiRootWithClientCredentialsFlow } from '@/api/client'
+import router from '@/router'
 //import type { Product } from '@commercetools/platform-sdk'
 
-export const fetchProducts = async () => {
+export const fetchProducts = async (page: number = 0) => {
   // const { getApiRoot } = useAuth()
   // const apiRoot = getApiRoot()
+
+  // TODO: add pagination offset parameter
+  const limit = 9 // product's per page
+  const offset = limit * page
+
   try {
     const apiRoot = await createApiRootWithClientCredentialsFlow()
     const response = await apiRoot
       .products()
       .get({
         queryArgs: {
-          // limit: 100,
+          limit,
+          offset,
         },
       })
       .execute()
@@ -33,6 +40,7 @@ export const fetchProducts = async () => {
     return results
   } catch (error) {
     console.error('Failed to fetch products:', error)
+    router.push('/404')
     throw error
   }
 }

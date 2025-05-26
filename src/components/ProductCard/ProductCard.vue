@@ -2,28 +2,35 @@
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 import type { ProductCardItem } from '@/interfaces/catalogInterfaces.ts'
+//import { useRoute } from 'vue-router';
 
 const props = defineProps<ProductCardItem>()
+
+//const route = useRoute()
+
+// const productSlug = route.params.slug
 </script>
 
 <template>
-  <Card style="overflow: hidden">
-    <template #header>
-      <img :alt="props.title" :src="props.imageURL" />
-    </template>
-    <template #title> {{ props.title }}</template>
-    <template #subtitle>{{ props.price }}</template>
-    <template #content>
-      <p class="m-0">
-        {{ props.shortDescription }}
-      </p>
-    </template>
-    <template #footer>
-      <div class="flex gap-4 mt-1 justify-center align-center">
-        <Button label="Add to Bag" outlined class="w-full" />
-      </div>
-    </template>
-  </Card>
+  <RouterLink :to="props.slug">
+    <Card style="overflow: hidden">
+      <template #header>
+        <img :alt="props.title" :src="props.imageURL" />
+      </template>
+      <template #title> {{ props.title }}</template>
+      <template #subtitle>{{ props.price }}</template>
+      <template #content>
+        <p class="m-0">
+          {{ props.shortDescription }}
+        </p>
+      </template>
+      <template #footer>
+        <div class="flex gap-4 mt-1 justify-center align-center">
+          <Button label="Add to Bag" outlined class="w-full" />
+        </div>
+      </template>
+    </Card>
+  </RouterLink>
 </template>
 
 <style scoped>

@@ -2,6 +2,7 @@
 import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Breadcrumb from 'primevue/breadcrumb'
+import { useCategoriesStore } from '@/stores/categoryStore'
 
 const home = ref({
   icon: 'pi pi-home',
@@ -9,53 +10,45 @@ const home = ref({
 })
 
 const route = useRoute()
-const items = ref<{ label: string; to?: string }[]>([])
+const categoriesStore = useCategoriesStore()
 
-function getCategoryNameBySlug(slug: string): string {
-  const slugs = slug.split('/')
-  const categorySlug = slugs[slugs.length - 1]
+const currentSlug = ref((route.params.slug as string) || '')
 
-  const categoryName = categorySlug
-    .split('-')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
+const breadcrumbItems = ref<{ label: string; route: string }[]>([])
 
-  return categoryName
-}
-
-function updateBreadcrumbs() {
-  const path = route.path
-
-  const segments = path.split('/').filter(Boolean)
-  const accumulatedPath: string[] = []
-
-  const crumbs = segments.map((segment) => {
-    accumulatedPath.push(segment)
-    const route = '/' + accumulatedPath.join('/')
-    return {
-      label: getCategoryNameBySlug(segment),
-      route,
-    }
-  })
-
-  items.value = crumbs
+const updateBreadcrumbs = () => {
+  const path = categoriesStore.getBreadcrumbPathBySlug(currentSlug.value)
+  breadcrumbItems.value = path.map((cat) => ({
+    label: cat.name['en-US'],
+    route: `/catalog/${cat.slug['en-US']}`,
+  }))
 }
 
 onMounted(() => {
   updateBreadcrumbs()
+  console.log('Breadcrumbs mounted')
 })
 
 watch(
-  () => route.fullPath,
+  () => route.params.slug,
+  (newSlug) => {
+    currentSlug.value = newSlug as string
+    updateBreadcrumbs()
+  },
+)
+
+watch(
+  () => categoriesStore.isLoaded,
   () => {
     updateBreadcrumbs()
+    console.log('Categories updated, breadcrumbs refreshed')
   },
 )
 </script>
 
 <template>
   <div class="card flex justify-start">
-    <Breadcrumb :home="home" :model="items">
+    <Breadcrumb :home="home" :model="breadcrumbItems">
       <template #item="{ item, props }">
         <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
           <a :href="href" v-bind="props.action" @click="navigate">

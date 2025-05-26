@@ -15,4 +15,5 @@ export interface ProductCardItem {
   price: string
   shortDescription: string
   imageURL: string
+  slug: string
 }

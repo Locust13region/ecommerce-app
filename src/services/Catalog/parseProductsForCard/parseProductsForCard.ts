@@ -3,23 +3,26 @@ import type { Product } from '@commercetools/platform-sdk'
 
 export function parseProductsForCards(productsData: Product[]): ProductCardItem[] {
   return productsData.map((product) => {
-    const title = product.masterData.current.name?.['en-US'] ?? ''
+    const currentProduct = product.masterData.current
+    const title = currentProduct.name?.['en-US'] ?? ''
     const price =
-      product.masterData.current.masterVariant.prices?.find(
-        (item) => item.value.currencyCode === 'USD',
-      )?.value.centAmount || product.masterData.current.masterVariant.price
+      currentProduct.masterVariant.prices?.find((item) => item.value.currencyCode === 'USD')?.value
+        .centAmount || currentProduct.masterVariant.price
     const parsedPrice = formatPrice(price as number)
 
-    const description = product.masterData.current.description?.['en-US'] ?? ''
+    const description = currentProduct.description?.['en-US'] ?? ''
     const shortDescription = getShortDescription(description)
 
-    const imageURL = product.masterData.current.masterVariant.images?.[0].url ?? ''
+    const imageURL = currentProduct.masterVariant.images?.[0].url ?? ''
+
+    const slug = currentProduct.slug?.['en-US'] ?? ''
 
     return {
       title,
       price: parsedPrice,
       shortDescription,
       imageURL,
+      slug,
     }
   })
 }

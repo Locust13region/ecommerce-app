@@ -8,6 +8,7 @@ import type { MegaMenuItem } from '@/interfaces/catalogInterfaces'
 import { onMounted, ref } from 'vue'
 import { fetchCategories } from '@/services/Catalog/FetchCategories/fetchCategories'
 import { transformCategoriesToMegaMenu } from '@/services/Catalog/ParseCategoriesToMegaMenu/parseCategoriesToMegaMenu'
+import { useCategoriesStore } from '@/stores/categoryStore.ts'
 
 const user = useUserStateStore()
 const { logout } = useAuth()
@@ -17,11 +18,14 @@ function logoutHandler() {
   router.push('/login')
 }
 
+const categoriesStore = useCategoriesStore()
+
 const navMenuItems = ref<MegaMenuItem[]>([])
 
 onMounted(async () => {
   const categories = await fetchCategories()
   navMenuItems.value = transformCategoriesToMegaMenu(categories, 'en-US', false)
+  categoriesStore.loadCategories()
 })
 </script>
 

@@ -16,12 +16,12 @@ export function transformCategoriesToMegaMenu(
     categoryMap.get(parentId)!.push(cat)
   }
 
-  const buildSubcategories = (parentId: string, parentSlugPath: string): MegaMenuItem[] => {
+  const buildSubcategories = (parentId: string): MegaMenuItem[] => {
     const children = categoryMap.get(parentId)
     if (!children) return []
 
     return children.map((cat) => {
-      const currentSlugPath = `${parentSlugPath}/${cat.slug[locale]}`
+      const currentSlugPath = cat.slug[locale]
       return {
         label: cat.name[locale],
         url: `/catalog/${currentSlugPath}`,
@@ -34,12 +34,12 @@ export function transformCategoriesToMegaMenu(
 
   if (isHorizontal) {
     const result: MegaMenuItem[] = topLevelCategories.map((cat) => {
-      const currentSlugPath = `${cat.slug[locale]}`
-      const subcategories = buildSubcategories(cat.id, currentSlugPath)
+      const currentSlugPath = cat.slug[locale]
+      const subcategories = buildSubcategories(cat.id)
 
       return {
         label: cat.name[locale],
-        url: `/catalog/${cat.slug[locale]}`,
+        url: `/catalog/${currentSlugPath}`,
         items: subcategories.length
           ? [
               [
@@ -60,11 +60,11 @@ export function transformCategoriesToMegaMenu(
       url: `/catalog`,
       items: [
         topLevelCategories.map((cat) => {
-          const currentSlugPath = `${cat.slug[locale]}`
+          const currentSlugPath = cat.slug[locale]
           return {
             label: cat.name[locale],
-            url: `/catalog/${cat.slug[locale]}`,
-            items: buildSubcategories(cat.id, currentSlugPath),
+            url: `/catalog/${currentSlugPath}`,
+            items: buildSubcategories(cat.id),
           }
         }),
       ],

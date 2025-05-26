@@ -4,16 +4,17 @@ import { useUserStateStore } from '@/stores/userState'
 import {
   fetchCategories,
   // getUserInfo,
-  createCategoryTree,
+  // createCategoryTree,
 } from '@/services/Catalog/FetchCategories/fetchCategories'
 import { fetchProducts } from '@/services/Catalog/FetchProducts/fetchProducts.ts'
 import type { MegaMenuItem, ProductCardItem } from '@/interfaces/catalogInterfaces'
 import MegaMenu from '@/components/MegaMenu/MegaMenu.vue'
 import BreadCrumbs from '@/components/BreadCrumbs/BreadCrumbs.vue'
-import { onMounted, onUpdated, ref } from 'vue'
+import { onMounted, onUpdated, ref, watch } from 'vue'
 import { transformCategoriesToMegaMenu } from '@/services/Catalog/ParseCategoriesToMegaMenu/parseCategoriesToMegaMenu'
 import ProductCard from '@/components/ProductCard/ProductCard.vue'
 import { parseProductsForCards } from '@/services/Catalog/parseProductsForCard/parseProductsForCard.ts'
+import { useRoute } from 'vue-router'
 // import { useAuth } from '@/composables/useAuth'
 // import { useApiState } from '@/stores/apiState'
 
@@ -23,16 +24,31 @@ const pageMenu = ref<MegaMenuItem[]>([])
 
 const pageProducts = ref<ProductCardItem[]>([])
 
+const route = useRoute()
+
+watch(
+  () => route.params.slug,
+  (newId, oldId) => {
+    // react to route changes...
+    console.log(route.params.slug, 'route')
+    console.log(newId, 'new route')
+    console.log(oldId, 'old route')
+  },
+)
+
 onMounted(async () => {
   const categories = await fetchCategories()
   pageMenu.value = transformCategoriesToMegaMenu(categories, 'en-US', true)
-})
-
-onUpdated(async () => {
   const products = await fetchProducts()
   pageProducts.value = await parseProductsForCards(products)
 
   console.log(pageProducts.value, 'parsedProducts')
+})
+
+onUpdated(async () => {
+  // const products = await fetchProducts()
+  // pageProducts.value = await parseProductsForCards(products)
+  // console.log(pageProducts.value, 'parsedProducts')
 })
 
 // const { getApiRoot } = useAuth();
@@ -46,6 +62,7 @@ onUpdated(async () => {
     <div class="catalog-main">
       <h1>Catalog</h1>
       <p>Welcome to the catalog page!</p>
+      <p>Params: {{ $route.params.slug }}</p>
       <div class="catalog-main-breadcrumbs">
         <BreadCrumbs />
       </div>
@@ -60,8 +77,8 @@ onUpdated(async () => {
       />
       <Button
         severity="secondary"
-        label="Get API ROOT"
-        @click="console.log(createCategoryTree())"
+        label="Get Categories"
+        @click="console.log(fetchCategories())"
         v-if="user.isLoggedIn"
       />
     </div>
