@@ -21,6 +21,8 @@ function logoutHandler() {
       <nav>
         <RouterLink to="/" class="pi pi-home"> Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/product">Product</RouterLink>
+        <!-- temporary -->
       </nav>
       <div class="auth">
         <Button
