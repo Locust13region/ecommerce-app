@@ -34,8 +34,6 @@ export const createApiRootWithClientCredentialsFlow = () => {
     .withHttpMiddleware(httpMiddlewareOptions)
     .build()
 
-  console.log(ctpClient, 'ctpClient from CreateRoot with Credentials')
-
   const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
     projectKey,
   })

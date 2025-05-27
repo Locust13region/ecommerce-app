@@ -10,6 +10,14 @@ export function parseProductsForCards(productsData: ProductProjection[]): Produc
         .centAmount || currentProduct.masterVariant.price
     const parsedPrice = formatPrice(price as number)
 
+    const discountedPrice =
+      currentProduct.masterVariant.prices?.find(
+        (item) => item.value.currencyCode === 'USD' && item.discounted?.value,
+      )?.discounted?.value.centAmount || null
+
+    const parsedDiscountedPrice =
+      discountedPrice !== null ? formatPrice(discountedPrice as number) : null
+
     const description = currentProduct.description?.['en-US'] ?? ''
     const shortDescription = getShortDescription(description)
 
@@ -20,6 +28,7 @@ export function parseProductsForCards(productsData: ProductProjection[]): Produc
     return {
       title,
       price: parsedPrice,
+      discountedPrice: parsedDiscountedPrice,
       shortDescription,
       imageURL,
       slug,

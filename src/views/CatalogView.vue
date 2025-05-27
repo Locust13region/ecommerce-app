@@ -41,6 +41,7 @@ const {
 
 const onPageChange = async (event: PageState) => {
   offset.value = event.first
+  currentSlug.value = route.params.slug as string
 
   const query = { offset: `${offset.value}` }
   await router.push({ query: query })
@@ -54,6 +55,7 @@ watch(
   () => route.params.slug,
   async (newId) => {
     offset.value = 0
+    currentSlug.value = newId as string
     await loadProducts(newId as string)
 
     pageProducts.value = await parseProductsForCards(products.value)
@@ -61,16 +63,14 @@ watch(
 )
 
 watch(
-  () => route.query.offset,
-  async (newOffset) => {
-    if (newOffset) {
-      offset.value = parseInt(newOffset as string, 10)
-    } else {
+  () => route.path,
+  async (newPath) => {
+    if (newPath === '/catalog') {
       offset.value = 0
-    }
-    await loadProducts(currentSlug.value)
+      await loadProducts(newPath as string)
 
-    pageProducts.value = await parseProductsForCards(products.value)
+      pageProducts.value = await parseProductsForCards(products.value)
+    }
   },
 )
 
@@ -90,7 +90,7 @@ onMounted(async () => {
     await loadProducts(currentSlug.value)
     pageProducts.value = await parseProductsForCards(products.value)
   } else if (route.path === '/catalog') {
-    await loadProducts('')
+    await loadProducts(route.path)
 
     pageProducts.value = await parseProductsForCards(products.value)
   }
@@ -106,7 +106,6 @@ onMounted(async () => {
       <div class="catalog-main-header">
         <h1>Catalog</h1>
         <p>Welcome to the catalog page!</p>
-        <p>Params: {{ $route.params.slug }}</p>
       </div>
       <div class="catalog-main-breadcrumbs">
         <BreadCrumbs />
@@ -128,7 +127,7 @@ onMounted(async () => {
       <Button
         severity="secondary"
         label="Get products"
-        @click="console.log()"
+        @click="console.log(products)"
         v-if="user.isLoggedIn"
       />
       <Button
@@ -148,7 +147,8 @@ onMounted(async () => {
   align-items: center;
   justify-content: flex-start;
 }
-.catalog-main {
+.catalog-main,
+.catalog-main-header {
   display: flex;
   flex-direction: column;
   align-items: center;

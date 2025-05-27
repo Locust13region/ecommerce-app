@@ -30,7 +30,6 @@ const updateBreadcrumbs = () => {
 
 onMounted(() => {
   updateBreadcrumbs()
-  console.log('Breadcrumbs mounted')
 })
 
 watch(
@@ -45,7 +44,6 @@ watch(
   () => categoriesStore.isLoaded,
   () => {
     updateBreadcrumbs()
-    console.log('Categories updated, breadcrumbs refreshed')
   },
 )
 </script>

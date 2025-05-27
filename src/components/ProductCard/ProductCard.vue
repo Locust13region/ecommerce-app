@@ -16,9 +16,16 @@ const props = defineProps<ProductCardItem>()
     <Card style="overflow: hidden">
       <template #header>
         <img :alt="props.title" :src="props.imageURL" />
+        <span v-if="props.discountedPrice" class="p-card-ribbon">ON SALE</span>
       </template>
       <template #title> {{ props.title }}</template>
-      <template #subtitle>{{ props.price }}</template>
+      <template #subtitle>
+        <span v-if="props.discountedPrice" :class="{ highlighted: props.discountedPrice }">{{
+          props.discountedPrice
+        }}</span>
+        <span> </span>
+        <span :class="{ 'line-through grey': props.discountedPrice }">{{ props.price }}</span>
+      </template>
       <template #content>
         <p class="m-0">
           {{ props.shortDescription }}
@@ -33,19 +40,31 @@ const props = defineProps<ProductCardItem>()
   </RouterLink>
 </template>
 
-<style scoped>
+<style>
 .p-card.p-component {
   width: 20rem;
+}
+.product-card-link .p-card .p-card-header {
+  position: relative !important;
 }
 .p-card-header img {
   width: 100%;
   height: 500px;
   object-fit: cover;
 }
-.product-card-link {
-  z-index: 1;
+.highlighted {
+  color: green; /* Example color for highlighted price */
+  font-weight: bold;
+  margin-right: 0.3rem;
 }
-.product-card-button {
-  z-index: 6;
+.grey {
+  color: grey; /* Example color for greyed out price */
+}
+.p-card-ribbon {
+  position: absolute;
+  right: 0px;
+  background-color: var(--p-primary-700);
+  padding: 5px 10px;
+  top: 1rem;
 }
 </style>

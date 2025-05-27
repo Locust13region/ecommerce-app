@@ -15,6 +15,7 @@ export interface MegaMenuInnerItem {
 export interface ProductCardItem {
   title: string
   price: string
+  discountedPrice?: string | null
   shortDescription: string
   imageURL: string
   slug: string

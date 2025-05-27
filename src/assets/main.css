@@ -25,6 +25,9 @@ a,
 .justify-start {
   justify-content: flex-start;
 }
+.line-through {
+  text-decoration: line-through;
+}
 
 @media (hover: hover) {
   a:hover {

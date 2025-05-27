@@ -9,8 +9,6 @@ export function useProductList(slugRef: Ref<string>) {
   const offset = ref(0)
   const loading = ref(false)
 
-  //const first = ref(0)
-
   const loadProducts = async (slug: string = slugRef.value) => {
     if (!slug) return
 
@@ -31,10 +29,6 @@ export function useProductList(slugRef: Ref<string>) {
   function onPageChange(event: { first: number }) {
     offset.value = event.first
   }
-
-  watch(loading, () => {
-    console.log('Loading state changed:', loading.value)
-  })
 
   watch(slugRef, () => {
     offset.value = 0
