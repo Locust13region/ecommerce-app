@@ -2,23 +2,21 @@
 //import { useAuth } from '@/composables/useAuth'
 // TODO: Get Api root from useApiRoot() method
 import { createApiRootWithClientCredentialsFlow } from '@/api/client'
+import type { FetchProductsResponse } from '@/interfaces/catalogInterfaces'
 import router from '@/router'
-import { useCategoriesStore } from '@/stores/categoryStore'
-import type { ProductProjection, VariableMap } from '@commercetools/platform-sdk'
+import { useCategoriesStore } from '@/composables/useCategoryStore'
+import type { VariableMap } from '@commercetools/platform-sdk'
 //import type { Product } from '@commercetools/platform-sdk'
 
-const limit = 9 // product's per page
-
 export const fetchProducts = async (
-  page: number = 0,
-  slug?: string,
-): Promise<ProductProjection[]> => {
+  slug: string,
+  limit: number = 9,
+  offset: number = 0,
+): Promise<FetchProductsResponse> => {
   // const { getApiRoot } = useAuth()
   // const apiRoot = getApiRoot()
 
   // TODO: add pagination offset parameter
-
-  const offset = limit * page
 
   try {
     const apiRoot = await createApiRootWithClientCredentialsFlow()
@@ -42,9 +40,13 @@ export const fetchProducts = async (
       })
       .execute()
 
-    const results = await response.body.results
+    const results = response.body.results
+    const total = response.body.total
 
-    return results
+    return {
+      results,
+      total: total || 0,
+    }
   } catch (error) {
     console.error('Failed to fetch products:', error)
     router.push('/not-found')

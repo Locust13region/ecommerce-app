@@ -1,3 +1,5 @@
+import type { ProductProjection } from '@commercetools/platform-sdk'
+
 export interface MegaMenuItem {
   label: string
   items: MegaMenuInnerItem[][]
@@ -16,4 +18,9 @@ export interface ProductCardItem {
   shortDescription: string
   imageURL: string
   slug: string
+}
+
+export interface FetchProductsResponse {
+  results: ProductProjection[]
+  total: number
 }

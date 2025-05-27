@@ -1,4 +1,3 @@
-// stores/useCategoriesStore.ts
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 import type { Category } from '@commercetools/platform-sdk'

@@ -2,10 +2,11 @@
 import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Breadcrumb from 'primevue/breadcrumb'
-import { useCategoriesStore } from '@/stores/categoryStore'
+import { useCategoriesStore } from '@/composables/useCategoryStore'
 
 const home = ref({
   icon: 'pi pi-home',
+  label: 'Catalog',
   route: '/catalog',
 })
 

@@ -7,7 +7,7 @@ import MegaMenu from '@/components/MegaMenu/MegaMenu.vue'
 import type { MegaMenuItem } from '@/interfaces/catalogInterfaces'
 import { onMounted, ref } from 'vue'
 import { transformCategoriesToMegaMenu } from '@/services/Catalog/ParseCategoriesToMegaMenu/parseCategoriesToMegaMenu'
-import { useCategoriesStore } from '@/stores/categoryStore.ts'
+import { useCategoriesStore } from '@/composables/useCategoryStore'
 
 const user = useUserStateStore()
 const { logout } = useAuth()
