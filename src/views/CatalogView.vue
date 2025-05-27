@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { Button } from 'primevue'
 import { useUserStateStore } from '@/stores/userState'
-import {} from //fetchCategories,
-// getUserInfo,
-// createCategoryTree,
-'@/services/Catalog/FetchCategories/fetchCategories'
-//import { fetchProducts } from '@/services/Catalog/FetchProducts/fetchProducts.ts'
+
 import type { MegaMenuItem, ProductCardItem } from '@/interfaces/catalogInterfaces'
 import MegaMenu from '@/components/MegaMenu/MegaMenu.vue'
 import BreadCrumbs from '@/components/BreadCrumbs/BreadCrumbs.vue'
@@ -22,6 +18,7 @@ import { useProductList } from '@/composables/useProductsList.ts'
 
 // import { useAuth } from '@/composables/useAuth'
 // import { useApiState } from '@/stores/apiState'
+// const { getApiRoot } = useAuth();
 const route = useRoute()
 const currentSlug = ref(route.params.slug as string)
 
@@ -60,7 +57,20 @@ watch(
     await loadProducts(newId as string)
 
     pageProducts.value = await parseProductsForCards(products.value)
-    totalProducts.value = totalProducts.value || 0
+  },
+)
+
+watch(
+  () => route.query.offset,
+  async (newOffset) => {
+    if (newOffset) {
+      offset.value = parseInt(newOffset as string, 10)
+    } else {
+      offset.value = 0
+    }
+    await loadProducts(currentSlug.value)
+
+    pageProducts.value = await parseProductsForCards(products.value)
   },
 )
 
@@ -85,8 +95,6 @@ onMounted(async () => {
     pageProducts.value = await parseProductsForCards(products.value)
   }
 })
-
-// const { getApiRoot } = useAuth();
 </script>
 
 <template>

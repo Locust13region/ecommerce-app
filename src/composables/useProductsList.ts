@@ -32,15 +32,6 @@ export function useProductList(slugRef: Ref<string>) {
     offset.value = event.first
   }
 
-  // watch(() => slugRef.value, () => {
-  //   offset.value = 0
-  //   loadProducts(slugRef.value)
-  // }, { immediate: true })
-
-  // watch(first, loadProducts)
-
-  // watch([slugRef, limit, offset], loadProducts, { immediate: true })
-
   watch(loading, () => {
     console.log('Loading state changed:', loading.value)
   })
