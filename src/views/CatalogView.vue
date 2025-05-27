@@ -32,37 +32,35 @@ const pageMenu = ref<MegaMenuItem[]>([])
 const pageProducts = ref<ProductCardItem[]>([])
 
 const categoriesStore = useCategoriesStore()
-const useProductsList = useProductList(currentSlug)
 
-// const {
-//   products,
-//   totalProducts,
-//   offset,
-//   loadProducts,
-// } = useProductList(currentSlug)
+const {
+  products,
+  totalProducts,
+  limit,
+  offset,
+  // loading,
+  loadProducts,
+} = useProductList(currentSlug)
 
 const onPageChange = async (event: PageState) => {
-  useProductsList.offset.value = event.first
+  offset.value = event.first
 
-  const query = { offset: `${useProductsList.offset.value}` }
+  const query = { offset: `${offset.value}` }
   await router.push({ query: query })
-  await useProductsList.loadProducts(currentSlug.value)
+  await loadProducts(currentSlug.value)
 
-  pageProducts.value = await parseProductsForCards(useProductsList.products.value)
+  pageProducts.value = await parseProductsForCards(products.value)
   window.scrollTo({ top: 0, behavior: 'smooth' })
-
-  console.log(event, 'event on page change')
-  console.log(useProductsList.offset.value, 'offset value')
 }
 
 watch(
   () => route.params.slug,
   async (newId) => {
-    useProductsList.offset.value = 0
-    await useProductsList.loadProducts(newId as string)
+    offset.value = 0
+    await loadProducts(newId as string)
 
-    pageProducts.value = await parseProductsForCards(useProductsList.products.value)
-    useProductsList.totalProducts.value = useProductsList.totalProducts.value || 0
+    pageProducts.value = await parseProductsForCards(products.value)
+    totalProducts.value = totalProducts.value || 0
   },
 )
 
@@ -73,18 +71,18 @@ onMounted(async () => {
   const isCategoryExists = categoriesStore.categoryMapBySlug.has(route.params.slug as string)
 
   if (route.query.offset) {
-    useProductsList.offset.value = parseInt(route.query.offset as string, 10)
+    offset.value = parseInt(route.query.offset as string, 10)
   } else {
-    useProductsList.offset.value = 0
+    offset.value = 0
   }
 
   if (route.params.slug && isCategoryExists) {
-    await useProductsList.loadProducts(currentSlug.value)
-    pageProducts.value = await parseProductsForCards(useProductsList.products.value)
+    await loadProducts(currentSlug.value)
+    pageProducts.value = await parseProductsForCards(products.value)
   } else if (route.path === '/catalog') {
-    await useProductsList.loadProducts('')
+    await loadProducts('')
 
-    pageProducts.value = await parseProductsForCards(useProductsList.products.value)
+    pageProducts.value = await parseProductsForCards(products.value)
   }
 })
 
@@ -110,11 +108,11 @@ onMounted(async () => {
       </div>
       <div class="catalog-main-paginator">
         <Paginator
-          v-if="useProductsList.totalProducts.value > 0"
-          :rows="useProductsList.limit.value"
-          :totalRecords="useProductsList.totalProducts.value"
+          v-if="totalProducts > 0"
+          :rows="limit"
+          :totalRecords="totalProducts"
           :pageLinkSize="5"
-          v-model:first="useProductsList.offset.value"
+          v-model:first="offset"
           class="paginator"
           @page="onPageChange"
         />
