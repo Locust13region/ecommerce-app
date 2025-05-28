@@ -5,31 +5,27 @@ import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
 import { useAuth } from '@/composables/useAuth'
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import type { Address } from '@/interfaces/signUpFormInterfaces'
 import type {
   BaseAddress,
   ClientResponse,
   Customer,
-  MyCustomerUpdateAction,
+  /*MyCustomerUpdateAction,*/
 } from '@commercetools/platform-sdk'
-import { Button, InputText, Message } from 'primevue'
-import { personalDataValidator } from '@/services/PersonalDataValidator/PersonalDataValidator'
-import { Form, FormField, type FormSubmitEvent } from '@primevue/forms'
-import { useToast } from 'primevue/usetoast'
-import { saveChanges } from '@/services/saveChanges/saveChanges'
-import DatePicker from 'primevue/datepicker'
-import ChangePasswordForm from './changePasswordForm.vue'
+// import { Button, InputText, Message } from 'primevue'
 
-const userData = reactive({
-  firstName: '',
-  lastName: '',
-  dateOfBirth: '',
-  email: '',
-})
-const toast = useToast()
+import ChangePasswordForm from './changePasswordForm.vue'
+import PersonalInfoForm from './personalInfoForm.vue'
+
+// const userData = reactive({
+//   firstName: '',
+//   lastName: '',
+//   dateOfBirth: '',
+//   email: '',
+// })
+
 const { getApiRoot } = useAuth()
-const flagEditMode = ref(false)
 
 const billingAddressesHolder = ref<BaseAddress[]>([])
 const shippingAddressesHolder = ref<BaseAddress[]>([])
@@ -41,10 +37,10 @@ function getCustomerData(response: ClientResponse) {
   const addressesList: BaseAddress[] = customerData.addresses
   const defaultBillingId = customerData.defaultBillingAddressId
   const defaultShippingId = customerData.defaultShippingAddressId
-  userData.firstName = customerData.firstName || ''
-  userData.lastName = customerData.lastName || ''
-  userData.dateOfBirth = customerData.dateOfBirth || ''
-  userData.email = customerData.email || ''
+  // userData.firstName = customerData.firstName || ''
+  // userData.lastName = customerData.lastName || ''
+  // userData.dateOfBirth = customerData.dateOfBirth || ''
+  // userData.email = customerData.email || ''
   let billingIDs: string[] = []
   let shippingIDs: string[] = []
   if (customerData.billingAddressIds) {
@@ -71,48 +67,6 @@ function getCustomerData(response: ClientResponse) {
   })
 }
 
-function switchToEditMode() {
-  flagEditMode.value = true
-}
-function switchToReadMode() {
-  flagEditMode.value = false
-}
-
-async function onSubmit(event: FormSubmitEvent) {
-  if (event.valid) {
-    const eventData = event.states
-    const actions: MyCustomerUpdateAction[] = []
-    if (eventData.firstName.value) {
-      const name = eventData.firstName.value
-      actions.push({ action: 'setFirstName', firstName: name })
-    }
-    if (eventData.lastName.value) {
-      const name = eventData.lastName.value
-      actions.push({ action: 'setLastName', lastName: name })
-    }
-    if (eventData.dateOfBirth.value) {
-      let date = eventData.dateOfBirth.value
-      if (date instanceof Date) {
-        const dateObj = date
-        date = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}-${dateObj.getDate().toString().padStart(2, '0')}`
-      }
-      actions.push({ action: 'setDateOfBirth', dateOfBirth: date })
-    }
-    if (eventData.email.value) {
-      const email = eventData.email.value
-      actions.push({ action: 'changeEmail', email: email })
-    }
-    try {
-      await saveChanges(actions)
-      switchToReadMode()
-      toast.add({ severity: 'success', summary: 'Changes saved', life: 5000 })
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
-      }
-    }
-  }
-}
 getApiRoot()
   .me()
   .get()
@@ -133,131 +87,7 @@ getApiRoot()
       </TabList>
       <TabPanels>
         <TabPanel value="personal">
-          <section class="personal">
-            <Form
-              v-slot="$form"
-              @submit="onSubmit"
-              :initialValues="userData"
-              :resolver="personalDataValidator"
-              class="edit-form"
-            >
-              <div class="name">
-                <p>Name:</p>
-                <p v-if="!flagEditMode">{{ userData.firstName }}</p>
-                <FormField>
-                  <InputText
-                    v-if="flagEditMode"
-                    class="input-first-name"
-                    name="firstName"
-                    v-model="userData.firstName"
-                  />
-                  <Message
-                    class="validation-error-message"
-                    v-if="$form.firstName?.invalid"
-                    severity="error"
-                    size="small"
-                    variant="simple"
-                  >
-                    {{ $form.firstName.error?.message }}
-                  </Message>
-                </FormField>
-              </div>
-              <div class="surname">
-                <p>Surname:</p>
-                <p v-if="!flagEditMode">{{ userData.lastName }}</p>
-                <FormField>
-                  <InputText
-                    v-if="flagEditMode"
-                    class="input-last-name"
-                    name="lastName"
-                    v-model="userData.lastName"
-                  ></InputText>
-                  <Message
-                    class="validation-error-message"
-                    v-if="$form.lastName?.invalid"
-                    severity="error"
-                    size="small"
-                    variant="simple"
-                  >
-                    {{ $form.lastName.error?.message }}
-                  </Message>
-                </FormField>
-              </div>
-              <div class="email">
-                <p>Email:</p>
-                <p v-if="!flagEditMode">{{ userData.email }}</p>
-                <FormField>
-                  <InputText
-                    v-if="flagEditMode"
-                    class="input-email"
-                    name="email"
-                    v-model="userData.email"
-                  ></InputText>
-                  <Message
-                    class="validation-error-message"
-                    v-if="$form.email?.invalid"
-                    severity="error"
-                    size="small"
-                    variant="simple"
-                  >
-                    {{ $form.email.error?.message }}
-                  </Message>
-                </FormField>
-              </div>
-              <div class="birthDate">
-                <p>Date of birth:</p>
-                <p v-if="!flagEditMode">{{ userData.dateOfBirth }}</p>
-                <FormField>
-                  <DatePicker
-                    v-if="flagEditMode"
-                    class="input-date-of-birth"
-                    name="dateOfBirth"
-                    v-model="userData.dateOfBirth"
-                    dateFormat="yy-mm-dd"
-                    :manualInput="false"
-                    showIcon
-                    iconDisplay="input"
-                    >{{ userData.dateOfBirth.value }}</DatePicker
-                  >
-                  <Message
-                    class="validation-error-message"
-                    v-if="$form.dateOfBirth?.invalid"
-                    severity="error"
-                    size="small"
-                    variant="simple"
-                  >
-                    {{ $form.dateOfBirth.error?.message }}
-                  </Message>
-                </FormField>
-              </div>
-              <Button
-                v-if="!flagEditMode"
-                class="edit-button"
-                severity="secondary"
-                @click="switchToEditMode"
-                raised
-              >
-                <span class="pi pi-pencil"></span>
-                Edit</Button
-              >
-              <Button
-                v-if="flagEditMode"
-                severity="secondary"
-                @click="switchToReadMode"
-                class="cancel-button"
-                raised
-                ><span class="pi pi-times"></span> Cancel</Button
-              >
-              <Button
-                v-if="flagEditMode"
-                severity="secondary"
-                class="save-button"
-                type="submit"
-                raised
-                ><span class="pi pi-check"></span> Save</Button
-              >
-            </Form>
-          </section>
+          <PersonalInfoForm></PersonalInfoForm>
         </TabPanel>
         <TabPanel value="billing-address">
           <section class="billing-addresses">
@@ -333,22 +163,6 @@ getApiRoot()
   </div>
 </template>
 <style scoped>
-.edit-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px 0;
-}
-.name,
-.surname,
-.birthDate,
-.email {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  width: 100%;
-  min-width: 180px;
-  align-items: center;
-  justify-content: space-between;
-}
 .shipping-addresses,
 .billing-addresses {
   display: flex;
@@ -367,29 +181,5 @@ getApiRoot()
 .address-title {
   grid-column: span 2;
   border-bottom: 1px solid white;
-}
-input,
-.input-date-of-birth {
-  width: 100%;
-}
-.edit-button,
-.save-button,
-.cancel-button {
-  min-width: 180px;
-}
-
-@media (min-width: 550px) {
-  .name,
-  .surname,
-  .birthDate,
-  .email {
-    width: 50%;
-  }
-  .edit-button,
-  .save-button,
-  .cancel-button {
-    min-width: 150px;
-    width: fit-content;
-  }
 }
 </style>
