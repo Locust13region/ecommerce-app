@@ -34,7 +34,7 @@ const priceInfo = computed(() => {
 })
 
 onMounted(async () => {
-  const result = await fetchProduct('6288a3cc-4d8e-4c87-9bd2-102f8951e14d')
+  const result = await fetchProduct('lewis-carroll-alices-adventures-in-wonderland')
   if (!result) {
     toast.add({
       severity: 'error',

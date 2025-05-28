@@ -4,15 +4,23 @@ import type { ProductProjection } from '@commercetools/platform-sdk'
 export function useProduct() {
   const { getApiRoot } = useAuth()
 
-  const fetchProduct = async (id: string): Promise<ProductProjection | null> => {
+  const fetchProduct = async (
+    slug: string,
+    locale: string = 'en-US',
+  ): Promise<ProductProjection | null> => {
     try {
       const response = await getApiRoot()
         .productProjections()
-        .withId({ ID: id })
-        .get({ queryArgs: { staged: false } })
+        .search()
+        .get({
+          queryArgs: {
+            filter: [`slug.${locale}:"${slug}"`],
+            staged: false,
+          },
+        })
         .execute()
 
-      return response.body ?? null
+      return response.body.results[0] ?? null
     } catch (error) {
       console.warn('Product request failed: ', error)
       return null
