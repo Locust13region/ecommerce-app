@@ -74,4 +74,10 @@ const props = defineProps<ProductCardItem>()
   padding: 5px 10px;
   top: 1rem;
 }
+.product-card-link {
+  border-radius: 5px;
+}
+a.product-card-link:hover .p-card-title {
+  color: var(--marked-text);
+}
 </style>
