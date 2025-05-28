@@ -96,7 +96,7 @@ const addToCart = () => {
         class="image-dialog"
       >
         <template #header>
-          <div class="dialog-header">
+          <div class="custom-dialog-header">
             <Button icon="pi pi-times" @click="closeModal" />
           </div>
         </template>
@@ -151,7 +151,7 @@ const addToCart = () => {
   </div>
 </template>
 
-<style>
+<style scoped>
 .product-page {
   padding: 1rem;
 }
@@ -187,15 +187,16 @@ const addToCart = () => {
   object-fit: contain;
 }
 
-.image-dialog ::v-deep(.p-dialog-content) {
-  max-width: 64rem;
+.image-dialog :deep(.p-dialog-header) {
+  display: flex;
+  justify-content: flex-end;
   padding: 1rem;
 }
 
-.image-dialog ::v-deep(.dialog-header) {
+.custom-dialog-header {
+  width: 100%;
   display: flex;
   justify-content: flex-end;
-  width: 100%;
 }
 
 .product-info {
