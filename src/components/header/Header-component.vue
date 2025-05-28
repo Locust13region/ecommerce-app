@@ -36,7 +36,7 @@ onMounted(async () => {
         <RouterLink to="/" class="pi pi-home"> Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
         <!-- <RouterLink to="/catalog">Catalog</RouterLink> -->
-        <MegaMenu :model="navMenuItems" :class="'header'" />
+        <MegaMenu :model="navMenuItems" :class="'header-megamenu'" />
       </nav>
       <div class="auth">
         <Button
@@ -95,7 +95,8 @@ nav a.router-link-exact-active:hover {
   background-color: transparent;
 }
 
-nav a {
+nav a,
+nav .link {
   display: inline-block;
   padding: 0.5rem 1rem;
   border-left: 1px solid var(--color-border);

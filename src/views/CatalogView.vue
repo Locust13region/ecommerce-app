@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { Button } from 'primevue'
-import { useUserStateStore } from '@/stores/userState'
+// import { useUserStateStore } from '@/stores/userState'
 
 import type { MegaMenuItem, ProductCardItem } from '@/interfaces/catalogInterfaces'
 import MegaMenu from '@/components/MegaMenu/MegaMenu.vue'
@@ -22,7 +21,7 @@ import { useProductList } from '@/composables/useProductsList.ts'
 const route = useRoute()
 const currentSlug = ref(route.params.slug as string)
 
-const user = useUserStateStore()
+// const user = useUserStateStore()
 
 const pageMenu = ref<MegaMenuItem[]>([])
 
@@ -124,18 +123,7 @@ onMounted(async () => {
           @page="onPageChange"
         />
       </div>
-      <Button
-        severity="secondary"
-        label="Get products"
-        @click="console.log(products)"
-        v-if="user.isLoggedIn"
-      />
-      <Button
-        severity="secondary"
-        label="Get current category products"
-        @click="console.log()"
-        v-if="user.isLoggedIn"
-      />
+      <div class="footer"></div>
     </div>
   </div>
 </template>
@@ -168,6 +156,7 @@ onMounted(async () => {
   flex-wrap: wrap;
   gap: 20px;
   margin-bottom: 20px;
+  align-items: stretch;
 }
 .catalog-main-breadcrumbs {
   text-align: left;

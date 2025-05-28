@@ -43,6 +43,7 @@ const props = defineProps<ProductCardItem>()
 <style>
 .p-card.p-component {
   width: 20rem;
+  height: 100%;
 }
 .product-card-link .p-card .p-card-header {
   position: relative !important;
@@ -51,6 +52,12 @@ const props = defineProps<ProductCardItem>()
   width: 100%;
   height: 500px;
   object-fit: cover;
+}
+.p-card-body {
+  height: 100%;
+}
+.p-card-footer {
+  margin-top: auto;
 }
 .highlighted {
   color: green; /* Example color for highlighted price */
