@@ -1,25 +1,21 @@
-// import { useApiState } from '@/stores/apiState'
-//import { useAuth } from '@/composables/useAuth'
+import { useAuth } from '@/composables/useAuth'
 // TODO: Get Api root from useApiRoot() method
-import { createApiRootWithClientCredentialsFlow } from '@/api/client'
 import type { FetchProductsResponse } from '@/interfaces/catalogInterfaces'
 import router from '@/router'
 import { useCategoriesStore } from '@/composables/useCategoryStore'
 import type { VariableMap } from '@commercetools/platform-sdk'
-//import type { Product } from '@commercetools/platform-sdk'
 
 export const fetchProducts = async (
   slug: string,
   limit: number = 9,
   offset: number = 0,
 ): Promise<FetchProductsResponse> => {
-  // const { getApiRoot } = useAuth()
-  // const apiRoot = getApiRoot()
+  const { getApiRoot } = useAuth()
+  const apiRoot = getApiRoot()
 
   // TODO: add pagination offset parameter
 
   try {
-    const apiRoot = await createApiRootWithClientCredentialsFlow()
     const queryArgs: VariableMap = {
       limit,
       offset,

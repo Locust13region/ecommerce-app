@@ -2,7 +2,7 @@ import {
   ClientBuilder,
   type HttpMiddlewareOptions,
   type AnonymousAuthMiddlewareOptions,
-  type ExistingTokenMiddlewareOptions,
+  type RefreshAuthMiddlewareOptions,
   type PasswordAuthMiddlewareOptions,
   type TokenCache,
   type TokenStore,
@@ -60,18 +60,20 @@ export function initializeClient() {
 
   try {
     const parsed: TokenStore = JSON.parse(stored)
-    const { token, expirationTime } = parsed
+    const { token, expirationTime, refreshToken } = parsed
 
-    if (token && expirationTime > Date.now()) {
+    if (token && refreshToken && expirationTime > Date.now()) {
       refreshClient(parsed)
       // ToDo при использовании .withExistingTokenFlow токен не рефрешится SDK автоматически, в отличие от .withPasswordFlow
     } else {
       localStorage.removeItem(localStorageKey)
+      localStorage.removeItem('commercetools-isLoggedIn')
       createAnonymousClient()
     }
   } catch (error) {
     console.error('Invalid localStorage token :', error)
     localStorage.removeItem(localStorageKey)
+    localStorage.removeItem('commercetools-isLoggedIn')
     createAnonymousClient()
   }
 }
@@ -90,7 +92,6 @@ export function createAnonymousClient() {
       anonymousId,
     },
     scopes,
-    tokenCache,
   }
 
   const client = new ClientBuilder()
@@ -103,13 +104,20 @@ export function createAnonymousClient() {
 
 export function refreshClient(token: TokenStore) {
   const api = useApiState()
-  const authorization: string = `Bearer ${token.refreshToken}`
-  const options: ExistingTokenMiddlewareOptions = {
-    force: true,
+
+  const refreshOptions: RefreshAuthMiddlewareOptions = {
+    host: authUrl,
+    projectKey,
+    credentials: {
+      clientId,
+      clientSecret,
+    },
+    refreshToken: token.refreshToken!,
+    tokenCache,
   }
 
   const client = new ClientBuilder()
-    .withExistingTokenFlow(authorization, options)
+    .withRefreshTokenFlow(refreshOptions)
     .withHttpMiddleware(httpMiddlewareOptions)
     .build()
 
@@ -130,6 +138,7 @@ export function createPasswordClient(username: string, password: string) {
       },
     },
     scopes,
+    tokenCache,
   }
 
   const client = new ClientBuilder()
@@ -137,9 +146,5 @@ export function createPasswordClient(username: string, password: string) {
     .withHttpMiddleware(httpMiddlewareOptions)
     .build()
 
-  console.log('create customer with password')
-  console.log(api.root, 'api.root BEFORE setting')
-  console.log(client, 'client')
   api.setRoot(client)
-  console.log(api.root, 'api.root AFTER setting')
 }

@@ -1,14 +1,11 @@
-// import { useApiState } from '@/stores/apiState'
 import { useAuth } from '@/composables/useAuth'
-// TODO: Get Api root from useApiRoot() method
-import { createApiRootWithClientCredentialsFlow } from '@/api/client'
 import type { Category } from '@commercetools/platform-sdk'
 
 export const fetchCategories = async () => {
-  // const { getApiRoot } = useAuth()
-  // const apiRoot = getApiRoot()
+  const { getApiRoot } = useAuth()
+  const apiRoot = getApiRoot()
   try {
-    const apiRoot = await createApiRootWithClientCredentialsFlow()
+    //const apiRoot = await createApiRootWithClientCredentialsFlow()
     const response = await apiRoot
       .categories()
       .get({
@@ -27,21 +24,6 @@ export const fetchCategories = async () => {
   } catch (error) {
     console.error('Failed to fetch categories:', error)
     throw error
-  }
-}
-
-export const getUserInfo = async () => {
-  const { getApiRoot } = useAuth()
-  const apiRoot = getApiRoot()
-  if (apiRoot) {
-    try {
-      const response = await apiRoot.me().get().execute()
-      console.log('User Info:', response.body)
-    } catch (error) {
-      console.error('Failed to get user info:', error)
-    }
-  } else {
-    console.warn('apiRoot is not available')
   }
 }
 
