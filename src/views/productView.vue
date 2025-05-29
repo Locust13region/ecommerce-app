@@ -13,7 +13,7 @@ const toast = useToast()
 const router = useRouter()
 const { fetchProduct } = useProduct()
 
-const { slug } = defineProps<{ slug: string }>()
+const { productSlug } = defineProps<{ productSlug: string }>()
 
 const product = ref<ProductProjection | null>(null)
 const showModal = ref(false)
@@ -34,7 +34,7 @@ const priceInfo = computed(() => {
 })
 
 onMounted(async () => {
-  const result = await fetchProduct(slug)
+  const result = await fetchProduct(productSlug)
   if (!result) {
     toast.add({
       severity: 'error',
