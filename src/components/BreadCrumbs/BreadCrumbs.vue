@@ -13,7 +13,7 @@ const home = ref({
 const route = useRoute()
 const categoriesStore = useCategoriesStore()
 
-const currentSlug = ref((route.params.slug as string) || '')
+const currentSlug = ref((route.params.categorySlug as string) || '')
 
 const breadcrumbItems = ref<{ label: string; route: string }[]>([])
 
@@ -33,7 +33,7 @@ onMounted(() => {
 })
 
 watch(
-  () => route.params.slug,
+  () => route.params.categorySlug,
   (newSlug) => {
     currentSlug.value = newSlug as string
     updateBreadcrumbs()

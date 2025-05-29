@@ -15,7 +15,7 @@ import { useProductList } from '@/composables/useProductsList.ts'
 import { useProductListStore } from '@/stores/useProductListStore'
 
 const route = useRoute()
-const currentSlug = ref(route.params.slug as string)
+const currentSlug = ref(route.params.categorySlug as string)
 
 const pageMenu = ref<MegaMenuItem[]>([])
 
@@ -29,7 +29,7 @@ const { loadProducts } = useProductList(currentSlug)
 
 const onPageChange = async (event: PageState) => {
   productListStore.offset = event.first
-  currentSlug.value = route.params.slug as string
+  currentSlug.value = route.params.categorySlug as string
 
   const query = { offset: `${productListStore.offset}` }
   await router.push({ query: query })
@@ -40,7 +40,7 @@ const onPageChange = async (event: PageState) => {
 }
 
 watch(
-  () => route.params.slug,
+  () => route.params.categorySlug,
   async (newId) => {
     productListStore.offset = 0
     currentSlug.value = newId as string
@@ -66,7 +66,9 @@ onMounted(async () => {
   await categoriesStore.loadCategories()
   pageMenu.value = transformCategoriesToMegaMenu(categoriesStore.categories, 'en-US', true)
 
-  const isCategoryExists = categoriesStore.categoryMapBySlug.has(route.params.slug as string)
+  const isCategoryExists = categoriesStore.categoryMapBySlug.has(
+    route.params.categorySlug as string,
+  )
 
   if (route.query.offset) {
     productListStore.offset = parseInt(route.query.offset as string, 10)
@@ -74,7 +76,7 @@ onMounted(async () => {
     productListStore.offset = 0
   }
 
-  if (route.params.slug && isCategoryExists) {
+  if (route.params.categorySlug && isCategoryExists) {
     await loadProducts(currentSlug.value)
     pageProducts.value = await parseProductsForCards(productListStore.products)
   } else if (route.path === '/catalog') {

@@ -16,7 +16,7 @@ const props = defineProps<ProductCardItem>()
 </script>
 
 <template>
-  <RouterLink :to="`/catalog/${props.slug}`" class="product-card-link">
+  <RouterLink :to="`/product/${props.slug}`" class="product-card-link">
     <Card style="overflow: hidden">
       <template #header>
         <img :alt="props.title" :src="props.imageURL" />

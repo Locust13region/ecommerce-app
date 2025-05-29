@@ -44,7 +44,7 @@ const router = createRouter({
       component: () => import('../views/CatalogView.vue'),
     },
     {
-      path: '/catalog/:slug', // TODO: rename 'slug' to 'categorySlug'
+      path: '/catalog/:categorySlug', // TODO: rename 'slug' to 'categorySlug'
       name: 'category',
       component: () => import('../views/CatalogView.vue'),
     },
