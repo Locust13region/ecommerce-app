@@ -7,8 +7,12 @@ const productListStore = useProductListStore()
 export function useProductList(slugRef: string) {
   const loading = ref(false)
 
-  const loadProducts = async (slug: string = slugRef, name: string | null = null) => {
-    if (!slug) return
+  const loadProducts = async (
+    slug: string = slugRef,
+    name: string | null = null,
+    sort?: string,
+  ) => {
+    // if (!slug) return
     loading.value = true
     try {
       const response = await fetchProducts(
@@ -16,6 +20,7 @@ export function useProductList(slugRef: string) {
         productListStore.limit,
         productListStore.offset,
         name,
+        sort,
       )
       productListStore.products = response.results
       productListStore.totalProducts = response.total

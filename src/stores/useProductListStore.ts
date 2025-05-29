@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import type { ProductProjection } from '@commercetools/platform-sdk'
 import { useRoute } from 'vue-router'
 import type { ProductCardItem } from '@/interfaces/catalogInterfaces'
+import { parseProductsForCards } from '@/services/Catalog/parseProductsForCard/parseProductsForCard.ts'
+import { useProductList } from '@/composables/useProductsList'
 
 export const useProductListStore = defineStore('productList', () => {
   const products = ref<ProductProjection[]>([])
@@ -14,10 +16,25 @@ export const useProductListStore = defineStore('productList', () => {
   const currentSlug = ref<string>(route.params.categorySlug as string)
   const pageProducts = ref<ProductCardItem[]>([])
   const productsNotFound = ref(false)
+  const sortOption = ref('price asc')
+
+  const sortOptions = [
+    { label: 'Price ascending', value: 'price asc' },
+    { label: 'Price descending', value: 'price desc' },
+    { label: 'Alphabet (A-Z)', value: 'name.en-US asc' },
+    { label: 'Alphabet (Z-A)', value: 'name.en-US desc' },
+  ]
 
   function resetPagination() {
     offset.value = 0
   }
+
+  const { loadProducts } = useProductList(currentSlug.value)
+
+  watch(sortOption, async (newSort) => {
+    await loadProducts(currentSlug.value, null, newSort)
+    pageProducts.value = await parseProductsForCards(products.value)
+  })
 
   return {
     products,
@@ -29,5 +46,7 @@ export const useProductListStore = defineStore('productList', () => {
     resetPagination,
     pageProducts,
     productsNotFound,
+    sortOption,
+    sortOptions,
   }
 })

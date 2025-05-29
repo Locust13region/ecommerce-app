@@ -18,6 +18,7 @@ import { useProductList } from '@/composables/useProductsList.ts'
 import { useProductListStore } from '@/stores/useProductListStore'
 import ProgressSpinner from 'primevue/progressspinner'
 import SearchBar from '@/components/SearchBar/SearchBar.vue'
+import SelectFilters from '@/components/SelectFilters/SelectFilters.vue'
 
 const route = useRoute()
 // const currentSlug = ref(route.params.categorySlug as string)
@@ -36,9 +37,11 @@ const onPageChange = async (event: PageState) => {
   productListStore.offset = event.first
   productListStore.currentSlug = route.params.categorySlug as string
 
+  console.log('current slug', productListStore.currentSlug)
+
   const query = { offset: `${productListStore.offset}` }
   await router.push({ query: query })
-  await loadProducts(productListStore.currentSlug)
+  await loadProducts(productListStore.currentSlug, null, productListStore.sortOption)
 
   productListStore.pageProducts = await parseProductsForCards(productListStore.products)
   window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -49,7 +52,7 @@ watch(
   async (newId) => {
     productListStore.offset = 0
     productListStore.currentSlug = newId as string
-    await loadProducts(newId as string)
+    await loadProducts(newId as string, null, productListStore.sortOption)
 
     productListStore.pageProducts = await parseProductsForCards(productListStore.products)
   },
@@ -60,7 +63,7 @@ watch(
   async (newPath) => {
     if (newPath === '/catalog') {
       productListStore.offset = 0
-      await loadProducts(newPath as string)
+      await loadProducts(newPath as string, null, productListStore.sortOption)
 
       productListStore.pageProducts = await parseProductsForCards(productListStore.products)
     }
@@ -83,11 +86,11 @@ onMounted(async () => {
   }
 
   if (route.params.categorySlug && isCategoryExists) {
-    await loadProducts(productListStore.currentSlug)
+    await loadProducts(productListStore.currentSlug, null, productListStore.sortOption)
     productListStore.pageProducts = await parseProductsForCards(productListStore.products)
     console.log(productListStore.pageProducts, 'page products11111')
   } else if (route.path === '/catalog') {
-    await loadProducts(route.path)
+    await loadProducts(route.path, null, productListStore.sortOption)
 
     productListStore.pageProducts = await parseProductsForCards(productListStore.products)
   } else {
@@ -113,7 +116,9 @@ onMounted(async () => {
         <BreadCrumbs />
         <SearchBar />
       </div>
-      <div class="filters-container"></div>
+      <div class="filters-container">
+        <SelectFilters />
+      </div>
       <div class="catalog-main-product-list">
         <p v-if="productListStore.productsNotFound">No products by this search parameter</p>
         <ProductCard
@@ -178,5 +183,8 @@ onMounted(async () => {
   position: absolute;
   top: 50%;
   left: 50%;
+}
+.filters-container {
+  width: 100%;
 }
 </style>

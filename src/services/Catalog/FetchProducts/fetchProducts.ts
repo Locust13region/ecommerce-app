@@ -10,6 +10,7 @@ export const fetchProducts = async (
   limit: number = 9,
   offset: number = 0,
   name: string | null = null,
+  sort: string = 'name.en-US asc',
 ): Promise<FetchProductsResponse> => {
   const { getApiRoot } = useAuth()
   const apiRoot = getApiRoot()
@@ -30,6 +31,8 @@ export const fetchProducts = async (
     if (name) {
       queryArgs['text.en-US'] = name
     }
+
+    queryArgs.sort = sort
 
     const response = await apiRoot
       .productProjections()
