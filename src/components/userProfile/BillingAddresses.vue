@@ -85,6 +85,19 @@ async function saveNewAddress(event: FormSubmitEvent) {
     }
   }
 }
+async function deleteAddress(id: string) {
+  try {
+    const changes: MyCustomerUpdateAction[] = []
+    changes.push({ action: 'removeBillingAddressId', addressId: id })
+    changes.push({ action: 'removeAddress', addressId: id })
+    await saveChanges(changes)
+    billingAddressesHolder.value = billingAddressesHolder.value.filter((elem) => elem.id !== id)
+  } catch (error) {
+    if (error instanceof Error) {
+      toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
+    }
+  }
+}
 getApiRoot()
   .me()
   .get()
@@ -130,7 +143,17 @@ getApiRoot()
           <Button label="Edit" severity="contrast" outlined class="w-full"
             ><span class="pi pi-pencil"></span
           ></Button>
-          <Button label="Delete" severity="danger" class="w-full"
+          <Button
+            label="Delete"
+            severity="danger"
+            class="w-full"
+            @click="
+              () => {
+                if (address.id) {
+                  deleteAddress(address.id)
+                }
+              }
+            "
             ><span class="pi pi-trash"></span
           ></Button>
         </div>
