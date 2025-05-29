@@ -8,7 +8,11 @@ const props = defineProps<ProductCardItem>()
 
 //const route = useRoute()
 
-// const productSlug = route.params.slug
+// const productSlug = route.params.productSlug
+// TODO: add /product/:productSlug
+// parse ID
+
+// TODO: add router push on click
 </script>
 
 <template>

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// import { useUserStateStore } from '@/stores/userState'
-
 import type { MegaMenuItem, ProductCardItem } from '@/interfaces/catalogInterfaces'
 import MegaMenu from '@/components/MegaMenu/MegaMenu.vue'
 import BreadCrumbs from '@/components/BreadCrumbs/BreadCrumbs.vue'
@@ -14,14 +12,10 @@ import Paginator from 'primevue/paginator'
 import type { PageState } from 'primevue/paginator'
 import router from '@/router'
 import { useProductList } from '@/composables/useProductsList.ts'
+import { useProductListStore } from '@/stores/useProductListStore'
 
-// import { useAuth } from '@/composables/useAuth'
-// import { useApiState } from '@/stores/apiState'
-// const { getApiRoot } = useAuth();
 const route = useRoute()
 const currentSlug = ref(route.params.slug as string)
-
-// const user = useUserStateStore()
 
 const pageMenu = ref<MegaMenuItem[]>([])
 
@@ -29,35 +23,30 @@ const pageProducts = ref<ProductCardItem[]>([])
 
 const categoriesStore = useCategoriesStore()
 
-const {
-  products,
-  totalProducts,
-  limit,
-  offset,
-  // loading,
-  loadProducts,
-} = useProductList(currentSlug)
+const productListStore = useProductListStore()
+
+const { loadProducts } = useProductList(currentSlug)
 
 const onPageChange = async (event: PageState) => {
-  offset.value = event.first
+  productListStore.offset = event.first
   currentSlug.value = route.params.slug as string
 
-  const query = { offset: `${offset.value}` }
+  const query = { offset: `${productListStore.offset}` }
   await router.push({ query: query })
   await loadProducts(currentSlug.value)
 
-  pageProducts.value = await parseProductsForCards(products.value)
+  pageProducts.value = await parseProductsForCards(productListStore.products)
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 watch(
   () => route.params.slug,
   async (newId) => {
-    offset.value = 0
+    productListStore.offset = 0
     currentSlug.value = newId as string
     await loadProducts(newId as string)
 
-    pageProducts.value = await parseProductsForCards(products.value)
+    pageProducts.value = await parseProductsForCards(productListStore.products)
   },
 )
 
@@ -65,10 +54,10 @@ watch(
   () => route.path,
   async (newPath) => {
     if (newPath === '/catalog') {
-      offset.value = 0
+      productListStore.offset = 0
       await loadProducts(newPath as string)
 
-      pageProducts.value = await parseProductsForCards(products.value)
+      pageProducts.value = await parseProductsForCards(productListStore.products)
     }
   },
 )
@@ -80,18 +69,18 @@ onMounted(async () => {
   const isCategoryExists = categoriesStore.categoryMapBySlug.has(route.params.slug as string)
 
   if (route.query.offset) {
-    offset.value = parseInt(route.query.offset as string, 10)
+    productListStore.offset = parseInt(route.query.offset as string, 10)
   } else {
-    offset.value = 0
+    productListStore.offset = 0
   }
 
   if (route.params.slug && isCategoryExists) {
     await loadProducts(currentSlug.value)
-    pageProducts.value = await parseProductsForCards(products.value)
+    pageProducts.value = await parseProductsForCards(productListStore.products)
   } else if (route.path === '/catalog') {
     await loadProducts(route.path)
 
-    pageProducts.value = await parseProductsForCards(products.value)
+    pageProducts.value = await parseProductsForCards(productListStore.products)
   }
 })
 </script>
@@ -114,11 +103,11 @@ onMounted(async () => {
       </div>
       <div class="catalog-main-paginator">
         <Paginator
-          v-if="totalProducts > 0"
-          :rows="limit"
-          :totalRecords="totalProducts"
+          v-if="productListStore.totalProducts > 0"
+          :rows="productListStore.limit"
+          :totalRecords="productListStore.totalProducts"
           :pageLinkSize="5"
-          v-model:first="offset"
+          v-model:first="productListStore.offset"
           class="paginator"
           @page="onPageChange"
         />

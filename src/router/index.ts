@@ -44,10 +44,15 @@ const router = createRouter({
       component: () => import('../views/CatalogView.vue'),
     },
     {
-      path: '/catalog/:slug', // * - returns [] with all slugs after /catalog, + - returns [] with the current slug
+      path: '/catalog/:slug', // TODO: rename 'slug' to 'categorySlug'
       name: 'category',
       component: () => import('../views/CatalogView.vue'),
     },
+    // {
+    //   path: '/product/:productSlug', // * - returns [] with all slugs after /catalog, + - returns [] with the current slug
+    //   name: 'product',
+    //   component: () => import('../views/ProductView.vue'),
+    // },
   ],
 })
 
