@@ -13,8 +13,6 @@ export const fetchProducts = async (
   const { getApiRoot } = useAuth()
   const apiRoot = getApiRoot()
 
-  // TODO: add pagination offset parameter
-
   try {
     const queryArgs: VariableMap = {
       limit,

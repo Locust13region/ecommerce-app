@@ -81,6 +81,8 @@ onMounted(async () => {
     await loadProducts(route.path)
 
     pageProducts.value = await parseProductsForCards(productListStore.products)
+  } else {
+    router.push('/not-found')
   }
 })
 </script>
