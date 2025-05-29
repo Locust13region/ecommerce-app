@@ -9,6 +9,7 @@ export const fetchProducts = async (
   slug: string,
   limit: number = 9,
   offset: number = 0,
+  name: string | null = null,
 ): Promise<FetchProductsResponse> => {
   const { getApiRoot } = useAuth()
   const apiRoot = getApiRoot()
@@ -19,11 +20,15 @@ export const fetchProducts = async (
       offset,
     }
 
-    if (slug) {
+    if (slug && !name) {
       const category = useCategoriesStore().categoryMapBySlug.get(slug)
       if (category) {
         queryArgs.filter = [`categories.id:"${category.id}"`]
       }
+    }
+
+    if (name) {
+      queryArgs['text.en-US'] = name
     }
 
     const response = await apiRoot
