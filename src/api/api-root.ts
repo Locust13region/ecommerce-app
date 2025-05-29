@@ -2,10 +2,10 @@ import {
   ClientBuilder,
   type HttpMiddlewareOptions,
   type AnonymousAuthMiddlewareOptions,
-  type RefreshAuthMiddlewareOptions,
   type PasswordAuthMiddlewareOptions,
   type TokenCache,
   type TokenStore,
+  type RefreshAuthMiddlewareOptions,
 } from '@commercetools/sdk-client-v2'
 import generatorUuid from '@/services/Generator UUID/generator-uuid'
 import { useApiState } from '@/stores/apiState'
@@ -64,7 +64,6 @@ export function initializeClient() {
 
     if (token && refreshToken && expirationTime > Date.now()) {
       refreshClient(parsed)
-      // ToDo при использовании .withExistingTokenFlow токен не рефрешится SDK автоматически, в отличие от .withPasswordFlow
     } else {
       localStorage.removeItem(localStorageKey)
       localStorage.removeItem('commercetools-isLoggedIn')
@@ -115,7 +114,6 @@ export function refreshClient(token: TokenStore) {
     refreshToken: token.refreshToken!,
     tokenCache,
   }
-
   const client = new ClientBuilder()
     .withRefreshTokenFlow(refreshOptions)
     .withHttpMiddleware(httpMiddlewareOptions)
