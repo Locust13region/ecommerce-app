@@ -45,11 +45,6 @@ const router = createRouter({
       name: 'category',
       component: () => import('../views/CatalogView.vue'),
     },
-    // {
-    //   path: '/product/:productSlug', // * - returns [] with all slugs after /catalog, + - returns [] with the current slug
-    //   name: 'product',
-    //   component: () => import('../views/ProductView.vue'),
-    // },
   ],
 })
 

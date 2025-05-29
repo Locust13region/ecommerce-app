@@ -37,9 +37,6 @@ onMounted(async () => {
         <RouterLink to="/about">About</RouterLink>
         <!-- <RouterLink to="/catalog">Catalog</RouterLink> -->
         <MegaMenu :model="navMenuItems" :class="'header-megamenu'" />
-        <!-- temporary -->
-        <RouterLink to="/product/lewis-carroll-alices-adventures-in-wonderland">Product</RouterLink>
-        <!-- temporary -->
       </nav>
       <div class="auth">
         <Button
