@@ -1,28 +1,28 @@
 <script setup lang="ts">
 import { useProduct } from '@/composables/useProduct'
+import { useToast } from 'primevue'
+import { useRouter } from 'vue-router'
+import { computed, onMounted, ref } from 'vue'
 import type { ProductProjection } from '@commercetools/platform-sdk'
 import Button from 'primevue/button'
-import Carousel from 'primevue/carousel'
-import Dialog from 'primevue/dialog'
-import { useToast } from 'primevue'
-import { computed, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import ProductImageCarousel from '@/components/product-detailed/ProductImageCarousel.vue'
+import ImageDialog from '@/components/product-detailed//ImageDialog.vue'
+import ProductInfo from '@/components/product-detailed//ProductInfo.vue'
 
 const toast = useToast()
 const router = useRouter()
 const { fetchProduct } = useProduct()
 
+const { slug } = defineProps<{ slug: string }>()
+
 const product = ref<ProductProjection | null>(null)
 const showModal = ref(false)
 
-const images = computed(() => {
-  return product.value?.masterVariant.images?.map((img) => img.url) ?? []
-})
+const images = computed(() => product.value?.masterVariant.images?.map((img) => img.url) ?? [])
 
 const priceInfo = computed(() => {
   const price = product.value?.masterVariant.prices?.[0]
   if (!price) return null
-
   const original = price.value
   const discounted = price.discounted?.value
 
@@ -34,7 +34,7 @@ const priceInfo = computed(() => {
 })
 
 onMounted(async () => {
-  const result = await fetchProduct('lewis-carroll-alices-adventures-in-wonderland')
+  const result = await fetchProduct(slug)
   if (!result) {
     toast.add({
       severity: 'error',
@@ -44,22 +44,11 @@ onMounted(async () => {
     goBack()
   } else {
     product.value = result
-    console.log(result)
   }
 })
 
-const openModal = () => {
-  showModal.value = true
-}
-
-const closeModal = () => {
-  showModal.value = false
-}
-
-const goBack = () => {
-  router.back()
-}
-
+const goBack = () => router.back()
+const openModal = () => (showModal.value = true)
 const addToCart = () => {
   if (!product.value) return
   console.log('Add to cart')
@@ -74,77 +63,24 @@ const addToCart = () => {
 
     <main v-if="product" class="product-main">
       <div class="product-carousel">
-        <Carousel
-          :value="product.masterVariant.images?.map((img) => img.url) || []"
-          :numVisible="1"
-          :numScroll="1"
-          :showNavigators="images.length > 1"
-          :showIndicators="images.length > 1"
-        >
-          <template #item="{ data }">
-            <img :src="data" class="carousel-image" alt="product image" @click="openModal" />
-          </template>
-        </Carousel>
+        <ProductImageCarousel :images="images" @imageClick="openModal" />
       </div>
 
-      <Dialog
-        v-model:visible="showModal"
-        modal
-        dismissableMask
-        :closable="false"
-        :closeOnEscape="true"
-        class="image-dialog"
-      >
-        <template #header>
-          <div class="custom-dialog-header">
-            <Button icon="pi pi-times" @click="closeModal" />
-          </div>
-        </template>
+      <ImageDialog v-model:visible="showModal" :images="images" :showNav="images.length > 1" />
 
-        <Carousel
-          :value="product.masterVariant.images?.map((img) => img.url) || []"
-          :numVisible="1"
-          :numScroll="1"
-          :showNavigators="images.length > 1"
-          :showIndicators="images.length > 1"
-        >
-          <template #item="{ data }">
-            <img :src="data" class="carousel-image-large" alt="product image enlarged" />
-          </template>
-        </Carousel>
-      </Dialog>
-
-      <div class="product-info">
-        <h2 class="product-title">
-          {{ product.name['en-US'] || 'Name' }}
-        </h2>
-        <h3 class="product-subtitle">
-          {{
-            product.masterVariant.attributes?.[1]?.value['en-US'] ||
-            'Author - information is missing.'
-          }}
-        </h3>
-        <p>
-          {{ product.masterVariant.attributes?.[2]?.value || 'Genre - information is missing.' }}
-        </p>
-        <p class="product-description">
-          {{ product.description?.['en-US'] || 'Description - information is missing.' }}
-        </p>
-        <p>
-          Published in
-          {{ product.masterVariant.attributes?.[0]?.value || ' - information is missing.' }}
-        </p>
-        <div class="product-price-block" v-if="priceInfo">
-          <p v-if="priceInfo.discounted" class="original-price">
-            {{ priceInfo.original.toFixed(2) }} {{ priceInfo.currency }}
-          </p>
-          <p class="product-price">
-            {{ (priceInfo.discounted ?? priceInfo.original).toFixed(2) }} {{ priceInfo.currency }}
-          </p>
-        </div>
-
-        <Button label="Add to cart" icon="pi pi-shopping-cart" @click="addToCart" />
-      </div>
+      <ProductInfo
+        :name="product.name['en-US'] || 'Name'"
+        :author="
+          product.masterVariant.attributes?.[1]?.value['en-US'] || 'Author - information is missing'
+        "
+        :genre="product.masterVariant.attributes?.[2]?.value || 'Genre - information is missing'"
+        :description="product.description?.['en-US'] || 'Description - information is missing'"
+        :published="
+          product.masterVariant.attributes?.[0]?.value.toString() || 'information is missing'
+        "
+        :priceInfo="priceInfo"
+        @addToCart="addToCart"
+      />
     </main>
 
     <div v-else class="loading">Loading...</div>
@@ -170,71 +106,6 @@ const addToCart = () => {
 
 .product-carousel {
   flex: 1;
-}
-
-.carousel-image {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  cursor: zoom-in;
-}
-
-.carousel-image-large {
-  width: 100%;
-  max-height: 70vh;
-  object-fit: contain;
-}
-
-.image-dialog :deep(.p-dialog-header) {
-  display: flex;
-  justify-content: flex-end;
-  padding: 1rem;
-}
-
-.custom-dialog-header {
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.product-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.product-title {
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-.product-subtitle {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.product-description {
-  font-size: 1.2rem;
-}
-
-.product-price-block {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.original-price {
-  text-decoration: line-through;
-  font-size: 1.2rem;
-}
-
-.product-price {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #2e7d32;
 }
 
 .loading {
