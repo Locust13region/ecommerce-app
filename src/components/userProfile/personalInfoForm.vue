@@ -183,24 +183,26 @@ getApiRoot()
     <Button
       v-if="!flagEditMode"
       class="edit-button"
-      severity="secondary"
+      severity="contrast"
       @click="switchToEditMode"
       raised
     >
       <span class="pi pi-pencil"></span>
       Edit</Button
     >
-    <Button
-      v-if="flagEditMode"
-      severity="secondary"
-      @click="switchToReadMode"
-      class="cancel-button"
-      raised
-      ><span class="pi pi-times"></span> Cancel</Button
-    >
-    <Button v-if="flagEditMode" severity="secondary" class="save-button" type="submit" raised
-      ><span class="pi pi-check"></span> Save</Button
-    >
+    <div class="control-buttons">
+      <Button
+        v-if="flagEditMode"
+        severity="danger"
+        @click="switchToReadMode"
+        class="cancel-button"
+        raised
+        ><span class="pi pi-times"></span> Cancel</Button
+      >
+      <Button v-if="flagEditMode" severity="success" class="save-button" type="submit" raised
+        ><span class="pi pi-check"></span> Save</Button
+      >
+    </div>
   </Form>
 </template>
 <style lang="css" scoped>
@@ -228,6 +230,10 @@ input,
 .save-button,
 .cancel-button {
   min-width: 180px;
+}
+.control-buttons {
+  display: flex;
+  gap: 0 10px;
 }
 @media (min-width: 550px) {
   .name,

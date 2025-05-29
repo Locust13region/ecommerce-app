@@ -3,7 +3,7 @@ import type { MyCustomerUpdateAction } from '@commercetools/platform-sdk'
 
 const { getApiRoot } = useAuth()
 export async function saveChanges(changes: MyCustomerUpdateAction[]) {
-  await getApiRoot()
+  return await getApiRoot()
     .me()
     .get()
     .execute()
