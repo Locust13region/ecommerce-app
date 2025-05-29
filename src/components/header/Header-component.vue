@@ -3,6 +3,11 @@ import { Button } from 'primevue'
 import router from '@/router'
 import { useAuth } from '@/composables/useAuth'
 import { useUserStateStore } from '@/stores/userState'
+import MegaMenu from '@/components/MegaMenu/MegaMenu.vue'
+import type { MegaMenuItem } from '@/interfaces/catalogInterfaces'
+import { onMounted, ref } from 'vue'
+import { transformCategoriesToMegaMenu } from '@/services/Catalog/ParseCategoriesToMegaMenu/parseCategoriesToMegaMenu'
+import { useCategoriesStore } from '@/composables/useCategoryStore'
 
 const user = useUserStateStore()
 const { logout } = useAuth()
@@ -11,6 +16,15 @@ function logoutHandler() {
   logout()
   router.push('/login')
 }
+
+const categoriesStore = useCategoriesStore()
+
+const navMenuItems = ref<MegaMenuItem[]>([])
+
+onMounted(async () => {
+  await categoriesStore.loadCategories()
+  navMenuItems.value = transformCategoriesToMegaMenu(categoriesStore.categories, 'en-US', false)
+})
 </script>
 
 <template>
@@ -21,6 +35,8 @@ function logoutHandler() {
       <nav>
         <RouterLink to="/" class="pi pi-home"> Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+        <!-- <RouterLink to="/catalog">Catalog</RouterLink> -->
+        <MegaMenu :model="navMenuItems" :class="'header-megamenu'" />
         <!-- temporary -->
         <RouterLink to="/product/lewis-carroll-alices-adventures-in-wonderland">Product</RouterLink>
         <!-- temporary -->
@@ -69,6 +85,9 @@ nav {
   font-size: 12px;
   text-align: center;
   margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 nav a.router-link-exact-active {
@@ -79,7 +98,8 @@ nav a.router-link-exact-active:hover {
   background-color: transparent;
 }
 
-nav a {
+nav a,
+nav .link {
   display: inline-block;
   padding: 0.5rem 1rem;
   border-left: 1px solid var(--color-border);
@@ -126,8 +146,8 @@ nav a:first-of-type {
   .auth {
     justify-content: space-between;
     align-items: center;
-    /* width: 20%; */
-    width: 35%;
+    /* width: 20%;
+    width: 35%; */
   }
 }
 </style>
