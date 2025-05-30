@@ -21,6 +21,8 @@ const toast = useToast()
 const shippingAddressesHolder = ref<BaseAddress[]>([])
 const defaultAddressHolder = ref<BaseAddress[]>([])
 const addNewAddressMode = ref(false)
+const currentEditField = ref()
+const defaultValueForCountrySelector = ref()
 
 function getCustomerData(response: ClientResponse) {
   const customerData: Customer = response.body
@@ -64,13 +66,17 @@ async function saveNewAddress(event: FormSubmitEvent) {
         action: 'addShippingAddressId',
         addressId: newAddressId,
       }
+
       await saveChanges([actionAddId])
-      shippingAddressesHolder.value.push(newAddress)
+      const addressObj = Object.assign({ id: newAddressId }, newAddress)
+      shippingAddressesHolder.value.push(addressObj)
       toast.add({
         severity: 'success',
         summary: `Add ${newAddress.country}, ${newAddress.city}, ${newAddress.streetName}, ${newAddress.streetNumber} in shipping addresses`,
         life: 5000,
       })
+
+      addNewAddressHandler()
       event.reset()
     }
   } catch (error) {
@@ -114,6 +120,56 @@ async function setDefaultAddress(id: string) {
     }
   }
 }
+function editAddressHandler(id: string) {
+  currentEditField.value = id
+}
+function setDefaultValueForCountrySelect(countryCode: string) {
+  defaultValueForCountrySelector.value = countriesSelect.value.find(
+    (obj) => obj.code === countryCode,
+  )
+}
+async function editAddress(event: FormSubmitEvent) {
+  try {
+    if (event.valid) {
+      const newAddress: Address = {
+        city: event.states.city.value,
+        country: event.states.country.value.code,
+        streetName: event.states.streetName.value,
+        streetNumber: event.states.streetNumber.value,
+        postalCode: event.states.postalCode.value,
+      }
+
+      const actionChangeAddress: MyCustomerUpdateAction = {
+        action: 'changeAddress',
+        addressId: event.states.id.value,
+        address: newAddress,
+      }
+      await saveChanges([actionChangeAddress])
+      editAddressHandler('')
+
+      if (event.states.id.value === defaultAddressHolder.value[0].id) {
+        defaultAddressHolder.value.pop()
+        const editedAddress: BaseAddress = Object.assign({ id: event.states.id.value }, newAddress)
+        defaultAddressHolder.value.push(editedAddress)
+      } else {
+        shippingAddressesHolder.value = shippingAddressesHolder.value.filter(
+          (address) => address.id !== event.states.id.value,
+        )
+        const editedAddress: BaseAddress = Object.assign({ id: event.states.id.value }, newAddress)
+        shippingAddressesHolder.value.push(editedAddress)
+      }
+      toast.add({
+        severity: 'success',
+        summary: `Address changed`,
+        life: 5000,
+      })
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
+    }
+  }
+}
 getApiRoot()
   .me()
   .get()
@@ -128,15 +184,116 @@ getApiRoot()
     <Card class="default address" v-for="address in defaultAddressHolder" :key="address.id">
       <template #title>Default Address</template>
       <template #content>
-        <p>
+        <p v-if="currentEditField !== address.id">
           {{
             `${address.country}, ${address.city}, ${address.streetName}, ${address.streetNumber}, ZIP ${address.postalCode}`
           }}
         </p>
+        <Form
+          v-if="currentEditField === address.id"
+          v-slot="$form"
+          @submit="editAddress"
+          :initialValues="address"
+          :resolver="personalDataValidator"
+          class="edit-form"
+        >
+          <FormField name="id"></FormField>
+          <FormField name="country" :initialValue="defaultValueForCountrySelector">
+            <Select
+              :options="countriesSelect"
+              optionLabel="name"
+              placeholder="Select a Country"
+              :manualInput="false"
+              class="select-country-input"
+            ></Select>
+            <Message
+              class="validation-error-message"
+              v-if="$form.country?.invalid"
+              severity="error"
+              size="small"
+              variant="simple"
+              >{{ $form.country.error?.message }}</Message
+            >
+          </FormField>
+          <FormField>
+            <InputText class="input-city" name="city" placeholder="Enter city" />
+            <Message
+              class="validation-error-message"
+              v-if="$form.city?.invalid"
+              severity="error"
+              size="small"
+              variant="simple"
+            >
+              {{ $form.city.error?.message }}
+            </Message>
+          </FormField>
+          <FormField>
+            <InputText class="input-street" name="streetName" placeholder="Enter street name" />
+            <Message
+              class="validation-error-message"
+              v-if="$form.street?.invalid"
+              severity="error"
+              size="small"
+              variant="simple"
+            >
+              {{ $form.street.error?.message }}
+            </Message>
+          </FormField>
+          <FormField>
+            <InputText
+              class="input-street-number"
+              name="streetNumber"
+              placeholder="Enter street number"
+            />
+            <Message
+              class="validation-error-message"
+              v-if="$form.streetNumber?.invalid"
+              severity="error"
+              size="small"
+              variant="simple"
+            >
+              {{ $form.streetNumber.error?.message }}
+            </Message>
+          </FormField>
+          <FormField>
+            <InputText
+              class="input-postal-code"
+              name="postalCode"
+              placeholder="Enter postal code/ZIP"
+            />
+            <Message
+              class="validation-error-message"
+              v-if="$form.postalCode?.invalid"
+              severity="error"
+              size="small"
+              variant="simple"
+            >
+              {{ $form.postalCode.error?.message }}
+            </Message>
+          </FormField>
+          <div class="control-buttons">
+            <Button label="Save" severity="success" outlined type="submit" class="w-full"
+              ><span class="pi pi-check"></span
+            ></Button>
+            <Button label="Cancel" severity="danger" class="w-full" @click="editAddressHandler('')"
+              ><span class="pi pi-times"></span
+            ></Button>
+          </div>
+        </Form>
       </template>
       <template #footer>
-        <div class="control-buttons">
-          <Button label="Edit" severity="contrast" outlined class="w-full"
+        <div class="control-buttons" v-if="currentEditField !== address.id">
+          <Button
+            label="Edit"
+            severity="contrast"
+            outlined
+            class="w-full"
+            @click="
+              () => {
+                editAddressHandler(address.id || '')
+                setDefaultValueForCountrySelect(address.country)
+              }
+            "
             ><span class="pi pi-pencil"></span
           ></Button>
         </div>
@@ -145,14 +302,105 @@ getApiRoot()
     <h2>Other addresses</h2>
     <Card v-for="address in shippingAddressesHolder" :key="address.id" class="address">
       <template #content>
-        <h4>
+        <h4 v-if="currentEditField !== address.id">
           {{
             `${address.country}, ${address.city}, ${address.streetName}, ${address.streetNumber}, ZIP ${address.postalCode}`
           }}
         </h4>
+        <Form
+          v-if="currentEditField === address.id"
+          v-slot="$form"
+          @submit="editAddress"
+          :initialValues="address"
+          :resolver="personalDataValidator"
+          class="edit-form"
+        >
+          <FormField name="id"></FormField>
+          <FormField name="country" :initialValue="defaultValueForCountrySelector">
+            <Select
+              :options="countriesSelect"
+              optionLabel="name"
+              placeholder="Select a Country"
+              :manualInput="false"
+              class="select-country-input"
+            ></Select>
+            <Message
+              class="validation-error-message"
+              v-if="$form.country?.invalid"
+              severity="error"
+              size="small"
+              variant="simple"
+              >{{ $form.country.error?.message }}</Message
+            >
+          </FormField>
+          <FormField>
+            <InputText class="input-city" name="city" placeholder="Enter city" />
+            <Message
+              class="validation-error-message"
+              v-if="$form.city?.invalid"
+              severity="error"
+              size="small"
+              variant="simple"
+            >
+              {{ $form.city.error?.message }}
+            </Message>
+          </FormField>
+          <FormField>
+            <InputText class="input-street" name="streetName" placeholder="Enter street name" />
+            <Message
+              class="validation-error-message"
+              v-if="$form.street?.invalid"
+              severity="error"
+              size="small"
+              variant="simple"
+            >
+              {{ $form.street.error?.message }}
+            </Message>
+          </FormField>
+          <FormField>
+            <InputText
+              class="input-street-number"
+              name="streetNumber"
+              placeholder="Enter street number"
+            />
+            <Message
+              class="validation-error-message"
+              v-if="$form.streetNumber?.invalid"
+              severity="error"
+              size="small"
+              variant="simple"
+            >
+              {{ $form.streetNumber.error?.message }}
+            </Message>
+          </FormField>
+          <FormField>
+            <InputText
+              class="input-postal-code"
+              name="postalCode"
+              placeholder="Enter postal code/ZIP"
+            />
+            <Message
+              class="validation-error-message"
+              v-if="$form.postalCode?.invalid"
+              severity="error"
+              size="small"
+              variant="simple"
+            >
+              {{ $form.postalCode.error?.message }}
+            </Message>
+          </FormField>
+          <div class="control-buttons">
+            <Button label="Save" severity="success" outlined type="submit" class="w-full"
+              ><span class="pi pi-check"></span
+            ></Button>
+            <Button label="Cancel" severity="danger" class="w-full" @click="editAddressHandler('')"
+              ><span class="pi pi-times"></span
+            ></Button>
+          </div>
+        </Form>
       </template>
       <template #footer>
-        <div class="control-buttons">
+        <div class="control-buttons" v-if="currentEditField !== address.id">
           <Button
             class="set-as-default-button"
             raised
@@ -165,7 +413,17 @@ getApiRoot()
             "
             ><span class="pi pi-bookmark"> </span><span class="text">Set as default</span></Button
           >
-          <Button label="Edit" severity="contrast" outlined class="w-full"
+          <Button
+            label="Edit"
+            severity="contrast"
+            outlined
+            class="w-full"
+            @click="
+              () => {
+                editAddressHandler(address.id || '')
+                setDefaultValueForCountrySelect(address.country)
+              }
+            "
             ><span class="pi pi-pencil"></span
           ></Button>
           <Button

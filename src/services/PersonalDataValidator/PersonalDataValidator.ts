@@ -58,7 +58,7 @@ export const personalDataValidator = ref(
           message: 'Password cannot contain spaces.',
         }),
 
-      street: z.string().min(1, { message: 'Street is required' }),
+      streetName: z.string().min(1, { message: 'Street is required' }),
       streetNumber: z.string().min(1, { message: 'Street is required' }),
       city: z
         .string()
