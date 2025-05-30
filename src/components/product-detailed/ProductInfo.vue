@@ -36,7 +36,7 @@ defineEmits<{
       </p>
     </div>
 
-    <Button label="Add to cart" icon="pi pi-shopping-cart" @click="$emit('addToCart')" />
+    <Button label="Add to Bag" icon="pi pi-shopping-bag" @click="$emit('addToCart')" />
   </div>
 </template>
 
