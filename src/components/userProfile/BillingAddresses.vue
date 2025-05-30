@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAuth } from '@/composables/useAuth'
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import type { Address } from '@/interfaces/signUpFormInterfaces'
 import type {
   BaseAddress,
@@ -19,28 +19,22 @@ const { getApiRoot } = useAuth()
 const toast = useToast()
 
 const billingAddressesHolder = ref<BaseAddress[]>([])
-const defaultBillingAddress = reactive({
-  streetName: '',
-  streetNumber: '',
-  country: '',
-  postalCode: '',
-  city: '',
-})
+const defaultAddressHolder = ref<BaseAddress[]>([])
 const addNewAddressMode = ref(false)
 
 function getCustomerData(response: ClientResponse) {
   const customerData: Customer = response.body
   const addressesList: BaseAddress[] = customerData.addresses
   const defaultBillingId = customerData.defaultBillingAddressId
-
   let billingIDs: string[] = []
+
   if (customerData.billingAddressIds) {
     billingIDs = customerData.billingAddressIds
   }
   addressesList.forEach((address: BaseAddress) => {
     if (address.id) {
       if (address.id === defaultBillingId) {
-        Object.assign(defaultBillingAddress, address)
+        defaultAddressHolder.value.push(address)
       }
       if (billingIDs.includes(address.id) && address.id !== defaultBillingId) {
         billingAddressesHolder.value.push(address)
@@ -98,6 +92,28 @@ async function deleteAddress(id: string) {
     }
   }
 }
+async function setDefaultAddress(id: string) {
+  try {
+    const currentDefaultAddress = defaultAddressHolder.value[0]
+    const newDefaultAddress = billingAddressesHolder.value.find((address) => address.id === id)
+
+    billingAddressesHolder.value.push(currentDefaultAddress)
+    defaultAddressHolder.value.pop()
+    defaultAddressHolder.value.push(newDefaultAddress as BaseAddress)
+    billingAddressesHolder.value = billingAddressesHolder.value.filter((elem) => elem.id !== id)
+
+    await saveChanges([{ action: 'setDefaultBillingAddress', addressId: id }])
+    toast.add({
+      severity: 'success',
+      summary: `New default address saved`,
+      life: 3000,
+    })
+  } catch (error) {
+    if (error instanceof Error) {
+      toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
+    }
+  }
+}
 getApiRoot()
   .me()
   .get()
@@ -109,12 +125,12 @@ getApiRoot()
 
 <template>
   <section class="billing-addresses">
-    <Card class="default address">
+    <Card class="default address" v-for="address in defaultAddressHolder" :key="address.id">
       <template #title>Default Address</template>
       <template #content>
         <p>
           {{
-            `${defaultBillingAddress.country}, ${defaultBillingAddress.city}, ${defaultBillingAddress.streetName}, ${defaultBillingAddress.streetNumber}, ZIP ${defaultBillingAddress.postalCode}`
+            `${address.country}, ${address.city}, ${address.streetName}, ${address.streetNumber}, ZIP ${address.postalCode}`
           }}
         </p>
       </template>
@@ -122,9 +138,6 @@ getApiRoot()
         <div class="control-buttons">
           <Button label="Edit" severity="contrast" outlined class="w-full"
             ><span class="pi pi-pencil"></span
-          ></Button>
-          <Button label="Delete" severity="danger" class="w-full"
-            ><span class="pi pi-trash"></span
           ></Button>
         </div>
       </template>
@@ -140,6 +153,18 @@ getApiRoot()
       </template>
       <template #footer>
         <div class="control-buttons">
+          <Button
+            class="set-as-default-button"
+            raised
+            @click="
+              () => {
+                if (address.id) {
+                  setDefaultAddress(address.id)
+                }
+              }
+            "
+            ><span class="pi pi-bookmark"> </span><span class="text">Set as default</span></Button
+          >
           <Button label="Edit" severity="contrast" outlined class="w-full"
             ><span class="pi pi-pencil"></span
           ></Button>
