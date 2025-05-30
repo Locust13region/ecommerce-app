@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import type {
-  MegaMenuItem,
-  // ProductCardItem
-} from '@/interfaces/catalogInterfaces'
+import type { MegaMenuItem } from '@/interfaces/catalogInterfaces'
 import MegaMenu from '@/components/MegaMenu/MegaMenu.vue'
 import BreadCrumbs from '@/components/BreadCrumbs/BreadCrumbs.vue'
 import { onMounted, ref, watch } from 'vue'
@@ -18,14 +15,15 @@ import { useProductList } from '@/composables/useProductsList.ts'
 import { useProductListStore } from '@/stores/useProductListStore'
 import ProgressSpinner from 'primevue/progressspinner'
 import SearchBar from '@/components/SearchBar/SearchBar.vue'
-import SelectFilters from '@/components/SelectFilters/SelectFilters.vue'
+import SortFilters from '@/components/SortFilters/SortFilters.vue'
+import { Button } from 'primevue'
+import ProductFilters from '@/components/ProductFilters/ProductFilters.vue'
+import { parseAttributeFilters } from '@/services/Catalog/parseAttributeFilters/parseAttributeFilters.ts'
+// import { buildFilterQuery } from '@/services/Catalog/parseAttributeFilters/parseAttributeFilters'
 
 const route = useRoute()
-// const currentSlug = ref(route.params.categorySlug as string)
 
 const pageMenu = ref<MegaMenuItem[]>([])
-
-// const pageProducts = ref<ProductCardItem[]>([])
 
 const categoriesStore = useCategoriesStore()
 
@@ -47,13 +45,18 @@ const onPageChange = async (event: PageState) => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+const onFiltersUpdate = async (filters: Record<string, string[]>) => {
+  productListStore.productFilters = filters
+  await loadProducts(productListStore.currentSlug, null, productListStore.sortOption)
+  productListStore.pageProducts = await parseProductsForCards(productListStore.products)
+}
+
 watch(
   () => route.params.categorySlug,
   async (newId) => {
     productListStore.offset = 0
     productListStore.currentSlug = newId as string
     await loadProducts(newId as string, null, productListStore.sortOption)
-
     productListStore.pageProducts = await parseProductsForCards(productListStore.products)
   },
 )
@@ -64,7 +67,6 @@ watch(
     if (newPath === '/catalog') {
       productListStore.offset = 0
       await loadProducts(newPath as string, null, productListStore.sortOption)
-
       productListStore.pageProducts = await parseProductsForCards(productListStore.products)
     }
   },
@@ -88,11 +90,11 @@ onMounted(async () => {
   if (route.params.categorySlug && isCategoryExists) {
     await loadProducts(productListStore.currentSlug, null, productListStore.sortOption)
     productListStore.pageProducts = await parseProductsForCards(productListStore.products)
-    console.log(productListStore.pageProducts, 'page products11111')
+    productListStore.productFilters = parseAttributeFilters(productListStore.products)
   } else if (route.path === '/catalog') {
     await loadProducts(route.path, null, productListStore.sortOption)
-
     productListStore.pageProducts = await parseProductsForCards(productListStore.products)
+    productListStore.productFilters = parseAttributeFilters(productListStore.products)
   } else {
     router.push('/not-found')
   }
@@ -117,7 +119,11 @@ onMounted(async () => {
         <SearchBar />
       </div>
       <div class="filters-container">
-        <SelectFilters />
+        <ProductFilters
+          :filters="productListStore.productFilters"
+          @update:filters="onFiltersUpdate"
+        />
+        <SortFilters />
       </div>
       <div class="catalog-main-product-list">
         <p v-if="productListStore.productsNotFound">No products by this search parameter</p>
@@ -138,7 +144,13 @@ onMounted(async () => {
           @page="onPageChange"
         />
       </div>
-      <div class="footer"></div>
+      <div class="footer">
+        <Button
+          label="Add to Bag"
+          outlined
+          @click="console.log(productListStore.productFilterQueries)"
+        />
+      </div>
     </div>
   </div>
 </template>

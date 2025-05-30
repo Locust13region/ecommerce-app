@@ -11,6 +11,7 @@ export function useProductList(slugRef: string) {
     slug: string = slugRef,
     name: string | null = null,
     sort?: string,
+    filters?: string[],
   ) => {
     // if (!slug) return
     loading.value = true
@@ -21,6 +22,7 @@ export function useProductList(slugRef: string) {
         productListStore.offset,
         name,
         sort,
+        filters,
       )
       productListStore.products = response.results
       productListStore.totalProducts = response.total

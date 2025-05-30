@@ -1,5 +1,4 @@
 import { useAuth } from '@/composables/useAuth'
-// TODO: Get Api root from useApiRoot() method
 import type { FetchProductsResponse } from '@/interfaces/catalogInterfaces'
 import router from '@/router'
 import { useCategoriesStore } from '@/composables/useCategoryStore'
@@ -11,6 +10,7 @@ export const fetchProducts = async (
   offset: number = 0,
   name: string | null = null,
   sort: string = 'name.en-US asc',
+  filters: string[] = [],
 ): Promise<FetchProductsResponse> => {
   const { getApiRoot } = useAuth()
   const apiRoot = getApiRoot()
@@ -30,6 +30,10 @@ export const fetchProducts = async (
 
     if (name) {
       queryArgs['text.en-US'] = name
+    }
+
+    if (filters.length > 0) {
+      queryArgs.filter = filters
     }
 
     queryArgs.sort = sort

@@ -16,13 +16,15 @@ export const useProductListStore = defineStore('productList', () => {
   const currentSlug = ref<string>(route.params.categorySlug as string)
   const pageProducts = ref<ProductCardItem[]>([])
   const productsNotFound = ref(false)
-  const sortOption = ref('price asc')
+  const sortOption = ref('name.en-US asc')
+  const productFilters = ref<Record<string, string[]>>({})
+  const productFilterQueries = ref<Record<string, string[]>>({})
 
   const sortOptions = [
-    { label: 'Price ascending', value: 'price asc' },
-    { label: 'Price descending', value: 'price desc' },
     { label: 'Alphabet (A-Z)', value: 'name.en-US asc' },
     { label: 'Alphabet (Z-A)', value: 'name.en-US desc' },
+    { label: 'Price ascending', value: 'price asc' },
+    { label: 'Price descending', value: 'price desc' },
   ]
 
   function resetPagination() {
@@ -48,5 +50,7 @@ export const useProductListStore = defineStore('productList', () => {
     productsNotFound,
     sortOption,
     sortOptions,
+    productFilters,
+    productFilterQueries,
   }
 })
