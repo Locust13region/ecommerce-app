@@ -12,39 +12,43 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'),
     },
     {
       path: '/signup',
       name: 'signup',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import('../views/SignUpView.vue'),
     },
     {
       path: '/login',
       name: 'login',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import('../views/LoginView.vue'),
     },
-    {
+    { 
       path: '/profile',
       name: 'profile',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import('../views/UserProfileView.vue'),
+    },
+    {
+      path: '/product/:productSlug',
+      name: 'Product',
+      component: () => import('../views/productView.vue'),
+      props: true,
     },
     {
       path: '/:pathMatch(.*)*',
       name: '404',
       component: () => import('../views/404View.vue'),
+    },
+    {
+      path: '/catalog',
+      name: 'catalog',
+      component: () => import('../views/CatalogView.vue'),
+    },
+    {
+      path: '/catalog/:categorySlug', // TODO: rename 'slug' to 'categorySlug'
+      name: 'category',
+      component: () => import('../views/CatalogView.vue'),
     },
   ],
 })
