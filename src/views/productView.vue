@@ -8,12 +8,16 @@ import Button from 'primevue/button'
 import ProductImageCarousel from '@/components/product-detailed/ProductImageCarousel.vue'
 import ImageDialog from '@/components/product-detailed//ImageDialog.vue'
 import ProductInfo from '@/components/product-detailed//ProductInfo.vue'
+import { useProductListStore } from '@/stores/useProductListStore'
+
+const { productSlug } = defineProps<{ productSlug: string }>()
 
 const toast = useToast()
 const router = useRouter()
 const { fetchProduct } = useProduct()
-
-const { productSlug } = defineProps<{ productSlug: string }>()
+const { products } = useProductListStore()
+// const productExist = computed(() => products.filter((product) => product.slug["en-US"] === productSlug)).value[0]
+// console.log(productExist)
 
 const product = ref<ProductProjection | null>(null)
 const showModal = ref(false)
@@ -34,16 +38,22 @@ const priceInfo = computed(() => {
 })
 
 onMounted(async () => {
-  const result = await fetchProduct(productSlug)
-  if (!result) {
-    toast.add({
-      severity: 'error',
-      summary: 'Product request failed',
-      life: 5000,
-    })
-    goBack()
+  const productExist = products.find((product) => product.slug['en-US'] === productSlug)
+
+  if (productExist) {
+    product.value = productExist
   } else {
-    product.value = result
+    try {
+      product.value = await fetchProduct(productSlug)
+    } catch (error) {
+      console.log(error)
+      toast.add({
+        severity: 'error',
+        summary: 'Product request failed',
+        life: 5000,
+      })
+      goBack()
+    }
   }
 })
 
