@@ -6,7 +6,7 @@ import type { VariableMap } from '@commercetools/platform-sdk'
 
 export const fetchProducts = async (
   slug: string,
-  limit: number = 9,
+  limit: number = 100,
   offset: number = 0,
   name: string | null = null,
   sort: string = 'name.en-US asc',
@@ -21,7 +21,8 @@ export const fetchProducts = async (
       offset,
     }
 
-    if (slug && !name) {
+    if (slug) {
+      // Currently searching through current category. Set (slug && !name) to search through all products
       const category = useCategoriesStore().categoryMapBySlug.get(slug)
       if (category) {
         queryArgs.filter = [`categories.id:"${category.id}"`]

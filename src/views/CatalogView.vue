@@ -5,7 +5,7 @@ import BreadCrumbs from '@/components/BreadCrumbs/BreadCrumbs.vue'
 import { onMounted, ref, watch } from 'vue'
 import { transformCategoriesToMegaMenu } from '@/services/Catalog/ParseCategoriesToMegaMenu/parseCategoriesToMegaMenu'
 import ProductCard from '@/components/ProductCard/ProductCard.vue'
-import { parseProductsForCards } from '@/services/Catalog/parseProductsForCard/parseProductsForCard.ts'
+// import { parseProductsForCards } from '@/services/Catalog/parseProductsForCard/parseProductsForCard.ts'
 import { useRoute } from 'vue-router'
 import { useCategoriesStore } from '@/composables/useCategoryStore'
 import Paginator from 'primevue/paginator'
@@ -18,7 +18,10 @@ import SearchBar from '@/components/SearchBar/SearchBar.vue'
 import SortFilters from '@/components/SortFilters/SortFilters.vue'
 import { Button } from 'primevue'
 import ProductFilters from '@/components/ProductFilters/ProductFilters.vue'
-import { parseAttributeFilters } from '@/services/Catalog/parseAttributeFilters/parseAttributeFilters.ts'
+import {
+  // buildFilterQuery,
+  parseAttributeFilters,
+} from '@/services/Catalog/parseAttributeFilters/parseAttributeFilters.ts'
 // import { buildFilterQuery } from '@/services/Catalog/parseAttributeFilters/parseAttributeFilters'
 
 const route = useRoute()
@@ -39,25 +42,39 @@ const onPageChange = async (event: PageState) => {
 
   const query = { offset: `${productListStore.offset}` }
   await router.push({ query: query })
-  await loadProducts(productListStore.currentSlug, null, productListStore.sortOption)
+  await loadProducts(
+    productListStore.currentSlug,
+    null,
+    productListStore.sortOption,
+    productListStore.selectedFilters,
+  )
 
-  productListStore.pageProducts = await parseProductsForCards(productListStore.products)
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-const onFiltersUpdate = async (filters: Record<string, string[]>) => {
+const onSortFiltersUpdate = async (filters: Record<string, string[]>) => {
   productListStore.productFilters = filters
-  await loadProducts(productListStore.currentSlug, null, productListStore.sortOption)
-  productListStore.pageProducts = await parseProductsForCards(productListStore.products)
+  await loadProducts(
+    productListStore.currentSlug,
+    null,
+    productListStore.sortOption,
+    productListStore.selectedFilters,
+  )
 }
 
 watch(
   () => route.params.categorySlug,
   async (newId) => {
+    productListStore.resetProductFilters()
     productListStore.offset = 0
     productListStore.currentSlug = newId as string
-    await loadProducts(newId as string, null, productListStore.sortOption)
-    productListStore.pageProducts = await parseProductsForCards(productListStore.products)
+    await loadProducts(
+      newId as string,
+      null,
+      productListStore.sortOption,
+      productListStore.selectedFilters,
+    )
+    productListStore.productFilters = parseAttributeFilters(productListStore.allCategoryProducts)
   },
 )
 
@@ -65,9 +82,15 @@ watch(
   () => route.path,
   async (newPath) => {
     if (newPath === '/catalog') {
+      productListStore.resetProductFilters()
       productListStore.offset = 0
-      await loadProducts(newPath as string, null, productListStore.sortOption)
-      productListStore.pageProducts = await parseProductsForCards(productListStore.products)
+      await loadProducts(
+        newPath as string,
+        null,
+        productListStore.sortOption,
+        productListStore.selectedFilters,
+      )
+      productListStore.productFilters = parseAttributeFilters(productListStore.allCategoryProducts)
     }
   },
 )
@@ -88,16 +111,39 @@ onMounted(async () => {
   }
 
   if (route.params.categorySlug && isCategoryExists) {
-    await loadProducts(productListStore.currentSlug, null, productListStore.sortOption)
-    productListStore.pageProducts = await parseProductsForCards(productListStore.products)
-    productListStore.productFilters = parseAttributeFilters(productListStore.products)
+    await loadProducts(
+      productListStore.currentSlug,
+      null,
+      productListStore.sortOption,
+      productListStore.selectedFilters,
+    )
+    productListStore.productFilters = parseAttributeFilters(productListStore.allCategoryProducts)
   } else if (route.path === '/catalog') {
-    await loadProducts(route.path, null, productListStore.sortOption)
-    productListStore.pageProducts = await parseProductsForCards(productListStore.products)
-    productListStore.productFilters = parseAttributeFilters(productListStore.products)
+    await loadProducts(
+      route.path,
+      null,
+      productListStore.sortOption,
+      productListStore.selectedFilters,
+    )
+    productListStore.productFilters = parseAttributeFilters(productListStore.allCategoryProducts)
   } else {
     router.push('/not-found')
   }
+
+  // TODO: read query params from URL
+  // const query = route.query
+  // const newFilters: Record<string, string[]> = {}
+
+  // for (const [key, value] of Object.entries(query)) {
+  //   if (key.startsWith('filter=') && typeof value === 'string') {
+  //     const attr = key.replace('filter=', '')
+  //     newFilters[attr] = value.split(',')
+  //   }
+  // }
+
+  // productListStore.productFilterQueries = newFilters
+  // productListStore.selectedFilters = buildFilterQuery(productListStore.productFilterQueries)
+  // console.log(productListStore.productFilterQueries, 'product filters on filter mounted')
 })
 </script>
 
@@ -121,7 +167,7 @@ onMounted(async () => {
       <div class="filters-container">
         <ProductFilters
           :filters="productListStore.productFilters"
-          @update:filters="onFiltersUpdate"
+          @update:filters="onSortFiltersUpdate"
         />
         <SortFilters />
       </div>
@@ -145,11 +191,7 @@ onMounted(async () => {
         />
       </div>
       <div class="footer">
-        <Button
-          label="Add to Bag"
-          outlined
-          @click="console.log(productListStore.productFilterQueries)"
-        />
+        <Button label="Add to Bag" outlined @click="console.log(categoriesStore.categories)" />
       </div>
     </div>
   </div>

@@ -3,19 +3,19 @@
 import Checkbox from 'primevue/checkbox'
 import { useProductListStore } from '@/stores/useProductListStore'
 import { useProductList } from '@/composables/useProductsList'
-import { parseProductsForCards } from '@/services/Catalog/parseProductsForCard/parseProductsForCard.ts'
 import { buildFilterQuery } from '@/services/Catalog/parseAttributeFilters/parseAttributeFilters.ts'
+import { useRoute } from 'vue-router'
+import { parseKebabToCamelCase } from '@/services/Catalog/parseKebabToCamelCase/parseKebabToCamelCase.ts'
+import { watch } from 'vue'
+import router from '@/router'
 
 const productListStore = useProductListStore()
 const { loadProducts } = useProductList(productListStore.currentSlug)
+const route = useRoute()
 
 const props = defineProps<{
   filters: Record<string, string[]>
 }>()
-
-// const emit = defineEmits<{
-//   (e: 'update:filters', value: Record<string, string[]>): void
-// }>()
 
 async function toggleFilter(attr: string, value: string) {
   if (!productListStore.productFilterQueries[attr]) {
@@ -32,32 +32,47 @@ async function toggleFilter(attr: string, value: string) {
     }
   }
 
-  const filters = buildFilterQuery(productListStore.productFilterQueries)
+  productListStore.selectedFilters = buildFilterQuery(productListStore.productFilterQueries)
 
-  await loadProducts(productListStore.currentSlug, null, productListStore.sortOption, filters)
-  productListStore.pageProducts = await parseProductsForCards(productListStore.products)
-  //productListStore.productFilters = parseAttributeFilters(productListStore.products)
+  await loadProducts(
+    productListStore.currentSlug,
+    null,
+    productListStore.sortOption,
+    productListStore.selectedFilters,
+  )
 
-  console.log(productListStore.productFilterQueries)
+  console.log(productListStore.selectedFilters, 'product filter queries')
 }
 
-// watch(
-//   () => productListStore.productFilterQueries,
-//   (newFilters) => {
-//     for (const key in newFilters) {
-//       if (!(key in productListStore.productFilters)) {
-//         productListStore.productFilters[key] = []
-//       }
-//     }
-//   },
-//   { immediate: true }
-// )
+watch(
+  () => productListStore.productFilterQueries,
+  (filters) => {
+    const query = { ...route.query }
+
+    for (const key in query) {
+      if (key.startsWith('filter=')) {
+        delete query[key]
+      }
+    }
+
+    for (const [key, values] of Object.entries(filters)) {
+      if (values.length) {
+        query[`filter=${key}`] = values.join(',')
+      }
+    }
+
+    if (!query.offset) query.offset = '0'
+
+    router.push({ query })
+  },
+  { deep: true },
+)
 </script>
 
 <template>
   <div class="product-filters">
     <div v-for="(values, attr) in props.filters" :key="attr" class="filter-group">
-      <h4>{{ attr }}</h4>
+      <h4>{{ parseKebabToCamelCase(attr) }}</h4>
       <div v-for="val in values" :key="val" class="filter-group-item">
         <Checkbox
           :inputId="`${attr}-${val}`"
