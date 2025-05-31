@@ -36,7 +36,7 @@ async function toggleFilter(attr: string, value: string) {
 
   await loadProducts(
     productListStore.currentSlug,
-    null,
+    productListStore.searchInput,
     productListStore.sortOption,
     productListStore.selectedFilters,
   )

@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { useProductList } from '@/composables/useProductsList'
 import { useProductListStore } from '@/stores/useProductListStore'
-import { parseProductsForCards } from '@/services/Catalog/parseProductsForCard/parseProductsForCard.ts'
 import { IconField, InputIcon, InputText } from 'primevue'
-import { ref, watch } from 'vue'
+import { watch } from 'vue'
 import { useRoute } from 'vue-router'
-//import router from '@/router'
+import router from '@/router'
 
-const searchInput = ref<string>()
 const productListStore = useProductListStore()
 
 const { loadProducts } = useProductList(productListStore.currentSlug)
@@ -15,25 +13,38 @@ const { loadProducts } = useProductList(productListStore.currentSlug)
 const route = useRoute()
 
 watch(
-  () => searchInput.value,
+  () => productListStore.searchInput,
   (newValue) => {
-    searchInput.value = newValue
+    productListStore.searchInput = newValue || null
   },
 )
 
 const handleKeydown = async (event: KeyboardEvent) => {
   if (event.key === 'Enter') {
+    const searchInput = productListStore.searchInput ? productListStore.searchInput!.trim() : null
+    onSearchSubmit(searchInput)
     await loadProducts(
       productListStore.currentSlug,
-      searchInput.value!.trim(),
+      searchInput,
       productListStore.sortOption,
+      productListStore.selectedFilters,
     )
-    productListStore.pageProducts = await parseProductsForCards(productListStore.products)
     productListStore.productsNotFound = productListStore.totalProducts === 0
-    const query = { keyword: `${searchInput.value!.trim()}` }
-    console.log(query, route.params)
-    // await router.push({ query: query })
   }
+}
+
+const onSearchSubmit = (keyword?: string | null) => {
+  const newQuery = {
+    ...route.query,
+    keyword,
+    offset: '0',
+  }
+
+  if (!keyword) delete newQuery.keyword
+
+  productListStore.offset = 0
+
+  router.push({ query: newQuery })
 }
 </script>
 
@@ -41,7 +52,11 @@ const handleKeydown = async (event: KeyboardEvent) => {
   <div class="search-bar">
     <IconField>
       <InputIcon class="pi pi-search" />
-      <InputText v-model="searchInput" placeholder="Search" @keydown="handleKeydown" />
+      <InputText
+        v-model="productListStore.searchInput"
+        placeholder="Search"
+        @keydown="handleKeydown"
+      />
     </IconField>
   </div>
 </template>

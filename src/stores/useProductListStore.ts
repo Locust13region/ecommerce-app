@@ -5,6 +5,7 @@ import { useRoute } from 'vue-router'
 import type { ProductCardItem } from '@/interfaces/catalogInterfaces'
 import { parseProductsForCards } from '@/services/Catalog/parseProductsForCard/parseProductsForCard.ts'
 import { useProductList } from '@/composables/useProductsList'
+import router from '@/router'
 
 export const useProductListStore = defineStore('productList', () => {
   const products = ref<ProductProjection[]>([])
@@ -21,6 +22,7 @@ export const useProductListStore = defineStore('productList', () => {
   const productFilters = ref<Record<string, string[]>>({})
   const productFilterQueries = ref<Record<string, string[]>>({})
   const selectedFilters = ref<string[]>([])
+  const searchInput = ref<string | null>()
 
   const sortOptions = [
     { label: 'Alphabet (A-Z)', value: 'name.en-US asc' },
@@ -31,6 +33,10 @@ export const useProductListStore = defineStore('productList', () => {
 
   function resetPagination() {
     offset.value = 0
+    searchInput.value = null
+    const newQuery = { ...route.query }
+    delete newQuery.keyword
+    router.push({ query: newQuery })
   }
 
   function resetProductFilters() {
@@ -38,10 +44,12 @@ export const useProductListStore = defineStore('productList', () => {
     selectedFilters.value = []
   }
 
+  // TODO: add method to set query parameters correctly to use on Catalog Page mount
+
   const { loadProducts } = useProductList(currentSlug.value)
 
   watch(sortOption, async (newSort) => {
-    await loadProducts(currentSlug.value, null, newSort)
+    await loadProducts(currentSlug.value, searchInput.value, newSort, selectedFilters.value)
     pageProducts.value = await parseProductsForCards(products.value)
   })
 
@@ -62,5 +70,6 @@ export const useProductListStore = defineStore('productList', () => {
     productFilters,
     productFilterQueries,
     selectedFilters,
+    searchInput,
   }
 })

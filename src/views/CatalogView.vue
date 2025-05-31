@@ -38,13 +38,16 @@ const onPageChange = async (event: PageState) => {
   productListStore.offset = event.first
   productListStore.currentSlug = route.params.categorySlug as string
 
-  console.log('current slug', productListStore.currentSlug)
+  const offset = productListStore.offset
+  const newQuery = {
+    ...route.query,
+    offset,
+  }
 
-  const query = { offset: `${productListStore.offset}` }
-  await router.push({ query: query })
+  await router.push({ query: newQuery })
   await loadProducts(
     productListStore.currentSlug,
-    null,
+    productListStore.searchInput,
     productListStore.sortOption,
     productListStore.selectedFilters,
   )
@@ -56,7 +59,7 @@ const onSortFiltersUpdate = async (filters: Record<string, string[]>) => {
   productListStore.productFilters = filters
   await loadProducts(
     productListStore.currentSlug,
-    null,
+    productListStore.searchInput,
     productListStore.sortOption,
     productListStore.selectedFilters,
   )
@@ -65,12 +68,13 @@ const onSortFiltersUpdate = async (filters: Record<string, string[]>) => {
 watch(
   () => route.params.categorySlug,
   async (newId) => {
+    productListStore.resetPagination()
     productListStore.resetProductFilters()
     productListStore.offset = 0
     productListStore.currentSlug = newId as string
     await loadProducts(
       newId as string,
-      null,
+      productListStore.searchInput,
       productListStore.sortOption,
       productListStore.selectedFilters,
     )
@@ -82,11 +86,12 @@ watch(
   () => route.path,
   async (newPath) => {
     if (newPath === '/catalog') {
+      productListStore.resetPagination()
       productListStore.resetProductFilters()
       productListStore.offset = 0
       await loadProducts(
         newPath as string,
-        null,
+        productListStore.searchInput,
         productListStore.sortOption,
         productListStore.selectedFilters,
       )
@@ -96,6 +101,7 @@ watch(
 )
 
 onMounted(async () => {
+  productListStore.resetPagination()
   productListStore.currentSlug = route.params.categorySlug as string
   await categoriesStore.loadCategories()
   pageMenu.value = transformCategoriesToMegaMenu(categoriesStore.categories, 'en-US', true)
@@ -113,7 +119,7 @@ onMounted(async () => {
   if (route.params.categorySlug && isCategoryExists) {
     await loadProducts(
       productListStore.currentSlug,
-      null,
+      productListStore.searchInput,
       productListStore.sortOption,
       productListStore.selectedFilters,
     )
@@ -121,7 +127,7 @@ onMounted(async () => {
   } else if (route.path === '/catalog') {
     await loadProducts(
       route.path,
-      null,
+      productListStore.searchInput,
       productListStore.sortOption,
       productListStore.selectedFilters,
     )
@@ -129,21 +135,6 @@ onMounted(async () => {
   } else {
     router.push('/not-found')
   }
-
-  // TODO: read query params from URL
-  // const query = route.query
-  // const newFilters: Record<string, string[]> = {}
-
-  // for (const [key, value] of Object.entries(query)) {
-  //   if (key.startsWith('filter=') && typeof value === 'string') {
-  //     const attr = key.replace('filter=', '')
-  //     newFilters[attr] = value.split(',')
-  //   }
-  // }
-
-  // productListStore.productFilterQueries = newFilters
-  // productListStore.selectedFilters = buildFilterQuery(productListStore.productFilterQueries)
-  // console.log(productListStore.productFilterQueries, 'product filters on filter mounted')
 })
 </script>
 
