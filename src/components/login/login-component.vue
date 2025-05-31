@@ -57,10 +57,7 @@ const formSubmit = async (event: FormSubmitEvent) => {
         v-model="password"
         toggleMask
       />
-      <div
-        v-if="$form.password?.invalid"
-        class="flex flex-col gap-1 password-validation-error-block"
-      >
+      <div v-if="$form.password?.invalid" class="password-validation-error-block">
         <Message
           class="password-validation-error-message"
           v-for="(error, index) of $form.password.errors"
@@ -88,6 +85,8 @@ const formSubmit = async (event: FormSubmitEvent) => {
 }
 
 .password-validation-error-message {
+  display: flex;
+  flex-direction: column;
   max-width: 235px;
   word-break: normal;
 }
