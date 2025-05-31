@@ -32,7 +32,7 @@ const categoriesStore = useCategoriesStore()
 
 const productListStore = useProductListStore()
 
-const { loadProducts, loading } = useProductList(productListStore.currentSlug)
+const { loadProducts, loading } = useProductList()
 
 const onPageChange = async (event: PageState) => {
   productListStore.offset = event.first
@@ -45,12 +45,7 @@ const onPageChange = async (event: PageState) => {
   }
 
   await router.push({ query: newQuery })
-  await loadProducts(
-    productListStore.currentSlug,
-    productListStore.searchInput,
-    productListStore.sortOption,
-    productListStore.selectedFilters,
-  )
+  await loadProducts()
 
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
@@ -70,14 +65,9 @@ watch(
   async (newId) => {
     productListStore.resetPagination()
     productListStore.resetProductFilters()
-    productListStore.offset = 0
+
     productListStore.currentSlug = newId as string
-    await loadProducts(
-      newId as string,
-      productListStore.searchInput,
-      productListStore.sortOption,
-      productListStore.selectedFilters,
-    )
+    await loadProducts(newId as string)
     productListStore.productFilters = parseAttributeFilters(productListStore.allCategoryProducts)
   },
 )
@@ -88,17 +78,20 @@ watch(
     if (newPath === '/catalog') {
       productListStore.resetPagination()
       productListStore.resetProductFilters()
-      productListStore.offset = 0
-      await loadProducts(
-        newPath as string,
-        productListStore.searchInput,
-        productListStore.sortOption,
-        productListStore.selectedFilters,
-      )
+      await loadProducts(newPath as string)
       productListStore.productFilters = parseAttributeFilters(productListStore.allCategoryProducts)
     }
   },
 )
+
+// watch(() => route.query,
+// async (newQuery) => {
+//   if (!newQuery.offset) {
+//     productListStore.resetPagination()
+//     productListStore.resetProductFilters()
+//     await loadProducts()
+//   }
+// })
 
 onMounted(async () => {
   productListStore.resetPagination()
@@ -117,21 +110,15 @@ onMounted(async () => {
   }
 
   if (route.params.categorySlug && isCategoryExists) {
-    await loadProducts(
-      productListStore.currentSlug,
-      productListStore.searchInput,
-      productListStore.sortOption,
-      productListStore.selectedFilters,
-    )
+    await loadProducts()
     productListStore.productFilters = parseAttributeFilters(productListStore.allCategoryProducts)
+    await productListStore.parseQueryParamsOnLoad()
+    await loadProducts()
   } else if (route.path === '/catalog') {
-    await loadProducts(
-      route.path,
-      productListStore.searchInput,
-      productListStore.sortOption,
-      productListStore.selectedFilters,
-    )
+    await loadProducts(route.path)
     productListStore.productFilters = parseAttributeFilters(productListStore.allCategoryProducts)
+    await productListStore.parseQueryParamsOnLoad()
+    await loadProducts()
   } else {
     router.push('/not-found')
   }
@@ -182,7 +169,7 @@ onMounted(async () => {
         />
       </div>
       <div class="footer">
-        <Button label="Add to Bag" outlined @click="console.log(categoriesStore.categories)" />
+        <Button label="Add to Bag" outlined @click="console.log(productListStore.productFilters)" />
       </div>
     </div>
   </div>

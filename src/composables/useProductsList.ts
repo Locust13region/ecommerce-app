@@ -5,17 +5,16 @@ import { parseProductsForCards } from '@/services/Catalog/parseProductsForCard/p
 
 const productListStore = useProductListStore()
 
-export function useProductList(slugRef: string) {
+export function useProductList() {
   const loading = ref(false)
 
   const loadProducts = async (
-    slug: string = slugRef,
-    name: string | null = null,
-    sort?: string,
-    filters?: string[],
+    slug: string = productListStore.currentSlug,
+    name: string | null | undefined = productListStore.searchInput,
+    sort: string = productListStore.sortOption,
+    filters: string[] = productListStore.selectedFilters,
     limit: number = 100,
   ) => {
-    // if (!slug) return
     loading.value = true
     try {
       const response = await fetchProducts(
@@ -39,10 +38,6 @@ export function useProductList(slugRef: string) {
       loading.value = false
     }
   }
-
-  // watch(slugRef, () => {
-  //   productListStore.offset = 0
-  // })
 
   return {
     loading,

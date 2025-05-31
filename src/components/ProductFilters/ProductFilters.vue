@@ -4,14 +4,14 @@ import Checkbox from 'primevue/checkbox'
 import { useProductListStore } from '@/stores/useProductListStore'
 import { useProductList } from '@/composables/useProductsList'
 import { buildFilterQuery } from '@/services/Catalog/parseAttributeFilters/parseAttributeFilters.ts'
-import { useRoute } from 'vue-router'
+// import { useRoute } from 'vue-router'
 import { parseKebabToCamelCase } from '@/services/Catalog/parseKebabToCamelCase/parseKebabToCamelCase.ts'
 import { watch } from 'vue'
 import router from '@/router'
 
 const productListStore = useProductListStore()
-const { loadProducts } = useProductList(productListStore.currentSlug)
-const route = useRoute()
+const { loadProducts } = useProductList()
+// const route = useRoute()
 
 const props = defineProps<{
   filters: Record<string, string[]>
@@ -34,34 +34,27 @@ async function toggleFilter(attr: string, value: string) {
 
   productListStore.selectedFilters = buildFilterQuery(productListStore.productFilterQueries)
 
-  await loadProducts(
-    productListStore.currentSlug,
-    productListStore.searchInput,
-    productListStore.sortOption,
-    productListStore.selectedFilters,
-  )
-
-  console.log(productListStore.selectedFilters, 'product filter queries')
+  await loadProducts()
 }
 
 watch(
   () => productListStore.productFilterQueries,
   (filters) => {
-    const query = { ...route.query }
-
-    for (const key in query) {
-      if (key.startsWith('filter=')) {
-        delete query[key]
-      }
-    }
+    const query: Record<string, string> = {}
 
     for (const [key, values] of Object.entries(filters)) {
-      if (values.length) {
-        query[`filter=${key}`] = values.join(',')
+      if (Array.isArray(values) && values.length > 0) {
+        query[key] = values.map(encodeURIComponent).join(',')
       }
     }
 
-    if (!query.offset) query.offset = '0'
+    if (productListStore.searchInput?.trim()) {
+      query.keyword = productListStore.searchInput.trim()
+    }
+
+    if (productListStore.offset && productListStore.offset > 0) {
+      query.offset = String(productListStore.offset)
+    }
 
     router.push({ query })
   },
@@ -76,9 +69,9 @@ watch(
       <div v-for="val in values" :key="val" class="filter-group-item">
         <Checkbox
           :inputId="`${attr}-${val}`"
-          :value="!val"
-          :modelValue="productListStore.productFilters[attr] || []"
-          @change="toggleFilter(attr, val)"
+          :value="String(val)"
+          :modelValue="productListStore.productFilterQueries[attr] || []"
+          @change="toggleFilter(attr, val.toString())"
         />
         <label :for="`${attr}-${val}`">{{ val }}</label>
       </div>

@@ -5,7 +5,7 @@ import { useRoute } from 'vue-router'
 import type { ProductCardItem } from '@/interfaces/catalogInterfaces'
 import { parseProductsForCards } from '@/services/Catalog/parseProductsForCard/parseProductsForCard.ts'
 import { useProductList } from '@/composables/useProductsList'
-import router from '@/router'
+import { buildFilterQuery } from '@/services/Catalog/parseAttributeFilters/parseAttributeFilters'
 
 export const useProductListStore = defineStore('productList', () => {
   const products = ref<ProductProjection[]>([])
@@ -34,9 +34,6 @@ export const useProductListStore = defineStore('productList', () => {
   function resetPagination() {
     offset.value = 0
     searchInput.value = null
-    const newQuery = { ...route.query }
-    delete newQuery.keyword
-    router.push({ query: newQuery })
   }
 
   function resetProductFilters() {
@@ -44,9 +41,38 @@ export const useProductListStore = defineStore('productList', () => {
     selectedFilters.value = []
   }
 
-  // TODO: add method to set query parameters correctly to use on Catalog Page mount
+  const parseQueryParamsOnLoad = () => {
+    const query = route.query
 
-  const { loadProducts } = useProductList(currentSlug.value)
+    if (query.offset) {
+      const parsedOffset = parseInt(query.offset as string, 10)
+      if (!isNaN(parsedOffset)) {
+        offset.value = parsedOffset
+      }
+    }
+
+    if (query.keyword) {
+      searchInput.value = query.keyword as string
+    }
+
+    const filterMap: Record<string, string[]> = {}
+
+    for (const key in query) {
+      if (key === 'offset' || key === 'keyword') continue
+
+      const rawValue = query[key]
+      if (typeof rawValue === 'string') {
+        filterMap[key] = rawValue.split(',').map(decodeURIComponent)
+      } else if (Array.isArray(rawValue)) {
+        filterMap[key] = rawValue.flatMap((val) => val!.split(',').map(decodeURIComponent))
+      }
+    }
+
+    productFilterQueries.value = filterMap
+    selectedFilters.value = buildFilterQuery(productFilterQueries.value)
+  }
+
+  const { loadProducts } = useProductList()
 
   watch(sortOption, async (newSort) => {
     await loadProducts(currentSlug.value, searchInput.value, newSort, selectedFilters.value)
@@ -63,6 +89,7 @@ export const useProductListStore = defineStore('productList', () => {
     currentSlug,
     resetPagination,
     resetProductFilters,
+    parseQueryParamsOnLoad,
     pageProducts,
     productsNotFound,
     sortOption,

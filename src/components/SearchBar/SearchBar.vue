@@ -8,7 +8,7 @@ import router from '@/router'
 
 const productListStore = useProductListStore()
 
-const { loadProducts } = useProductList(productListStore.currentSlug)
+const { loadProducts } = useProductList()
 
 const route = useRoute()
 
