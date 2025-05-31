@@ -7,9 +7,8 @@ import { useToast } from 'primevue/usetoast'
 import type { ClientResponse, Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
 import { saveChanges } from '@/services/saveChanges/saveChanges'
 import { reactive, ref } from 'vue'
-import { useAuth } from '@/composables/useAuth'
+import { getCustomer } from '@/services/saveChanges/getCustomer'
 
-const { getApiRoot } = useAuth()
 const toast = useToast()
 const flagEditMode = ref(false)
 const userData = reactive({
@@ -71,13 +70,11 @@ function switchToReadMode() {
   flagEditMode.value = false
 }
 
-getApiRoot()
-  .me()
-  .get()
-  .execute()
-  .then((res) => {
-    getCustomerData(res)
-  })
+getCustomer(getCustomerData).catch((error) => {
+  if (error instanceof Error) {
+    toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
+  }
+})
 </script>
 <template>
   <Form

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useAuth } from '@/composables/useAuth'
 import { ref } from 'vue'
 import type { Address } from '@/interfaces/signUpFormInterfaces'
 import type {
@@ -14,17 +13,16 @@ import Card from 'primevue/card'
 import { personalDataValidator } from '@/services/PersonalDataValidator/PersonalDataValidator'
 import { countriesSelect } from '@/consts/signUpFormConsts'
 import { saveChanges } from '@/services/saveChanges/saveChanges'
+import { getCustomer } from '@/services/saveChanges/getCustomer'
 
-const { getApiRoot } = useAuth()
 const toast = useToast()
-
 const billingAddressesHolder = ref<BaseAddress[]>([])
 const defaultAddressHolder = ref<BaseAddress[]>([])
 const addNewAddressMode = ref(false)
 const currentEditField = ref()
 const defaultValueForCountrySelector = ref()
 
-function getCustomerData(response: ClientResponse) {
+function getCustomerAddresses(response: ClientResponse) {
   const customerData: Customer = response.body
   const addressesList: BaseAddress[] = customerData.addresses
   const defaultBillingId = customerData.defaultBillingAddressId
@@ -168,13 +166,11 @@ async function editAddress(event: FormSubmitEvent) {
     }
   }
 }
-getApiRoot()
-  .me()
-  .get()
-  .execute()
-  .then((res) => {
-    getCustomerData(res)
-  })
+getCustomer(getCustomerAddresses).catch((error) => {
+  if (error instanceof Error) {
+    toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
+  }
+})
 </script>
 
 <template>
