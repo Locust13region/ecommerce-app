@@ -23,12 +23,13 @@ function addNewAddressHandler() {
 function getCustomerAddresses(response: ClientResponse) {
   const customerData: Customer = response.body
   const addressesList: BaseAddress[] = customerData.addresses
-  const defaultShippingId = customerData.defaultBillingAddressId
+  const defaultShippingId = customerData.defaultShippingAddressId
   let shippingIDs: string[] = []
 
   if (customerData.shippingAddressIds) {
     shippingIDs = customerData.shippingAddressIds
   }
+
   addressesList.forEach((address: BaseAddress) => {
     if (address.id) {
       if (address.id === defaultShippingId) {
@@ -54,6 +55,7 @@ async function saveNewAddress(event: FormSubmitEvent) {
       const actionAddAddress: MyCustomerUpdateAction = { action: 'addAddress', address: newAddress }
       const res = await saveChanges([actionAddAddress])
       const newAddressId = res.body.addresses[res.body.addresses.length - 1].id
+
       const actionAddId: MyCustomerUpdateAction = {
         action: 'addShippingAddressId',
         addressId: newAddressId,
