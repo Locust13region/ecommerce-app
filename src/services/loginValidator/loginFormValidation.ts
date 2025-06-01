@@ -12,7 +12,6 @@ export const loginValidator = ref(
       password: z
         .string()
         .min(8, { message: 'Minimum 8 characters.' })
-        .max(12, { message: 'Maximum 12 characters.' })
         .refine((value) => /[a-z]/.test(value), {
           message: 'Must have a lowercase letter.',
         })
