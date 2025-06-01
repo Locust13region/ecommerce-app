@@ -36,7 +36,11 @@ export function parseProductsForCards(productsData: ProductProjection[]): Produc
   })
 }
 
-function formatPrice(cents: number, locale: string = 'en-US', currency: string = 'USD'): string {
+export function formatPrice(
+  cents: number,
+  locale: string = 'en-US',
+  currency: string = 'USD',
+): string {
   const dollars = cents / 100
   return dollars.toLocaleString(locale, {
     style: 'currency',

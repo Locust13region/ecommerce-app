@@ -24,6 +24,12 @@ export const useProductListStore = defineStore('productList', () => {
   const selectedFilters = ref<string[]>([])
   const searchInput = ref<string | null>()
 
+  const minCategoryPrice = ref(0)
+  const maxCategoryPrice = ref(10000000)
+
+  const priceRange = ref<[number, number]>([minCategoryPrice.value, maxCategoryPrice.value])
+  const selectedPriceRange = ref<[number, number] | null>(null)
+
   const sortOptions = [
     { label: 'Alphabet (A-Z)', value: 'name.en-US asc' },
     { label: 'Alphabet (Z-A)', value: 'name.en-US desc' },
@@ -58,13 +64,25 @@ export const useProductListStore = defineStore('productList', () => {
     const filterMap: Record<string, string[]> = {}
 
     for (const key in query) {
-      if (key === 'offset' || key === 'keyword') continue
+      if (key === 'offset' || key === 'keyword' || key === 'price') continue
 
       const rawValue = query[key]
+      console.log(rawValue, 'parsing raw value')
       if (typeof rawValue === 'string') {
         filterMap[key] = rawValue.split(',').map(decodeURIComponent)
       } else if (Array.isArray(rawValue)) {
         filterMap[key] = rawValue.flatMap((val) => val!.split(',').map(decodeURIComponent))
+      }
+    }
+
+    if (query.price && typeof query.price === 'string') {
+      const [minStr, maxStr] = query.price.split('-')
+      const min = parseInt(minStr, 10)
+      const max = parseInt(maxStr, 10)
+      if (!isNaN(min) && !isNaN(max)) {
+        selectedPriceRange.value = [min, max]
+        // minCategoryPrice.value = min
+        // maxCategoryPrice.value = max
       }
     }
 
@@ -73,6 +91,33 @@ export const useProductListStore = defineStore('productList', () => {
   }
 
   const { loadProducts } = useProductList()
+
+  watch(
+    allCategoryProducts,
+    (products) => {
+      const prices: number[] = []
+
+      for (const product of products) {
+        const variants = [product.masterVariant, ...product.variants]
+        for (const variant of variants) {
+          for (const price of variant.prices || []) {
+            if (typeof price.value.centAmount === 'number') {
+              prices.push(price.value.centAmount)
+            }
+          }
+        }
+      }
+
+      if (prices.length) {
+        minCategoryPrice.value = 0 //Math.min(...prices)
+        maxCategoryPrice.value = Math.max(...prices)
+      } else {
+        minCategoryPrice.value = 0
+        maxCategoryPrice.value = 0
+      }
+    },
+    { immediate: true },
+  )
 
   watch(sortOption, async (newSort) => {
     await loadProducts(currentSlug.value, searchInput.value, newSort, selectedFilters.value)
@@ -98,5 +143,9 @@ export const useProductListStore = defineStore('productList', () => {
     productFilterQueries,
     selectedFilters,
     searchInput,
+    priceRange,
+    selectedPriceRange,
+    minCategoryPrice,
+    maxCategoryPrice,
   }
 })

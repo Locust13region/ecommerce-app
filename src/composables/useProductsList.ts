@@ -1,5 +1,8 @@
 import { ref } from 'vue'
-import { fetchProducts } from '@/services/Catalog/FetchProducts/fetchProducts.ts'
+import {
+  fetchProducts,
+  fetchAllProductsByCategorySlug,
+} from '@/services/Catalog/FetchProducts/fetchProducts.ts'
 import { useProductListStore } from '@/stores/useProductListStore'
 import { parseProductsForCards } from '@/services/Catalog/parseProductsForCard/parseProductsForCard.ts'
 
@@ -14,6 +17,7 @@ export function useProductList() {
     sort: string = productListStore.sortOption,
     filters: string[] = productListStore.selectedFilters,
     limit: number = 100,
+    priceRange: [number, number] | null = productListStore.selectedPriceRange,
   ) => {
     loading.value = true
     try {
@@ -24,9 +28,10 @@ export function useProductList() {
         name,
         sort,
         filters,
+        priceRange,
       )
       productListStore.products = response.results.slice(0, 9)
-      productListStore.allCategoryProducts = response.results
+      //productListStore.allCategoryProducts = response.results
       productListStore.totalProducts = response.total
 
       productListStore.pageProducts = await parseProductsForCards(productListStore.products)
@@ -39,8 +44,27 @@ export function useProductList() {
     }
   }
 
+  const loadFilters = async (slug: string = productListStore.currentSlug) => {
+    try {
+      const allProductsFetch = await fetchAllProductsByCategorySlug(slug)
+      const filters = allProductsFetch.filters
+
+      const allCategoryProducts = allProductsFetch.products
+      productListStore.allCategoryProducts = allCategoryProducts
+
+      productListStore.productFilters = filters
+    } catch (error) {
+      console.error('Failed to load products:', error)
+      productListStore.products = []
+      productListStore.totalProducts = 0
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     loading,
     loadProducts,
+    loadFilters,
   }
 }

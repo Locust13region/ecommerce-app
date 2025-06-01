@@ -4,14 +4,14 @@ import Checkbox from 'primevue/checkbox'
 import { useProductListStore } from '@/stores/useProductListStore'
 import { useProductList } from '@/composables/useProductsList'
 import { buildFilterQuery } from '@/services/Catalog/parseAttributeFilters/parseAttributeFilters.ts'
-// import { useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { parseKebabToCamelCase } from '@/services/Catalog/parseKebabToCamelCase/parseKebabToCamelCase.ts'
 import { watch } from 'vue'
 import router from '@/router'
 
 const productListStore = useProductListStore()
 const { loadProducts } = useProductList()
-// const route = useRoute()
+const route = useRoute()
 
 const props = defineProps<{
   filters: Record<string, string[]>
@@ -41,7 +41,7 @@ watch(
   () => productListStore.productFilterQueries,
   (filters) => {
     const query: Record<string, string> = {}
-
+    // const query = { ...route.query }
     for (const [key, values] of Object.entries(filters)) {
       if (Array.isArray(values) && values.length > 0) {
         query[key] = values.map(encodeURIComponent).join(',')
@@ -55,6 +55,8 @@ watch(
     if (productListStore.offset && productListStore.offset > 0) {
       query.offset = String(productListStore.offset)
     }
+
+    if (route.query.price) query.price = route.query.price as string
 
     router.push({ query })
   },

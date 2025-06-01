@@ -18,11 +18,7 @@ import SearchBar from '@/components/SearchBar/SearchBar.vue'
 import SortFilters from '@/components/SortFilters/SortFilters.vue'
 import { Button } from 'primevue'
 import ProductFilters from '@/components/ProductFilters/ProductFilters.vue'
-import {
-  // buildFilterQuery,
-  parseAttributeFilters,
-} from '@/services/Catalog/parseAttributeFilters/parseAttributeFilters.ts'
-// import { buildFilterQuery } from '@/services/Catalog/parseAttributeFilters/parseAttributeFilters'
+import PriceRangeSlider from '@/components/PriceRangeSlider/PriceRangeSlider.vue'
 
 const route = useRoute()
 
@@ -32,7 +28,7 @@ const categoriesStore = useCategoriesStore()
 
 const productListStore = useProductListStore()
 
-const { loadProducts, loading } = useProductList()
+const { loadProducts, loadFilters, loading } = useProductList()
 
 const onPageChange = async (event: PageState) => {
   productListStore.offset = event.first
@@ -52,12 +48,7 @@ const onPageChange = async (event: PageState) => {
 
 const onSortFiltersUpdate = async (filters: Record<string, string[]>) => {
   productListStore.productFilters = filters
-  await loadProducts(
-    productListStore.currentSlug,
-    productListStore.searchInput,
-    productListStore.sortOption,
-    productListStore.selectedFilters,
-  )
+  await loadProducts()
 }
 
 watch(
@@ -67,8 +58,8 @@ watch(
     productListStore.resetProductFilters()
 
     productListStore.currentSlug = newId as string
+    await loadFilters(newId as string)
     await loadProducts(newId as string)
-    productListStore.productFilters = parseAttributeFilters(productListStore.allCategoryProducts)
   },
 )
 
@@ -78,20 +69,11 @@ watch(
     if (newPath === '/catalog') {
       productListStore.resetPagination()
       productListStore.resetProductFilters()
+      await loadFilters(newPath as string)
       await loadProducts(newPath as string)
-      productListStore.productFilters = parseAttributeFilters(productListStore.allCategoryProducts)
     }
   },
 )
-
-// watch(() => route.query,
-// async (newQuery) => {
-//   if (!newQuery.offset) {
-//     productListStore.resetPagination()
-//     productListStore.resetProductFilters()
-//     await loadProducts()
-//   }
-// })
 
 onMounted(async () => {
   productListStore.resetPagination()
@@ -110,19 +92,20 @@ onMounted(async () => {
   }
 
   if (route.params.categorySlug && isCategoryExists) {
-    await loadProducts()
-    productListStore.productFilters = parseAttributeFilters(productListStore.allCategoryProducts)
+    await loadFilters()
+
     await productListStore.parseQueryParamsOnLoad()
     await loadProducts()
   } else if (route.path === '/catalog') {
-    await loadProducts(route.path)
-    productListStore.productFilters = parseAttributeFilters(productListStore.allCategoryProducts)
+    await loadFilters()
     await productListStore.parseQueryParamsOnLoad()
     await loadProducts()
   } else {
     router.push('/not-found')
   }
 })
+
+// TODO: Add Panel to collapse filters
 </script>
 
 <template>
@@ -143,6 +126,7 @@ onMounted(async () => {
         <SearchBar />
       </div>
       <div class="filters-container">
+        <PriceRangeSlider />
         <ProductFilters
           :filters="productListStore.productFilters"
           @update:filters="onSortFiltersUpdate"
@@ -169,7 +153,11 @@ onMounted(async () => {
         />
       </div>
       <div class="footer">
-        <Button label="Add to Bag" outlined @click="console.log(productListStore.productFilters)" />
+        <Button
+          label="Add to Bag"
+          outlined
+          @click="console.log(productListStore.productFilterQueries)"
+        />
       </div>
     </div>
   </div>
@@ -210,6 +198,7 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 }
 .spinner {
   position: absolute;
