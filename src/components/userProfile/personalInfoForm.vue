@@ -17,7 +17,7 @@ const userData = reactive({
   dateOfBirth: null as Date | null,
   email: '',
 })
-const userNewData = reactive({
+const userEditData = reactive({
   firstName: '',
   lastName: '',
   dateOfBirth: null as Date | null,
@@ -36,31 +36,32 @@ async function onSubmit(event: FormSubmitEvent) {
   if (event.valid) {
     const eventData = event.states
     const actions: MyCustomerUpdateAction[] = []
-    if (eventData.firstName.value && userData.firstName !== userNewData.firstName) {
+    if (eventData.firstName.value && userData.firstName !== userEditData.firstName) {
       const name = eventData.firstName.value
       actions.push({ action: 'setFirstName', firstName: name })
-      userData.firstName = userNewData.firstName
+      userData.firstName = userEditData.firstName
     }
-    if (eventData.lastName.value && userData.lastName !== userNewData.lastName) {
+    if (eventData.lastName.value && userData.lastName !== userEditData.lastName) {
       const name = eventData.lastName.value
       actions.push({ action: 'setLastName', lastName: name })
-      userData.lastName = userNewData.lastName
+      userData.lastName = userEditData.lastName
     }
-    if (eventData.dateOfBirth.value && userData.dateOfBirth !== userNewData.dateOfBirth) {
+    if (eventData.dateOfBirth.value && userData.dateOfBirth !== userEditData.dateOfBirth) {
       let date = eventData.dateOfBirth.value
       if (date instanceof Date) {
         const dateObj = date
         date = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}-${dateObj.getDate().toString().padStart(2, '0')}`
       }
       actions.push({ action: 'setDateOfBirth', dateOfBirth: date })
-      userData.dateOfBirth = userNewData.dateOfBirth
+      userData.dateOfBirth = userEditData.dateOfBirth
     }
-    if (eventData.email.value && userData.email !== userNewData.email) {
+    if (eventData.email.value && userData.email !== userEditData.email) {
       const email = eventData.email.value
       actions.push({ action: 'changeEmail', email: email })
-      userData.email = userNewData.email
+      userData.email = userEditData.email
     }
     try {
+      console.log(actions)
       await saveChanges(actions)
       switchToReadMode()
       toast.add({ severity: 'success', summary: 'Changes saved', life: 5000 })
@@ -74,12 +75,12 @@ async function onSubmit(event: FormSubmitEvent) {
 
 function switchToEditMode() {
   flagEditMode.value = true
+  Object.assign(userEditData, userData)
 }
 
 function switchToReadMode() {
   flagEditMode.value = false
-  // const errors = document.querySelectorAll('.validation-error-message')
-  // errors.forEach((err) => )
+  Object.assign(userEditData, userData)
 }
 
 getCustomer(getCustomerData).catch((error) => {
@@ -104,7 +105,7 @@ getCustomer(getCustomerData).catch((error) => {
           v-if="flagEditMode"
           class="input-first-name"
           name="firstName"
-          v-model="userNewData.firstName"
+          v-model="userEditData.firstName"
         />
         <Message
           class="validation-error-message"
@@ -125,7 +126,7 @@ getCustomer(getCustomerData).catch((error) => {
           v-if="flagEditMode"
           class="input-last-name"
           name="lastName"
-          v-model="userNewData.lastName"
+          v-model="userEditData.lastName"
         ></InputText>
         <Message
           class="validation-error-message"
@@ -146,7 +147,7 @@ getCustomer(getCustomerData).catch((error) => {
           v-if="flagEditMode"
           class="input-email"
           name="email"
-          v-model="userNewData.email"
+          v-model="userEditData.email"
         ></InputText>
         <Message
           class="validation-error-message"
@@ -171,7 +172,7 @@ getCustomer(getCustomerData).catch((error) => {
           v-if="flagEditMode"
           class="input-date-of-birth"
           name="dateOfBirth"
-          v-model="userNewData.dateOfBirth"
+          v-model="userEditData.dateOfBirth"
           dateFormat="yy-mm-dd"
           :manualInput="false"
           showIcon
