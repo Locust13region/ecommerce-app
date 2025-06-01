@@ -5,6 +5,7 @@ import BreadCrumbs from '@/components/BreadCrumbs/BreadCrumbs.vue'
 import { onMounted, ref, watch } from 'vue'
 import { transformCategoriesToMegaMenu } from '@/services/Catalog/ParseCategoriesToMegaMenu/parseCategoriesToMegaMenu'
 import ProductCard from '@/components/ProductCard/ProductCard.vue'
+import Panel from 'primevue/panel'
 // import { parseProductsForCards } from '@/services/Catalog/parseProductsForCard/parseProductsForCard.ts'
 import { useRoute } from 'vue-router'
 import { useCategoriesStore } from '@/composables/useCategoryStore'
@@ -16,7 +17,6 @@ import { useProductListStore } from '@/stores/useProductListStore'
 import ProgressSpinner from 'primevue/progressspinner'
 import SearchBar from '@/components/SearchBar/SearchBar.vue'
 import SortFilters from '@/components/SortFilters/SortFilters.vue'
-import { Button } from 'primevue'
 import ProductFilters from '@/components/ProductFilters/ProductFilters.vue'
 import PriceRangeSlider from '@/components/PriceRangeSlider/PriceRangeSlider.vue'
 
@@ -126,11 +126,13 @@ onMounted(async () => {
         <SearchBar />
       </div>
       <div class="filters-container">
-        <PriceRangeSlider />
-        <ProductFilters
-          :filters="productListStore.productFilters"
-          @update:filters="onSortFiltersUpdate"
-        />
+        <Panel header="Filters" toggleable collapsed>
+          <PriceRangeSlider />
+          <ProductFilters
+            :filters="productListStore.productFilters"
+            @update:filters="onSortFiltersUpdate"
+          />
+        </Panel>
         <SortFilters />
       </div>
       <div class="catalog-main-product-list">
@@ -152,13 +154,7 @@ onMounted(async () => {
           @page="onPageChange"
         />
       </div>
-      <div class="footer">
-        <Button
-          label="Add to Bag"
-          outlined
-          @click="console.log(productListStore.productFilterQueries)"
-        />
-      </div>
+      <div class="footer"></div>
     </div>
   </div>
 </template>
@@ -207,5 +203,6 @@ onMounted(async () => {
 }
 .filters-container {
   width: 100%;
+  margin: 10px 0px;
 }
 </style>

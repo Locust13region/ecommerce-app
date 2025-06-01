@@ -104,4 +104,7 @@ nav
   > .p-megamenu-item-label {
   color: var(--marked-text);
 }
+.p-megamenu.p-megamenu-mobile .p-megamenu-root-list {
+  width: auto;
+}
 </style>
