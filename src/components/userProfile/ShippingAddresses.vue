@@ -1,13 +1,7 @@
 <script setup lang="ts">
-import { useAuth } from '@/composables/useAuth'
 import { ref } from 'vue'
 import type { Address } from '@/interfaces/signUpFormInterfaces'
-import type {
-  BaseAddress,
-  ClientResponse,
-  Customer,
-  MyCustomerUpdateAction,
-} from '@commercetools/platform-sdk'
+import type { BaseAddress, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
 import { Button, InputText, Message, Select, useToast } from 'primevue'
 import { Form, FormField, type FormSubmitEvent } from '@primevue/forms'
 import Card from 'primevue/card'
@@ -15,35 +9,12 @@ import { personalDataValidator } from '@/services/PersonalDataValidator/Personal
 import { countriesSelect } from '@/consts/signUpFormConsts'
 import { saveChanges } from '@/services/saveChanges/saveChanges'
 
-const { getApiRoot } = useAuth()
 const toast = useToast()
-
 const shippingAddressesHolder = ref<BaseAddress[]>([])
 const defaultAddressHolder = ref<BaseAddress[]>([])
 const addNewAddressMode = ref(false)
 const currentEditField = ref()
 const defaultValueForCountrySelector = ref()
-
-function getCustomerData(response: ClientResponse) {
-  const customerData: Customer = response.body
-  const addressesList: BaseAddress[] = customerData.addresses
-  const defaultShippingId = customerData.defaultShippingAddressId
-  let shippingIDs: string[] = []
-
-  if (customerData.shippingAddressIds) {
-    shippingIDs = customerData.shippingAddressIds
-  }
-  addressesList.forEach((address: BaseAddress) => {
-    if (address.id) {
-      if (address.id === defaultShippingId) {
-        defaultAddressHolder.value.push(address)
-      }
-      if (shippingIDs.includes(address.id) && address.id !== defaultShippingId) {
-        shippingAddressesHolder.value.push(address)
-      }
-    }
-  })
-}
 
 function addNewAddressHandler() {
   addNewAddressMode.value = !addNewAddressMode.value
@@ -170,13 +141,11 @@ async function editAddress(event: FormSubmitEvent) {
     }
   }
 }
-getApiRoot()
-  .me()
-  .get()
-  .execute()
-  .then((res) => {
-    getCustomerData(res)
-  })
+getCustomer(getCustomerAddresses).catch((error) => {
+  if (error instanceof Error) {
+    toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
+  }
+})
 </script>
 
 <template>
