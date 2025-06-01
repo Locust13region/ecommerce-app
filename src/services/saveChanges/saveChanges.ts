@@ -1,25 +1,19 @@
 import { useAuth } from '@/composables/useAuth'
-import type { MyCustomerUpdateAction } from '@commercetools/platform-sdk'
+import type { ClientResponse, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
 
 const { getApiRoot } = useAuth()
-export async function saveChanges(changes: MyCustomerUpdateAction[]) {
-  getApiRoot()
+export async function saveChanges(changes: MyCustomerUpdateAction[]): Promise<ClientResponse> {
+  const apiRoot = getApiRoot()
+  const customerRes = await apiRoot.me().get().execute()
+  const customer = customerRes.body
+
+  return apiRoot
     .me()
-    .get()
+    .post({
+      body: {
+        version: customer.version,
+        actions: changes,
+      },
+    })
     .execute()
-    .then(async (res) => {
-      const customer = res.body
-      return customer
-    })
-    .then((customer) => {
-      getApiRoot()
-        .me()
-        .post({
-          body: {
-            version: customer.version,
-            actions: changes,
-          },
-        })
-        .execute()
-    })
 }
