@@ -17,6 +17,12 @@ const userData = reactive({
   dateOfBirth: null as Date | null,
   email: '',
 })
+const userNewData = reactive({
+  firstName: '',
+  lastName: '',
+  dateOfBirth: null as Date | null,
+  email: '',
+})
 
 function getCustomerData(response: ClientResponse) {
   const customerData: Customer = response.body
@@ -30,25 +36,29 @@ async function onSubmit(event: FormSubmitEvent) {
   if (event.valid) {
     const eventData = event.states
     const actions: MyCustomerUpdateAction[] = []
-    if (eventData.firstName.value) {
+    if (eventData.firstName.value && userData.firstName !== userNewData.firstName) {
       const name = eventData.firstName.value
       actions.push({ action: 'setFirstName', firstName: name })
+      userData.firstName = userNewData.firstName
     }
-    if (eventData.lastName.value) {
+    if (eventData.lastName.value && userData.lastName !== userNewData.lastName) {
       const name = eventData.lastName.value
       actions.push({ action: 'setLastName', lastName: name })
+      userData.lastName = userNewData.lastName
     }
-    if (eventData.dateOfBirth.value) {
+    if (eventData.dateOfBirth.value && userData.dateOfBirth !== userNewData.dateOfBirth) {
       let date = eventData.dateOfBirth.value
       if (date instanceof Date) {
         const dateObj = date
         date = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}-${dateObj.getDate().toString().padStart(2, '0')}`
       }
       actions.push({ action: 'setDateOfBirth', dateOfBirth: date })
+      userData.dateOfBirth = userNewData.dateOfBirth
     }
-    if (eventData.email.value) {
+    if (eventData.email.value && userData.email !== userNewData.email) {
       const email = eventData.email.value
       actions.push({ action: 'changeEmail', email: email })
+      userData.email = userNewData.email
     }
     try {
       await saveChanges(actions)
@@ -68,6 +78,8 @@ function switchToEditMode() {
 
 function switchToReadMode() {
   flagEditMode.value = false
+  // const errors = document.querySelectorAll('.validation-error-message')
+  // errors.forEach((err) => )
 }
 
 getCustomer(getCustomerData).catch((error) => {
@@ -92,11 +104,11 @@ getCustomer(getCustomerData).catch((error) => {
           v-if="flagEditMode"
           class="input-first-name"
           name="firstName"
-          v-model="userData.firstName"
+          v-model="userNewData.firstName"
         />
         <Message
           class="validation-error-message"
-          v-if="$form.firstName?.invalid"
+          v-if="$form.firstName?.invalid && flagEditMode"
           severity="error"
           size="small"
           variant="simple"
@@ -113,11 +125,11 @@ getCustomer(getCustomerData).catch((error) => {
           v-if="flagEditMode"
           class="input-last-name"
           name="lastName"
-          v-model="userData.lastName"
+          v-model="userNewData.lastName"
         ></InputText>
         <Message
           class="validation-error-message"
-          v-if="$form.lastName?.invalid"
+          v-if="$form.lastName?.invalid && flagEditMode"
           severity="error"
           size="small"
           variant="simple"
@@ -134,11 +146,11 @@ getCustomer(getCustomerData).catch((error) => {
           v-if="flagEditMode"
           class="input-email"
           name="email"
-          v-model="userData.email"
+          v-model="userNewData.email"
         ></InputText>
         <Message
           class="validation-error-message"
-          v-if="$form.email?.invalid"
+          v-if="$form.email?.invalid && flagEditMode"
           severity="error"
           size="small"
           variant="simple"
@@ -159,7 +171,7 @@ getCustomer(getCustomerData).catch((error) => {
           v-if="flagEditMode"
           class="input-date-of-birth"
           name="dateOfBirth"
-          v-model="userData.dateOfBirth"
+          v-model="userNewData.dateOfBirth"
           dateFormat="yy-mm-dd"
           :manualInput="false"
           showIcon
@@ -168,7 +180,7 @@ getCustomer(getCustomerData).catch((error) => {
         >
         <Message
           class="validation-error-message"
-          v-if="$form.dateOfBirth?.invalid"
+          v-if="$form.dateOfBirth?.invalid && flagEditMode"
           severity="error"
           size="small"
           variant="simple"
