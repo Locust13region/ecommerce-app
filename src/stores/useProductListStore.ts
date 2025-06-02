@@ -67,7 +67,6 @@ export const useProductListStore = defineStore('productList', () => {
       if (key === 'offset' || key === 'keyword' || key === 'price') continue
 
       const rawValue = query[key]
-      console.log(rawValue, 'parsing raw value')
       if (typeof rawValue === 'string') {
         filterMap[key] = rawValue.split(',').map(decodeURIComponent)
       } else if (Array.isArray(rawValue)) {
@@ -81,8 +80,6 @@ export const useProductListStore = defineStore('productList', () => {
       const max = parseInt(maxStr, 10)
       if (!isNaN(min) && !isNaN(max)) {
         selectedPriceRange.value = [min, max]
-        // minCategoryPrice.value = min
-        // maxCategoryPrice.value = max
       }
     }
 

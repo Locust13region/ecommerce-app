@@ -17,6 +17,10 @@ a,
 }
 .flex {
   display: flex;
+}
+
+.flex-column,
+.flex-col {
   flex-direction: column;
 }
 

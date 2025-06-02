@@ -6,7 +6,6 @@ import { onMounted, ref, watch } from 'vue'
 import { transformCategoriesToMegaMenu } from '@/services/Catalog/ParseCategoriesToMegaMenu/parseCategoriesToMegaMenu'
 import ProductCard from '@/components/ProductCard/ProductCard.vue'
 import Panel from 'primevue/panel'
-// import { parseProductsForCards } from '@/services/Catalog/parseProductsForCard/parseProductsForCard.ts'
 import { useRoute } from 'vue-router'
 import { useCategoriesStore } from '@/composables/useCategoryStore'
 import Paginator from 'primevue/paginator'
@@ -69,7 +68,7 @@ watch(
     if (newPath === '/catalog') {
       productListStore.resetPagination()
       productListStore.resetProductFilters()
-      await loadFilters(newPath as string)
+      await loadFilters(newPath)
       await loadProducts(newPath as string)
     }
   },
@@ -97,15 +96,13 @@ onMounted(async () => {
     await productListStore.parseQueryParamsOnLoad()
     await loadProducts()
   } else if (route.path === '/catalog') {
-    await loadFilters()
+    await loadFilters(route.path)
     await productListStore.parseQueryParamsOnLoad()
     await loadProducts()
   } else {
     router.push('/not-found')
   }
 })
-
-// TODO: Add Panel to collapse filters
 </script>
 
 <template>

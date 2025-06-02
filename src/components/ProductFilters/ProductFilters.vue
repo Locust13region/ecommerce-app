@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// import { watch } from 'vue'
 import Checkbox from 'primevue/checkbox'
 import { useProductListStore } from '@/stores/useProductListStore'
 import { useProductList } from '@/composables/useProductsList'
