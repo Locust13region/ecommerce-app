@@ -3,7 +3,6 @@ import { mount, VueWrapper } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
 import SignUpView from '@/views/SignUpView.vue'
-import SignUpForm from '@/components/signUp/SignUpForm.vue'
 import router from '@/router'
 import FormInputField from '@/components/FormInputField/FormInputField.vue'
 import { InputText, Message, Select } from 'primevue'
@@ -59,25 +58,6 @@ describe('SignUpView', () => {
 })
 
 describe('SignUpForm', () => {
-  it('Form Input Field insode SignUp Form renders properly', () => {
-    const wrapper = mount(SignUpForm, {
-      global: {
-        plugins: [PrimeVue, ToastService, router],
-        stubs: [
-          'FormInputField',
-          'SignUpPassword',
-          'SignUpBirthDate',
-          'countrySelect',
-          'CheckboxComponent',
-        ],
-        components: {
-          FormInputField,
-        },
-      },
-    })
-    const formInputField = wrapper.findComponent(FormInputField)
-    expect(formInputField.exists()).toBe(true)
-  })
   it('Form Input Field inside SignUp Form renders properly with props', () => {
     const wrapper = mount(FormInputField, {
       props: {

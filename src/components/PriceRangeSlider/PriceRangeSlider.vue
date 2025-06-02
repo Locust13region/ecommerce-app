@@ -30,9 +30,6 @@ watch(
   },
 )
 
-// TODO: Add URL query for price range, and then parse it. to load correctly
-// TODO2: correctly load all categories to show an accurate max category price. Might be not changing it on loadProducts?
-
 const onSlideEnded = async () => {
   const [min, max] = selectedPriceRange.value
 

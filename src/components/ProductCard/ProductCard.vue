@@ -19,7 +19,9 @@ const props = defineProps<ProductCardItem>()
           props.discountedPrice
         }}</span>
         <span> </span>
-        <span :class="{ 'line-through grey': props.discountedPrice }">{{ props.price }}</span>
+        <span class="price" :class="{ 'line-through grey': props.discountedPrice }">{{
+          props.price
+        }}</span>
       </template>
       <template #content>
         <p class="m-0">
