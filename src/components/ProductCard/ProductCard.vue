@@ -2,17 +2,8 @@
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 import type { ProductCardItem } from '@/interfaces/catalogInterfaces.ts'
-//import { useRoute } from 'vue-router';
 
 const props = defineProps<ProductCardItem>()
-
-//const route = useRoute()
-
-// const productSlug = route.params.productSlug
-// TODO: add /product/:productSlug
-// parse ID
-
-// TODO: add router push on click
 </script>
 
 <template>
@@ -28,7 +19,9 @@ const props = defineProps<ProductCardItem>()
           props.discountedPrice
         }}</span>
         <span> </span>
-        <span :class="{ 'line-through grey': props.discountedPrice }">{{ props.price }}</span>
+        <span class="price" :class="{ 'line-through grey': props.discountedPrice }">{{
+          props.price
+        }}</span>
       </template>
       <template #content>
         <p class="m-0">

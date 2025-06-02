@@ -9,6 +9,7 @@ describe('LoginComponent', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
+
   const wrapper = mount(LoginComponent, {
     global: {
       plugins: [PrimeVue, ToastService, router],

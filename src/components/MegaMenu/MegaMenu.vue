@@ -23,7 +23,6 @@ const route = useRoute()
 
 const menuItems = ref<MegaMenuItem[]>(props.model)
 const isActive = ref(route.path.includes('/catalog'))
-// TODO: Add styling for the active tab
 
 watch(
   () => route.path,

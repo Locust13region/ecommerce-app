@@ -4,9 +4,8 @@ import { useProductListStore } from '@/stores/useProductListStore'
 import { parseProductsForCards } from '@/services/Catalog/parseProductsForCard/parseProductsForCard.ts'
 import { parseAttributeFilters } from '@/services/Catalog/parseAttributeFilters/parseAttributeFilters.ts'
 
-const productListStore = useProductListStore()
-
 export function useProductList() {
+  const productListStore = useProductListStore()
   const loading = ref(false)
 
   const loadProducts = async (
