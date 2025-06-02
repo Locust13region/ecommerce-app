@@ -54,8 +54,7 @@ function handleDateChange() {
   <div class="flex flex-col gap-1">
     <label :for="name" v-if="label">{{ label }}</label>
     <DatePicker
-      :id="name"
-      :name="name"
+      :inputId="name"
       dateFormat="dd/mm/yy"
       fluid
       :manualInput="false"
