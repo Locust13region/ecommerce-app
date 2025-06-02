@@ -19,10 +19,10 @@ const model = defineModel('modelValue', {
 </script>
 
 <template>
-  <FormField :name="name" class="flex flex-col gap-1">
+  <FormField class="flex flex-col gap-1">
     <label :for="name">{{ label }}</label>
     <Password
-      :id="name"
+      :inputId="name"
       :type="type"
       :placeholder="placeholder"
       :feedback="false"
