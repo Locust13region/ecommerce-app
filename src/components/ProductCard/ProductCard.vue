@@ -45,7 +45,7 @@ const props = defineProps<ProductCardItem>()
 </template>
 
 <style>
-.p-card.p-component {
+.product-card-link .p-card.p-component {
   width: 20rem;
   height: 100%;
 }
