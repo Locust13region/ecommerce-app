@@ -1,17 +1,10 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import {
-  mount,
-  VueWrapper,
-  //VueWrapper
-} from '@vue/test-utils'
+import { mount, VueWrapper } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
-//import ToastService from 'primevue/toastservice'
-// import router from '@/router'
-//import FormInputField from '@/components/FormInputField/FormInputField'
 import Paginator from 'primevue/paginator'
 import { Slider, Card, Button } from 'primevue'
-import PaginatorComponent from '/Users/roman.kargin/Documents/GitHub/ecommerce-app/src/components/Paginator/PaginatorComponent.vue'
-import ProductCard from '/Users/roman.kargin/Documents/GitHub/ecommerce-app/src/components/ProductCard/ProductCard.vue'
+import PaginatorComponent from '../../../components/Paginator/PaginatorComponent.vue'
+import ProductCard from '../../../components/ProductCard/ProductCard.vue'
 
 describe('Paginator', () => {
   it('Paginator: buttons exists', async () => {
