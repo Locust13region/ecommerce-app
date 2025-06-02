@@ -8,6 +8,7 @@ import Card from 'primevue/card'
 import { personalDataValidator } from '@/services/PersonalDataValidator/PersonalDataValidator'
 import { countriesSelect } from '@/consts/signUpFormConsts'
 import { saveChanges } from '@/services/saveChanges/saveChanges'
+import { getCustomer } from '@/services/saveChanges/getCustomer'
 
 const toast = useToast()
 const shippingAddressesHolder = ref<BaseAddress[]>([])
@@ -18,6 +19,27 @@ const defaultValueForCountrySelector = ref()
 
 function addNewAddressHandler() {
   addNewAddressMode.value = !addNewAddressMode.value
+}
+function getCustomerAddresses(response: ClientResponse) {
+  const customerData: Customer = response.body
+  const addressesList: BaseAddress[] = customerData.addresses
+  const defaultShippingId = customerData.defaultShippingAddressId
+  let shippingIDs: string[] = []
+
+  if (customerData.shippingAddressIds) {
+    shippingIDs = customerData.shippingAddressIds
+  }
+
+  addressesList.forEach((address: BaseAddress) => {
+    if (address.id) {
+      if (address.id === defaultShippingId) {
+        defaultAddressHolder.value.push(address)
+      }
+      if (shippingIDs.includes(address.id) && address.id !== defaultShippingId) {
+        shippingAddressesHolder.value.push(address)
+      }
+    }
+  })
 }
 async function saveNewAddress(event: FormSubmitEvent) {
   try {
@@ -33,6 +55,7 @@ async function saveNewAddress(event: FormSubmitEvent) {
       const actionAddAddress: MyCustomerUpdateAction = { action: 'addAddress', address: newAddress }
       const res = await saveChanges([actionAddAddress])
       const newAddressId = res.body.addresses[res.body.addresses.length - 1].id
+
       const actionAddId: MyCustomerUpdateAction = {
         action: 'addShippingAddressId',
         addressId: newAddressId,
