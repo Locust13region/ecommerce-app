@@ -2,17 +2,8 @@
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 import type { ProductCardItem } from '@/interfaces/catalogInterfaces.ts'
-//import { useRoute } from 'vue-router';
 
 const props = defineProps<ProductCardItem>()
-
-//const route = useRoute()
-
-// const productSlug = route.params.productSlug
-// TODO: add /product/:productSlug
-// parse ID
-
-// TODO: add router push on click
 </script>
 
 <template>
@@ -64,12 +55,12 @@ const props = defineProps<ProductCardItem>()
   margin-top: auto;
 }
 .highlighted {
-  color: green; /* Example color for highlighted price */
+  color: green;
   font-weight: bold;
   margin-right: 0.3rem;
 }
 .grey {
-  color: grey; /* Example color for greyed out price */
+  color: grey;
 }
 .p-card-ribbon {
   position: absolute;
