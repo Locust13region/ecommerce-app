@@ -59,7 +59,6 @@ describe('LoginComponent', () => {
     expect(messageForEmail.text()).toMatch('Invalid email address.')
     expect(messageForPassword.exists()).toBe(true)
     expect(messageForPassword.text()).toContain('Must have an uppercase letter.')
-    console.log(messageForPassword.text())
     expect(messageForPassword.text()).toContain('Must have a number.')
     expect(messageForPassword.text()).toContain(
       'Must have at least one special character (e.g., !@#$%^&*)',
