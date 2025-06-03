@@ -8,3 +8,11 @@ import CustomerBagComponent from '@/components/CustomerBag/CustomerBagComponent.
     <CustomerBagComponent></CustomerBagComponent>
   </div>
 </template>
+<style lang="css" scoped>
+.bag {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px 0;
+}
+</style>
