@@ -47,8 +47,7 @@ onMounted(async () => {
         >
           Sign Up
         </Button>
-        <Button class="button-to-bag" @click="router.push('/bag')">
-          <!-- v-if="!user.isLoggedIn" -->
+        <Button class="button-to-bag" @click="router.push('/bag')" v-if="user.isLoggedIn">
           <span class="pi pi-shopping-bag"></span>
         </Button>
         <Button class="button-to-login" @click="router.push('/login')" v-if="!user.isLoggedIn">
