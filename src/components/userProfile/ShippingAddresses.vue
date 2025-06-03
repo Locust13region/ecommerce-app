@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { Address } from '@/interfaces/signUpFormInterfaces'
-import type { BaseAddress, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
+import type {
+  BaseAddress,
+  ClientResponse,
+  Customer,
+  MyCustomerUpdateAction,
+} from '@commercetools/platform-sdk'
 import { Button, InputText, Message, Select, useToast } from 'primevue'
 import { Form, FormField, type FormSubmitEvent } from '@primevue/forms'
 import Card from 'primevue/card'
