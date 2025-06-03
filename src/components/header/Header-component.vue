@@ -47,6 +47,10 @@ onMounted(async () => {
         >
           Sign Up
         </Button>
+        <Button class="button-to-bag" @click="router.push('/bag')">
+          <!-- v-if="!user.isLoggedIn" -->
+          <span class="pi pi-shopping-bag"></span>
+        </Button>
         <Button class="button-to-login" @click="router.push('/login')" v-if="!user.isLoggedIn">
           <span class="pi pi-sign-in"></span>
           Login
@@ -131,6 +135,9 @@ nav a:first-of-type {
   width: 45%;
   min-width: 100px;
 }
+.button-to-bag {
+  height: 43px;
+}
 
 @media (min-width: 1024px) {
   header {
@@ -163,7 +170,8 @@ nav a:first-of-type {
   .auth {
     justify-content: space-between;
     align-items: center;
-    width: 30%;
+    width: 40%;
+    flex-wrap: nowrap;
   }
 }
 </style>
