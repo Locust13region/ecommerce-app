@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onUpdated } from 'vue'
+import { ref, watch, onUpdated, computed, onUnmounted } from 'vue'
 import MegaMenu from 'primevue/megamenu'
 import type { MegaMenuItem } from '@/interfaces/catalogInterfaces'
 import router from '@/router'
@@ -22,14 +22,7 @@ const props = defineProps<{
 const route = useRoute()
 
 const menuItems = ref<MegaMenuItem[]>(props.model)
-const isActive = ref(route.path.includes('/catalog'))
-
-watch(
-  () => route.path,
-  (newPath) => {
-    isActive.value = newPath.includes('/catalog')
-  },
-)
+const isActive = computed(() => route.path.includes('/catalog'))
 
 watch(
   () => props.model,
@@ -38,16 +31,20 @@ watch(
   },
 )
 
+const setActive = (item: Element) => {
+  item.classList.add('p-megamenu-item-active')
+}
+
+const clearActive = (item: Element) => {
+  item.classList.remove('p-megamenu-item-active')
+}
+
 onUpdated(async () => {
   const menuListItems = document.querySelectorAll('.p-megamenu-root-list > .p-megamenu-item')
 
   menuListItems.forEach((item) => {
-    item.addEventListener('mouseenter', () => {
-      item.classList.add('p-megamenu-item-active')
-    })
-    item.addEventListener('mouseleave', () => {
-      item.classList.remove('p-megamenu-item-active')
-    })
+    item.addEventListener('mouseenter', () => setActive(item))
+    item.addEventListener('mouseleave', () => clearActive(item))
   })
 
   const subMenus = document.querySelectorAll('.p-megamenu-submenu .p-megamenu-submenu-label')
@@ -68,6 +65,24 @@ onUpdated(async () => {
 
   megaMenuLinks.forEach((item) => {
     item.addEventListener('click', (event) => {
+      event.preventDefault()
+      router.push((item as HTMLAnchorElement).pathname)
+    })
+  })
+})
+
+onUnmounted(() => {
+  const menuListItems = document.querySelectorAll('.p-megamenu-root-list > .p-megamenu-item')
+
+  menuListItems.forEach((item) => {
+    item.removeEventListener('mouseenter', () => setActive(item))
+    item.removeEventListener('mouseleave', () => clearActive(item))
+  })
+
+  const megaMenuLinks = document.querySelectorAll('.p-megamenu-root-list a')
+
+  megaMenuLinks.forEach((item) => {
+    item.removeEventListener('click', (event) => {
       event.preventDefault()
       router.push((item as HTMLAnchorElement).pathname)
     })
