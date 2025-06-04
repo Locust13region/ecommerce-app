@@ -7,7 +7,7 @@ import InputIcon from 'primevue/inputicon'
 import { loginValidator } from '@/services/loginValidator/loginFormValidation'
 import { Form, FormField, type FormSubmitEvent } from '@primevue/forms'
 import { ref } from 'vue'
-import { Message, Toast } from 'primevue'
+import { Message } from 'primevue'
 import { useToast } from 'primevue/usetoast'
 import { useAuth } from '@/composables/useAuth'
 
@@ -57,10 +57,7 @@ const formSubmit = async (event: FormSubmitEvent) => {
         v-model="password"
         toggleMask
       />
-      <div
-        v-if="$form.password?.invalid"
-        class="flex flex-col gap-1 password-validation-error-block"
-      >
+      <div v-if="$form.password?.invalid" class="password-validation-error-block">
         <Message
           class="password-validation-error-message"
           v-for="(error, index) of $form.password.errors"
@@ -74,7 +71,6 @@ const formSubmit = async (event: FormSubmitEvent) => {
     </FormField>
     <Button type="submit" label="Login" class="login-button">Log In</Button>
   </Form>
-  <Toast></Toast>
 </template>
 
 <style>
@@ -89,6 +85,8 @@ const formSubmit = async (event: FormSubmitEvent) => {
 }
 
 .password-validation-error-message {
+  display: flex;
+  flex-direction: column;
   max-width: 235px;
   word-break: normal;
 }

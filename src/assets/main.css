@@ -15,6 +15,24 @@ a,
   transition: 0.4s;
   padding: 3px;
 }
+.flex {
+  display: flex;
+}
+
+.flex-column,
+.flex-col {
+  flex-direction: column;
+}
+
+.justify-center {
+  justify-content: center;
+}
+.justify-start {
+  justify-content: flex-start;
+}
+.line-through {
+  text-decoration: line-through;
+}
 
 @media (hover: hover) {
   a:hover {

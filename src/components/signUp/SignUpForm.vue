@@ -74,12 +74,12 @@ const onFormSubmit = async () => {
       })
     }
   } else {
-    // toast.add({
-    //   severity: 'error',
-    //   summary: 'Error',
-    //   detail: `Form validation failed`,
-    //   life: 10000,
-    // })
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: `Form validation failed`,
+      life: 10000,
+    })
   }
 }
 </script>

@@ -3,6 +3,11 @@ import { Button } from 'primevue'
 import router from '@/router'
 import { useAuth } from '@/composables/useAuth'
 import { useUserStateStore } from '@/stores/userState'
+import MegaMenu from '@/components/MegaMenu/MegaMenu.vue'
+import type { MegaMenuItem } from '@/interfaces/catalogInterfaces'
+import { onMounted, ref } from 'vue'
+import { transformCategoriesToMegaMenu } from '@/services/Catalog/ParseCategoriesToMegaMenu/parseCategoriesToMegaMenu'
+import { useCategoriesStore } from '@/composables/useCategoryStore'
 
 const user = useUserStateStore()
 const { logout } = useAuth()
@@ -11,6 +16,15 @@ function logoutHandler() {
   logout()
   router.push('/login')
 }
+
+const categoriesStore = useCategoriesStore()
+
+const navMenuItems = ref<MegaMenuItem[]>([])
+
+onMounted(async () => {
+  await categoriesStore.loadCategories()
+  navMenuItems.value = transformCategoriesToMegaMenu(categoriesStore.categories, 'en-US', false)
+})
 </script>
 
 <template>
@@ -19,8 +33,10 @@ function logoutHandler() {
 
     <div class="wrapper">
       <nav>
-        <RouterLink to="/" class="pi pi-home"> Home</RouterLink>
+        <RouterLink to="/"> <span class="pi pi-home"></span> Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+        <!-- <RouterLink to="/catalog">Catalog</RouterLink> -->
+        <MegaMenu :model="navMenuItems" :class="'header-megamenu'" />
       </nav>
       <div class="auth">
         <Button
@@ -34,6 +50,15 @@ function logoutHandler() {
         <Button class="button-to-login" @click="router.push('/login')" v-if="!user.isLoggedIn">
           <span class="pi pi-sign-in"></span>
           Login
+        </Button>
+        <Button
+          class="button-to-profile-page"
+          severity="secondary"
+          @click="router.push('/profile')"
+          v-if="user.isLoggedIn"
+        >
+          <span class="pi pi-user"></span>
+          Profile
         </Button>
         <Button class="button-to-logout" @click="logoutHandler" v-if="user.isLoggedIn">
           <span class="pi pi-sign-out"></span>
@@ -66,6 +91,9 @@ nav {
   font-size: 12px;
   text-align: center;
   margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 nav a.router-link-exact-active {
@@ -76,10 +104,12 @@ nav a.router-link-exact-active:hover {
   background-color: transparent;
 }
 
-nav a {
+nav a,
+nav .link {
   display: inline-block;
   padding: 0.5rem 1rem;
   border-left: 1px solid var(--color-border);
+  height: 100%;
 }
 
 nav a:first-of-type {
@@ -88,7 +118,18 @@ nav a:first-of-type {
 
 .auth {
   display: flex;
-  /* min-width: 170px; */
+  flex-wrap: wrap;
+  min-width: 170px;
+  gap: 10px;
+  justify-content: center;
+}
+
+.button-to-signup,
+.button-to-login,
+.button-to-profile-page,
+.button-to-logout {
+  width: 45%;
+  min-width: 100px;
 }
 
 @media (min-width: 1024px) {
@@ -115,7 +156,6 @@ nav a:first-of-type {
     text-align: left;
     margin-left: -1rem;
     font-size: 1rem;
-
     padding: 1rem 0;
     margin-top: 0;
   }
@@ -123,8 +163,7 @@ nav a:first-of-type {
   .auth {
     justify-content: space-between;
     align-items: center;
-    /* width: 20%; */
-    width: 35%;
+    width: 30%;
   }
 }
 </style>
