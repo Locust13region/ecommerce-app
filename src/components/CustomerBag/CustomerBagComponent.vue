@@ -5,22 +5,21 @@ import { useAuth } from '@/composables/useAuth'
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { Button } from 'primevue'
-
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import { changeQuantityRequest } from '@/services/CustomerBagUpdate/changeQuantity'
 
 const { getApiRoot } = useAuth()
 const isBagEmpty = ref(true)
 const itemsList = ref<LineItem[]>([])
 const totalPrice = ref('')
-async function getCustomerId(res: ClientResponse) {
-  const client = res.body.id
-  // 3fdf450d-89a1-4613-be95-5fc3b06d54d4
-  // console.log(client)
+const client = ref('')
 
+async function getCustomerCart(res: ClientResponse) {
+  client.value = res.body.id
   const cartResponse = await getApiRoot()
     .carts()
-    .withCustomerId({ customerId: client })
+    .withCustomerId({ customerId: client.value })
     .get()
     .execute()
 
@@ -32,10 +31,23 @@ async function getCustomerId(res: ClientResponse) {
     const cart = cartResponse.body
     totalPrice.value = `${cart.totalPrice.centAmount / 100} ${cart.totalPrice.currencyCode}`
     itemsList.value = cart.lineItems
-    // console.log(cart.lineItems)
   }
 }
-getCustomer(getCustomerId)
+async function decreaseQuantity(lineId: string, quantity: number) {
+  const res = await changeQuantityRequest(lineId, quantity - 1)
+  itemsList.value = res.body.lineItems
+  if (itemsList.value.length === 0) {
+    isBagEmpty.value = true
+  }
+  totalPrice.value = `${res.body.totalPrice.centAmount / 100} ${res.body.totalPrice.currencyCode}`
+}
+
+async function increaseQuantity(lineId: string, quantity: number) {
+  const res = await changeQuantityRequest(lineId, quantity + 1)
+  itemsList.value = res.body.lineItems
+  totalPrice.value = `${res.body.totalPrice.centAmount / 100} ${res.body.totalPrice.currencyCode}`
+}
+getCustomer(getCustomerCart)
 </script>
 
 <template>
@@ -43,7 +55,13 @@ getCustomer(getCustomerId)
     Your bag is empty. You can choose any of the books provided
     <RouterLink to="/catalog"> on the catalog page.</RouterLink>
   </div>
-  <DataTable stripedRows :value="itemsList" :size="'small'" tableStyle="min-width: 50rem">
+  <DataTable
+    stripedRows
+    :value="itemsList"
+    :size="'small'"
+    tableStyle="min-width: 50rem"
+    v-if="!isBagEmpty"
+  >
     <Column field="variant.images[0]" header="Cover">
       <template #body="{ data }">
         <div>
@@ -68,9 +86,21 @@ getCustomer(getCustomerId)
     <Column field="quantity" header="Quantity">
       <template #body="{ data }">
         <div class="quantity-block">
-          <Button icon="pi pi-minus" severity="secondary" aria-label="minus" :size="'small'" />
+          <Button
+            icon="pi pi-minus"
+            severity="secondary"
+            aria-label="minus"
+            :size="'small'"
+            @click="decreaseQuantity(data.id, data.quantity)"
+          />
           <h4>{{ data.quantity }}</h4>
-          <Button icon="pi pi-plus" severity="secondary" aria-label="plus" :size="'small'" />
+          <Button
+            icon="pi pi-plus"
+            severity="secondary"
+            aria-label="plus"
+            :size="'small'"
+            @click="increaseQuantity(data.id, data.quantity)"
+          />
         </div>
       </template>
     </Column>
@@ -89,7 +119,6 @@ getCustomer(getCustomerId)
     <template #footer>
       <div class="total">Total: {{ totalPrice }}</div>
     </template>
-    <!--  -->
   </DataTable>
 </template>
 <style lang="css" scoped>
