@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
+import InputText from 'primevue/inputtext'
+import { ref, watch } from 'vue'
 
-defineProps<{
+const props = defineProps<{
   name: string
   author: string
   genre: string
@@ -12,11 +14,36 @@ defineProps<{
     discounted: number | null
     currency: string
   } | null
+  quantity: number
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   (e: 'addToCart'): void
+  (e: 'update:quantity', value: number): void
 }>()
+
+const internalQuantity = ref(props.quantity)
+
+watch(
+  () => props.quantity,
+  (newVal) => {
+    internalQuantity.value = newVal
+  },
+)
+
+function increase() {
+  if (internalQuantity.value < 99) {
+    internalQuantity.value++
+    emit('update:quantity', internalQuantity.value)
+  }
+}
+
+function decrease() {
+  if (internalQuantity.value > 1) {
+    internalQuantity.value--
+    emit('update:quantity', internalQuantity.value)
+  }
+}
 </script>
 
 <template>
@@ -35,7 +62,11 @@ defineEmits<{
         {{ (priceInfo.discounted ?? priceInfo.original).toFixed(2) }} {{ priceInfo.currency }}
       </p>
     </div>
-
+    <div class="quantity-counter">
+      <Button icon="pi pi-plus" @click="increase" :disabled="quantity >= 99" />
+      <InputText :value="quantity" readonly class="product-quantity" />
+      <Button icon="pi pi-minus" @click="decrease" :disabled="quantity <= 1" />
+    </div>
     <Button label="Add to Bag" icon="pi pi-shopping-bag" @click="$emit('addToCart')" />
   </div>
 </template>
@@ -60,6 +91,18 @@ defineEmits<{
 
 .product-description {
   font-size: 1.2rem;
+}
+
+.quantity-counter {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.product-quantity {
+  width: 3rem;
+  text-align: center;
 }
 
 .product-price-block {
