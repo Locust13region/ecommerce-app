@@ -1,0 +1,56 @@
+@import './base.css';
+@import 'primeicons/primeicons.css';
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-weight: normal;
+}
+
+a,
+.indigo {
+  text-decoration: none;
+  color: var(--marked-text);
+  transition: 0.4s;
+  padding: 3px;
+}
+.flex {
+  display: flex;
+}
+
+.flex-column,
+.flex-col {
+  flex-direction: column;
+}
+
+.justify-center {
+  justify-content: center;
+}
+.justify-start {
+  justify-content: flex-start;
+}
+.line-through {
+  text-decoration: line-through;
+}
+
+@media (hover: hover) {
+  a:hover {
+    background-color: var(--hovered-text);
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    display: flex;
+    place-items: center;
+  }
+
+  #app {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr 8fr;
+    width: 100%;
+    padding: 0 2rem;
+  }
+}
