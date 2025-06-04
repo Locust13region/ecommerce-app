@@ -16,8 +16,6 @@ const toast = useToast()
 const router = useRouter()
 const { fetchProduct } = useProduct()
 const { products } = useProductListStore()
-// const productExist = computed(() => products.filter((product) => product.slug["en-US"] === productSlug)).value[0]
-// console.log(productExist)
 
 const product = ref<ProductProjection | null>(null)
 const showModal = ref(false)
