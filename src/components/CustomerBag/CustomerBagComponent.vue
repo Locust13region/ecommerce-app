@@ -4,7 +4,10 @@ import type { ClientResponse, LineItem } from '@commercetools/platform-sdk'
 import { useAuth } from '@/composables/useAuth'
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { Button, /* Image,*/ InputNumber } from 'primevue'
+import { Button } from 'primevue'
+
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
 
 const { getApiRoot } = useAuth()
 const isBagEmpty = ref(true)
@@ -29,12 +32,8 @@ async function getCustomerId(res: ClientResponse) {
     const cart = cartResponse.body
     totalPrice.value = `${cart.totalPrice.centAmount / 100} ${cart.totalPrice.currencyCode}`
     itemsList.value = cart.lineItems
-    console.log(cart.lineItems)
+    // console.log(cart.lineItems)
   }
-
-  //get lineItems array
-  //show name, price, quantity, img
-  //total price of cart
 }
 getCustomer(getCustomerId)
 </script>
@@ -44,70 +43,65 @@ getCustomer(getCustomerId)
     Your bag is empty. You can choose any of the books provided
     <RouterLink to="/catalog"> on the catalog page.</RouterLink>
   </div>
-  <div class="table-header">
-    <h2>Item</h2>
-    <h2>Price</h2>
-    <h2>Quantity</h2>
-    <h2>Cost</h2>
-  </div>
-  <div class="item" v-for="item in itemsList" :key="item.id">
-    <div class="card">
-      <!-- <Image :src="item.variant.images[0].url" alt="Image" width="50" /> -->
-      <!-- <h2>{{ item.name['en-US'] }}</h2> -->
-    </div>
-    <div class="price">
-      {{ item.price.value.centAmount / 100 }} {{ item.price.value.currencyCode }}
-    </div>
-    <div class="buttons">
-      <div>{{ item.quantity }}</div>
-      <InputNumber
-        class="count"
-        inputId="horizontal-buttons"
-        showButtons
-        buttonLayout="horizontal"
-        :step="1"
-        :min="0"
-        :max="100"
-        mode="decimal"
-        fluid
-      >
-        <template #incrementbuttonicon>
-          <span class="pi pi-plus" />
-        </template>
-        <template #decrementbuttonicon>
-          <span class="pi pi-minus" />
-        </template>
-      </InputNumber>
-      <Button class="removeItem">Delete</Button>
-    </div>
-  </div>
-  <div class="total">Total: {{ totalPrice }}</div>
+  <DataTable stripedRows :value="itemsList" :size="'small'" tableStyle="min-width: 50rem">
+    <Column field="variant.images[0]" header="Cover">
+      <template #body="{ data }">
+        <div>
+          <img :src="data.variant.images[0].url" style="width: 50px" />
+        </div>
+      </template>
+    </Column>
+    <Column field="name" header="Name">
+      <template #body="{ data }">
+        <div>
+          <h3>{{ data.name['en-US'] }}</h3>
+        </div>
+      </template>
+    </Column>
+    <Column field="price" header="Price">
+      <template #body="{ data }">
+        <div>
+          <h4>{{ data.price.value.centAmount / 100 }} {{ data.price.value.currencyCode }}</h4>
+        </div>
+      </template>
+    </Column>
+    <Column field="quantity" header="Quantity">
+      <template #body="{ data }">
+        <div class="quantity-block">
+          <Button icon="pi pi-minus" severity="secondary" aria-label="minus" :size="'small'" />
+          <h4>{{ data.quantity }}</h4>
+          <Button icon="pi pi-plus" severity="secondary" aria-label="plus" :size="'small'" />
+        </div>
+      </template>
+    </Column>
+    <Column field="totalPrice" header="Sum">
+      <template #body="{ data }">
+        <div>
+          <h3>{{ data.totalPrice.centAmount / 100 }} {{ data.totalPrice.currencyCode }}</h3>
+        </div>
+      </template>
+    </Column>
+    <Column header="Delete Item">
+      <template #body>
+        <Button icon="pi pi-times" severity="danger" aria-label="Cancel" :size="'small'" />
+      </template>
+    </Column>
+    <template #footer>
+      <div class="total">Total: {{ totalPrice }}</div>
+    </template>
+    <!--  -->
+  </DataTable>
 </template>
 <style lang="css" scoped>
-.table-header {
-  display: flex;
-  justify-content: space-between;
-}
-.item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.07);
-  padding: 5px 10px;
-  border-radius: 5px;
-  border: 1px solid rgba(255, 255, 255, 0.185);
-}
-.card {
-  display: flex;
-  align-items: center;
-}
-.count {
-  max-width: 140px;
-  text-align: center;
-}
 .total {
-  align-self: flex-end;
+  text-align: end;
   border-top: 2px solid white;
   font-size: 25px;
+}
+.quantity-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 130px;
 }
 </style>
