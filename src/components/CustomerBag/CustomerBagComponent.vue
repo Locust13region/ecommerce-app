@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { getCustomer } from '@/services/saveChanges/getCustomer'
-import type { ClientResponse, LineItem } from '@commercetools/platform-sdk'
+// import { getCustomer } from '@/services/saveChanges/getCustomer'
+import type { /*ClientResponse, */ CartUpdateAction, LineItem } from '@commercetools/platform-sdk'
 import { useAuth } from '@/composables/useAuth'
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
@@ -8,27 +8,24 @@ import { Button } from 'primevue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { changeQuantityRequest } from '@/services/CustomerBagUpdate/changeQuantity'
+import { deleteItem } from '@/services/CustomerBagUpdate/deleteItem'
 
 const { getApiRoot } = useAuth()
 const isBagEmpty = ref(true)
 const itemsList = ref<LineItem[]>([])
 const totalPrice = ref('')
-const client = ref('')
 
-async function getCustomerCart(res: ClientResponse) {
-  client.value = res.body.id
-  const cartResponse = await getApiRoot()
-    .carts()
-    .withCustomerId({ customerId: client.value })
-    .get()
-    .execute()
+async function getCustomerCart() {
+  const cartResponse = await getApiRoot().me().carts().get().execute()
+  // console.log(cartResponse.body.results[0])
 
-  if (cartResponse.statusCode === 404 || cartResponse.body.lineItems.length === 0) {
+  if (cartResponse.body.results.length === 0) {
     isBagEmpty.value = true
   }
-  if (cartResponse.statusCode === 200 && cartResponse.body.lineItems.length !== 0) {
+  if (cartResponse.body.results[0].lineItems.length !== 0) {
     isBagEmpty.value = false
-    const cart = cartResponse.body
+    const cart = cartResponse.body.results[0]
+
     totalPrice.value = `${cart.totalPrice.centAmount / 100} ${cart.totalPrice.currencyCode}`
     itemsList.value = cart.lineItems
   }
@@ -41,13 +38,32 @@ async function decreaseQuantity(lineId: string, quantity: number) {
   }
   totalPrice.value = `${res.body.totalPrice.centAmount / 100} ${res.body.totalPrice.currencyCode}`
 }
-
 async function increaseQuantity(lineId: string, quantity: number) {
   const res = await changeQuantityRequest(lineId, quantity + 1)
   itemsList.value = res.body.lineItems
   totalPrice.value = `${res.body.totalPrice.centAmount / 100} ${res.body.totalPrice.currencyCode}`
 }
-getCustomer(getCustomerCart)
+async function deleteHandler(lineId: string) {
+  const res = await deleteItem(lineId)
+  itemsList.value = res.body.lineItems
+  totalPrice.value = `${res.body.totalPrice.centAmount / 100} ${res.body.totalPrice.currencyCode}`
+}
+async function emptyBag() {
+  const cartResponse = await getApiRoot().me().carts().get().execute()
+  const cart = cartResponse.body.results[0]
+  const actionArray: CartUpdateAction[] = []
+  if (cart.lineItems.length !== 0) {
+    const items = cart.lineItems
+    items.map((item) => {
+      actionArray.push({
+        action: 'removeLineItem',
+        lineItemId: item.id,
+      })
+    })
+  }
+  console.log('empty', cart, actionArray)
+}
+getCustomerCart()
 </script>
 
 <template>
@@ -112,18 +128,40 @@ getCustomer(getCustomerCart)
       </template>
     </Column>
     <Column header="Delete Item">
-      <template #body>
-        <Button icon="pi pi-times" severity="danger" aria-label="Cancel" :size="'small'" />
+      <template #body="{ data }">
+        <Button
+          icon="pi pi-times"
+          severity="danger"
+          aria-label="Cancel"
+          :size="'small'"
+          @click="deleteHandler(data.id)"
+        />
       </template>
     </Column>
     <template #footer>
-      <div class="total">Total: {{ totalPrice }}</div>
+      <div class="total">
+        <Button
+          label="Empty bag"
+          icon="pi pi-trash"
+          severity="danger"
+          aria-label="Delete"
+          :size="'small'"
+          @click="emptyBag"
+        >
+        </Button>
+        <div>Total: {{ totalPrice }}</div>
+      </div>
     </template>
   </DataTable>
 </template>
 <style lang="css" scoped>
 .total {
-  text-align: end;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-top: 5px;
+  gap: 10px;
   border-top: 2px solid white;
   font-size: 25px;
 }

@@ -1,10 +1,12 @@
 import { useAuth } from '@/composables/useAuth'
 
 const { getApiRoot } = useAuth()
-export async function changeQuantityRequest(lineId: string, newQuantity: number) {
+export async function deleteItem(lineId: string) {
   const apiRoot = getApiRoot()
   const cartResponse = await apiRoot.me().carts().get().execute()
   const cart = cartResponse.body.results[0]
+
+  // console.log('delete', cart, lineId)
   const response = await apiRoot
     .carts()
     .withId({ ID: cart.id })
@@ -13,9 +15,8 @@ export async function changeQuantityRequest(lineId: string, newQuantity: number)
         version: cart.version,
         actions: [
           {
-            action: 'changeLineItemQuantity',
+            action: 'removeLineItem',
             lineItemId: lineId,
-            quantity: newQuantity,
           },
         ],
       },
