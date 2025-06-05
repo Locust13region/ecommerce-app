@@ -9,8 +9,7 @@ import ProductImageCarousel from '@/components/product-detailed/ProductImageCaro
 import ImageDialog from '@/components/product-detailed//ImageDialog.vue'
 import ProductInfo from '@/components/product-detailed//ProductInfo.vue'
 import { useProductListStore } from '@/stores/useProductListStore'
-import { useUserStateStore } from '@/stores/userState'
-import { useShoppingBag } from '@/composables/useShoppingBag'
+import { addToCart } from '@/services/Cart/add-to-cart'
 
 const { productSlug } = defineProps<{ productSlug: string }>()
 
@@ -62,27 +61,8 @@ onMounted(async () => {
 const goBack = () => router.back()
 const openModal = () => (showModal.value = true)
 
-const addToCart = async () => {
-  if (!product.value) return
-  const { addToBag } = useShoppingBag()
-  const user = useUserStateStore()
-  if (user.isLoggedIn) {
-    if (product.value.masterVariant.sku) {
-      addToBag({ sku: product.value.masterVariant.sku, quantity: quantity.value })
-    } else {
-      toast.add({
-        severity: 'info',
-        summary: "Sorry, you can't buy this product. It doesn't have SCU.",
-        life: 5000,
-      })
-    }
-  } else {
-    toast.add({
-      severity: 'info',
-      summary: 'Login before add',
-      life: 5000,
-    })
-  }
+const handleAddToCart = async () => {
+  await addToCart(product.value, quantity.value, toast)
 }
 </script>
 
@@ -112,7 +92,7 @@ const addToCart = async () => {
         :priceInfo="priceInfo"
         :productSku="product.masterVariant.sku"
         v-model:quantity="quantity"
-        @addToCart="addToCart"
+        @addToCart="handleAddToCart"
       />
     </main>
 
