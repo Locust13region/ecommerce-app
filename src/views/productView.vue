@@ -9,6 +9,7 @@ import ProductImageCarousel from '@/components/product-detailed/ProductImageCaro
 import ImageDialog from '@/components/product-detailed//ImageDialog.vue'
 import ProductInfo from '@/components/product-detailed//ProductInfo.vue'
 import { useProductListStore } from '@/stores/useProductListStore'
+import { addToCart } from '@/services/Cart/add-to-cart'
 
 const { productSlug } = defineProps<{ productSlug: string }>()
 
@@ -19,6 +20,8 @@ const { products } = useProductListStore()
 
 const product = ref<ProductProjection | null>(null)
 const showModal = ref(false)
+
+const quantity = ref(1)
 
 const images = computed(() => product.value?.masterVariant.images?.map((img) => img.url) ?? [])
 
@@ -57,9 +60,9 @@ onMounted(async () => {
 
 const goBack = () => router.back()
 const openModal = () => (showModal.value = true)
-const addToCart = () => {
-  if (!product.value) return
-  console.log('Add to cart')
+
+const handleAddToCart = async () => {
+  await addToCart(product.value, quantity.value, toast)
 }
 </script>
 
@@ -87,7 +90,9 @@ const addToCart = () => {
           product.masterVariant.attributes?.[0]?.value.toString() || 'information is missing'
         "
         :priceInfo="priceInfo"
-        @addToCart="addToCart"
+        :productSku="product.masterVariant.sku"
+        v-model:quantity="quantity"
+        @addToCart="handleAddToCart"
       />
     </main>
 
