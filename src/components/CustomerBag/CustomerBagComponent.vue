@@ -1,10 +1,9 @@
 <script setup lang="ts">
-// import { getCustomer } from '@/services/saveChanges/getCustomer'
-import type { /*ClientResponse, */ CartUpdateAction, LineItem } from '@commercetools/platform-sdk'
+import type { CartUpdateAction, LineItem } from '@commercetools/platform-sdk'
 import { useAuth } from '@/composables/useAuth'
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { Button } from 'primevue'
+import { Button, useToast } from 'primevue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { changeQuantityRequest } from '@/services/CustomerBagUpdate/changeQuantity'
@@ -14,15 +13,14 @@ const { getApiRoot } = useAuth()
 const isBagEmpty = ref(true)
 const itemsList = ref<LineItem[]>([])
 const totalPrice = ref('')
+const toast = useToast()
 
 async function getCustomerCart() {
   const cartResponse = await getApiRoot().me().carts().get().execute()
-  // console.log(cartResponse.body.results[0])
 
   if (cartResponse.body.results.length === 0) {
     isBagEmpty.value = true
-  }
-  if (cartResponse.body.results[0].lineItems.length !== 0) {
+  } else if (cartResponse.body.results[0].lineItems.length !== 0) {
     isBagEmpty.value = false
     const cart = cartResponse.body.results[0]
 
@@ -31,37 +29,70 @@ async function getCustomerCart() {
   }
 }
 async function decreaseQuantity(lineId: string, quantity: number) {
-  const res = await changeQuantityRequest(lineId, quantity - 1)
-  itemsList.value = res.body.lineItems
-  if (itemsList.value.length === 0) {
-    isBagEmpty.value = true
+  try {
+    const res = await changeQuantityRequest(lineId, quantity - 1)
+    itemsList.value = res.body.lineItems
+    if (itemsList.value.length === 0) {
+      isBagEmpty.value = true
+    }
+    totalPrice.value = `${res.body.totalPrice.centAmount / 100} ${res.body.totalPrice.currencyCode}`
+    toast.add({ severity: 'success', summary: 'Password changed', life: 5000 })
+  } catch (error) {
+    if (error instanceof Error) {
+      toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
+    }
   }
-  totalPrice.value = `${res.body.totalPrice.centAmount / 100} ${res.body.totalPrice.currencyCode}`
 }
 async function increaseQuantity(lineId: string, quantity: number) {
-  const res = await changeQuantityRequest(lineId, quantity + 1)
-  itemsList.value = res.body.lineItems
-  totalPrice.value = `${res.body.totalPrice.centAmount / 100} ${res.body.totalPrice.currencyCode}`
+  try {
+    const res = await changeQuantityRequest(lineId, quantity + 1)
+    itemsList.value = res.body.lineItems
+    totalPrice.value = `${res.body.totalPrice.centAmount / 100} ${res.body.totalPrice.currencyCode}`
+    toast.add({ severity: 'success', summary: 'Password changed', life: 5000 })
+  } catch (error) {
+    if (error instanceof Error) {
+      toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
+    }
+  }
 }
 async function deleteHandler(lineId: string) {
-  const res = await deleteItem(lineId)
-  itemsList.value = res.body.lineItems
-  totalPrice.value = `${res.body.totalPrice.centAmount / 100} ${res.body.totalPrice.currencyCode}`
+  try {
+    const action: CartUpdateAction = { action: 'removeLineItem', lineItemId: lineId }
+    const res = await deleteItem([action])
+    itemsList.value = res.body.lineItems
+    totalPrice.value = `${res.body.totalPrice.centAmount / 100} ${res.body.totalPrice.currencyCode}`
+    toast.add({ severity: 'success', summary: 'Password changed', life: 5000 })
+  } catch (error) {
+    if (error instanceof Error) {
+      toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
+    }
+  }
 }
 async function emptyBag() {
-  const cartResponse = await getApiRoot().me().carts().get().execute()
-  const cart = cartResponse.body.results[0]
-  const actionArray: CartUpdateAction[] = []
-  if (cart.lineItems.length !== 0) {
-    const items = cart.lineItems
-    items.map((item) => {
-      actionArray.push({
-        action: 'removeLineItem',
-        lineItemId: item.id,
-      })
-    })
+  try {
+    const cartResponse = await getApiRoot().me().carts().get().execute()
+    if (cartResponse.body.results.length !== 0) {
+      const cart = cartResponse.body.results[0]
+      const actionArray: CartUpdateAction[] = []
+      if (cart.lineItems.length !== 0) {
+        const items = cart.lineItems
+        items.map((item) => {
+          actionArray.push({
+            action: 'removeLineItem',
+            lineItemId: item.id,
+          })
+        })
+      }
+      await deleteItem(actionArray)
+      isBagEmpty.value = true
+      itemsList.value = []
+    }
+    toast.add({ severity: 'success', summary: 'Password changed', life: 5000 })
+  } catch (error) {
+    if (error instanceof Error) {
+      toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
+    }
   }
-  console.log('empty', cart, actionArray)
 }
 getCustomerCart()
 </script>
