@@ -36,7 +36,6 @@ async function decreaseQuantity(lineId: string, quantity: number) {
       isBagEmpty.value = true
     }
     totalPrice.value = `${res.body.totalPrice.centAmount / 100} ${res.body.totalPrice.currencyCode}`
-    toast.add({ severity: 'success', summary: 'Password changed', life: 5000 })
   } catch (error) {
     if (error instanceof Error) {
       toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
@@ -48,7 +47,6 @@ async function increaseQuantity(lineId: string, quantity: number) {
     const res = await changeQuantityRequest(lineId, quantity + 1)
     itemsList.value = res.body.lineItems
     totalPrice.value = `${res.body.totalPrice.centAmount / 100} ${res.body.totalPrice.currencyCode}`
-    toast.add({ severity: 'success', summary: 'Password changed', life: 5000 })
   } catch (error) {
     if (error instanceof Error) {
       toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
@@ -61,7 +59,7 @@ async function deleteHandler(lineId: string) {
     const res = await deleteItem([action])
     itemsList.value = res.body.lineItems
     totalPrice.value = `${res.body.totalPrice.centAmount / 100} ${res.body.totalPrice.currencyCode}`
-    toast.add({ severity: 'success', summary: 'Password changed', life: 5000 })
+    toast.add({ severity: 'success', summary: `Item deleted`, life: 5000 })
   } catch (error) {
     if (error instanceof Error) {
       toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
@@ -87,7 +85,7 @@ async function emptyBag() {
       isBagEmpty.value = true
       itemsList.value = []
     }
-    toast.add({ severity: 'success', summary: 'Password changed', life: 5000 })
+    toast.add({ severity: 'success', summary: 'Bag is empty', life: 5000 })
   } catch (error) {
     if (error instanceof Error) {
       toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
@@ -172,7 +170,7 @@ getCustomerCart()
     <template #footer>
       <div class="total">
         <Button
-          label="Empty bag"
+          label="Clear bag"
           icon="pi pi-trash"
           severity="danger"
           aria-label="Delete"
