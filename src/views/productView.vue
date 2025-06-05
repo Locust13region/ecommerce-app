@@ -10,7 +10,7 @@ import ImageDialog from '@/components/product-detailed//ImageDialog.vue'
 import ProductInfo from '@/components/product-detailed//ProductInfo.vue'
 import { useProductListStore } from '@/stores/useProductListStore'
 import { useUserStateStore } from '@/stores/userState'
-import { useAuth } from '@/composables/useAuth'
+import { useShoppingBag } from '@/composables/useShoppingBag'
 
 const { productSlug } = defineProps<{ productSlug: string }>()
 
@@ -64,53 +64,23 @@ const openModal = () => (showModal.value = true)
 
 const addToCart = async () => {
   if (!product.value) return
-  const { getApiRoot } = useAuth()
+  const { addToBag } = useShoppingBag()
   const user = useUserStateStore()
   if (user.isLoggedIn) {
-    console.log('Add to cart')
-    await getApiRoot().me().carts().get().execute()
-
-    // await getApiRoot().me().carts()
-    //     .post({
-    //         body: {
-    //             currency: "USD",
-    //             country: "US",
-    //             // customerEmail: "a-g@proton.com",
-    //         },
-    //     })
-    //     .execute()
-
-    // await getApiRoot().me().carts().withId({ ID: "c7d9ebe4-54e9-43a4-ad9d-452ec1857a66" }).delete({
-    //     queryArgs: {
-    //         version: 23,
-    //     },
-    // }).execute();
-
-    // await getApiRoot().carts()
-    //     .withId({ ID: "c7d9ebe4-54e9-43a4-ad9d-452ec1857a66" })
-    //     .post({
-    //         body: {
-    //             version: 16,
-    //             actions: [
-    //                 {
-    //                     action: 'addLineItem',
-    //                     sku: "01-001",
-    //                     quantity: 1,
-    //                 }
-    //             ]
-    //         }
-    //     })
-    //     .execute();
-
-    // await getApiRoot().products()
-    //     .withId({ ID: 'b92dc2f8-f330-49f0-b2be-50aa3e904281' }) // ID твоего продукта
-    //     .get()
-    //     .execute();
+    if (product.value.masterVariant.sku) {
+      addToBag({ sku: product.value.masterVariant.sku, quantity: quantity.value })
+    } else {
+      toast.add({
+        severity: 'info',
+        summary: "Sorry, you can't buy this product. It doesn't have SCU.",
+        life: 5000,
+      })
+    }
   } else {
     toast.add({
       severity: 'info',
       summary: 'Login before add',
-      life: 7000,
+      life: 5000,
     })
   }
 }

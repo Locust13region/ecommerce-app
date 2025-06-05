@@ -36,7 +36,7 @@ export function useShoppingBag() {
       return { id: bagId.value, version: bagVersion.value }
     } catch (error) {
       console.error('Failed to get or create cart:', error)
-      throw error //TODO реализовать перехват ошибок на уровне выше
+      throw error
     }
   }
 
@@ -120,14 +120,13 @@ export function useShoppingBag() {
 
   const getAllBags = async () => {
     await api.root.me().carts().get().execute()
-  } // техническая функция
+  } // техническая функция просмотра корзин
 
   return {
-    getBag,
-    getAllBags,
     getBagId,
     getBagVersion,
     addToBag,
     removeFromBag,
+    getAllBags,
   }
 }
