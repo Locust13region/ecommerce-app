@@ -2,13 +2,24 @@
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 import type { ProductCardItem } from '@/interfaces/catalogInterfaces.ts'
+import router from '@/router'
 
 const props = defineProps<ProductCardItem>()
+
+const addToBagOnClick = (event: Event) => {
+  event.stopPropagation()
+  // add AddToBag method to add this product to bag
+  console.log(event.target)
+}
+
+const onCardClick = (slug: string) => {
+  router.push(`/product/${slug}`)
+}
 </script>
 
 <template>
-  <RouterLink :to="`/product/${props.slug}`" class="product-card-link">
-    <Card style="overflow: hidden">
+  <div class="product-card-link">
+    <Card style="overflow: hidden" @click="onCardClick(props.slug)">
       <template #header>
         <img :alt="props.title" :src="props.imageURL" />
         <span v-if="props.discountedPrice" class="p-card-ribbon">ON SALE</span>
@@ -30,14 +41,32 @@ const props = defineProps<ProductCardItem>()
       </template>
       <template #footer>
         <div class="flex gap-4 mt-1 justify-center align-center">
-          <Button label="Add to Bag" outlined class="w-full product-card-button" />
+          <Button
+            label="Add to Bag"
+            outlined
+            class="w-full product-card-button"
+            @click="addToBagOnClick"
+          />
         </div>
       </template>
     </Card>
-  </RouterLink>
+  </div>
 </template>
 
 <style>
+.product-card-link {
+  border-radius: 5px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.product-card-link:hover .p-card-title {
+  color: var(--marked-text);
+}
+.product-card-link:hover {
+  border-color: var(--marked-text);
+  transition: all 0.3s ease-in-out;
+}
+
 .product-card-link .p-card.p-component {
   width: 20rem;
   height: 100%;
@@ -70,11 +99,5 @@ const props = defineProps<ProductCardItem>()
   background-color: var(--p-primary-700);
   padding: 5px 10px;
   top: 1rem;
-}
-.product-card-link {
-  border-radius: 5px;
-}
-a.product-card-link:hover .p-card-title {
-  color: var(--marked-text);
 }
 </style>
