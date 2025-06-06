@@ -49,7 +49,7 @@ a,
   #app {
     height: 100vh;
     display: grid;
-    grid-template-rows: 1fr 8fr;
+    grid-template-rows: 30px 1fr 8fr;
     width: 100%;
     padding: 0 2rem;
   }

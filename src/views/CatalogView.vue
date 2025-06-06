@@ -18,6 +18,7 @@ import SearchBar from '@/components/SearchBar/SearchBar.vue'
 import SortFilters from '@/components/SortFilters/SortFilters.vue'
 import ProductFilters from '@/components/ProductFilters/ProductFilters.vue'
 import PriceRangeSlider from '@/components/PriceRangeSlider/PriceRangeSlider.vue'
+import Button from 'primevue/button'
 
 const route = useRoute()
 
@@ -151,7 +152,14 @@ onMounted(async () => {
           @page="onPageChange"
         />
       </div>
-      <div class="footer"></div>
+      <div class="footer">
+        <Button
+          label="Add to Bag"
+          outlined
+          class="w-full product-card-button"
+          @click="console.log(productListStore.allCategoryProducts)"
+        />
+      </div>
     </div>
   </div>
 </template>

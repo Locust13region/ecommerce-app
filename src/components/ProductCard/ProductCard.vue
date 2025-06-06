@@ -3,13 +3,17 @@ import Card from 'primevue/card'
 import Button from 'primevue/button'
 import type { ProductCardItem } from '@/interfaces/catalogInterfaces.ts'
 import router from '@/router'
+import { addToCart } from '@/services/Cart/add-to-cart'
+import { useToast } from 'primevue'
 
 const props = defineProps<ProductCardItem>()
 
-const addToBagOnClick = (event: Event) => {
+const toast = useToast()
+
+const addToBagOnClick = async (event: Event) => {
   event.stopPropagation()
   // add AddToBag method to add this product to bag
-  console.log(event.target)
+  await addToCart(props.currentProduct, 1, toast)
 }
 
 const onCardClick = (slug: string) => {
@@ -99,5 +103,9 @@ const onCardClick = (slug: string) => {
   background-color: var(--p-primary-700);
   padding: 5px 10px;
   top: 1rem;
+}
+.p-card-footer .product-card-button:active {
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  transform: translate3d(0, 1px, 0);
 }
 </style>
