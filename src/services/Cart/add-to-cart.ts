@@ -16,12 +16,19 @@ export const addToCart = async (
   if (user.isLoggedIn) {
     if (product.masterVariant.sku) {
       await addToBag({ sku: product.masterVariant.sku, quantity })
+      toast.add({
+        severity: 'info',
+        summary: 'The book was successfully added to the bag.',
+        life: 5000,
+      })
+      return true
     } else {
       toast.add({
         severity: 'info',
         summary: "Sorry, you can't buy this product. It doesn't have SCU.",
         life: 5000,
       })
+      return false
     }
   } else {
     toast.add({
