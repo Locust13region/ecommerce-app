@@ -6,6 +6,9 @@ import router from '@/router'
 import { ref } from 'vue'
 import { addToCart } from '@/services/Cart/add-to-cart'
 import { useToast } from 'primevue'
+import { useUserStateStore } from '@/stores/userState'
+
+const { isLoggedIn } = useUserStateStore()
 
 const props = defineProps<ProductCardItem>()
 
@@ -15,12 +18,13 @@ const toast = useToast()
 
 const addToBagOnClick = async (event: Event) => {
   event.stopPropagation()
-  // add AddToBag method to add this product to bag
-  buttonText.value = '✓'
+  if (isLoggedIn) {
+    buttonText.value = '✓'
+    setTimeout(() => {
+      buttonText.value = 'Add to Bag'
+    }, 1000)
+  }
   await addToCart(props.currentProduct, 1, toast)
-  setTimeout(() => {
-    buttonText.value = 'Add to Bag'
-  }, 1000)
 }
 
 const onCardClick = (slug: string) => {
