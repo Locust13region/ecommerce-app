@@ -15,10 +15,12 @@ const props = defineProps<{
     currency: string
   } | null
   quantity: number
+  productInCart: boolean
 }>()
 
 const emit = defineEmits<{
   (e: 'addToCart'): void
+  (e: 'removeFromCart'): void
   (e: 'update:quantity', value: number): void
 }>()
 
@@ -63,11 +65,22 @@ function decrease() {
       </p>
     </div>
     <div class="quantity-counter">
-      <Button icon="pi pi-plus" @click="increase" :disabled="quantity >= 99" />
+      <Button icon="pi pi-plus" @click="increase" :disabled="quantity >= 99 || productInCart" />
       <InputText :value="quantity" readonly class="product-quantity" />
-      <Button icon="pi pi-minus" @click="decrease" :disabled="quantity <= 1" />
+      <Button icon="pi pi-minus" @click="decrease" :disabled="quantity <= 1 || productInCart" />
     </div>
-    <Button label="Add to Bag" icon="pi pi-shopping-bag" @click="$emit('addToCart')" />
+    <Button
+      label="Add to Bag"
+      icon="pi pi-shopping-bag"
+      :disabled="productInCart"
+      @click="$emit('addToCart')"
+    />
+    <Button
+      label="Take out of the Bag"
+      icon="pi pi-trash"
+      :disabled="!productInCart"
+      @click="$emit('removeFromCart')"
+    />
   </div>
 </template>
 
