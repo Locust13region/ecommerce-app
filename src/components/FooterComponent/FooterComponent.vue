@@ -1,22 +1,28 @@
 <template>
-  <v-footer>
+  <footer>
     <div class="footer-container">
-      <a class="footer-rs-logo" href="https://rs.school/">
+      <a class="footer-rs-logo" href="https://rs.school/" target="_blank">
         <img src="@/assets/rss-logo.png" alt="RS School Logo" />
       </a>
       <div class="footer-team">
-        <span>Undefined team</span>
+        <RouterLink :to="'/about'" class="footer-team-link">Undefined team</RouterLink>
         <ul class="footer-team-list">
-          <li><a href="https://github.com/ElizavetaAbramova">Liza</a></li>
-          <li><a href="https://github.com/Locust13region">Andrey</a></li>
-          <li><a href="https://github.com/thefoku">Roma</a></li>
+          <li class="footer-team-item">
+            <a href="https://github.com/ElizavetaAbramova" target="_blank">Liza</a>
+          </li>
+          <li class="footer-team-item">
+            <a href="https://github.com/Locust13region" target="_blank">Andrey</a>
+          </li>
+          <li class="footer-team-item">
+            <a href="https://github.com/thefoku" target="_blank">Roma</a>
+          </li>
         </ul>
       </div>
       <div class="footer-year">
         <span>2025</span>
       </div>
     </div>
-  </v-footer>
+  </footer>
 </template>
 
 <style scoped>
@@ -38,13 +44,20 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 1.2rem;
+  font-size: 1.2em;
 }
 .footer-team-list {
   list-style: none;
   margin: 0px;
   padding: 0px;
   display: flex;
-  gap: 10px;
+  gap: 20px;
+}
+.footer-team-link,
+.footer-team-item a {
+  border-radius: 5px;
+}
+.footer-year {
+  font-size: 1.2em;
 }
 </style>

@@ -2,9 +2,7 @@
 
 <template>
   <div class="promo-banner">
-    <span class="promo-banner-text"
-      >Use "SALE15" promo-code to get 15% discount for all products</span
-    >
+    <span class="promo-banner-text"> Use code “SALE15” to get a 15% discount </span>
   </div>
 </template>
 
@@ -16,6 +14,7 @@
   justify-content: center;
   align-items: center;
   margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 .promo-banner-text {
   color: var(--p-primary-color);
