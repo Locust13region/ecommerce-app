@@ -9,7 +9,7 @@ const routeToCatalog = () => {
 
 <template>
   <div class="cover-container">
-    <span class="cover-text" @click="console.log('pizda')">The Undefined team book store.</span>
+    <span class="cover-text">The Undefined team book store.</span>
     <Button
       label="Shop Now"
       raised

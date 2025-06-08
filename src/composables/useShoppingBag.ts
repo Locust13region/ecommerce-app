@@ -47,8 +47,6 @@ export function useShoppingBag() {
     try {
       const { id, version } = await getBag()
 
-      console.log(id, sku, 'cart id and sku')
-
       const response = await api.root
         .me()
         .carts()
