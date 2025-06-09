@@ -2,7 +2,7 @@ import { useAuth } from '@/composables/useAuth'
 import type { CartUpdateAction } from '@commercetools/platform-sdk'
 
 const { getApiRoot } = useAuth()
-export async function deleteItem(actions: CartUpdateAction[]) {
+export async function updateBag(actions: CartUpdateAction[]) {
   const apiRoot = getApiRoot()
   const cartResponse = await apiRoot.me().carts().get().execute()
   const cart = cartResponse.body.results[0]

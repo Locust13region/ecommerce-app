@@ -4,15 +4,18 @@ import { useAuth } from '@/composables/useAuth'
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { Button, useToast } from 'primevue'
+import InputText from 'primevue/inputtext'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { changeQuantityRequest } from '@/services/CustomerBagUpdate/changeQuantity'
-import { deleteItem } from '@/services/CustomerBagUpdate/deleteItem'
+import { updateBag } from '@/services/CustomerBagUpdate/updateBag'
+import { Form, type FormSubmitEvent } from '@primevue/forms'
 
 const { getApiRoot } = useAuth()
 const isBagEmpty = ref(true)
 const itemsList = ref<LineItem[]>([])
 const totalPrice = ref('')
+const oldPrice = ref('')
 const toast = useToast()
 
 async function getCustomerCart() {
@@ -23,9 +26,11 @@ async function getCustomerCart() {
   } else if (cartResponse.body.results[0].lineItems.length !== 0) {
     isBagEmpty.value = false
     const cart = cartResponse.body.results[0]
-
     totalPrice.value = `${cart.totalPrice.centAmount / 100} ${cart.totalPrice.currencyCode}`
     itemsList.value = cart.lineItems
+    if (cart.discountOnTotalPrice?.discountedAmount.centAmount) {
+      oldPrice.value = `${cart.totalPrice.centAmount / 100 + cart.discountOnTotalPrice.discountedAmount.centAmount / 100} ${cart.totalPrice.currencyCode}`
+    }
   }
 }
 async function decreaseQuantity(lineId: string, quantity: number) {
@@ -56,10 +61,13 @@ async function increaseQuantity(lineId: string, quantity: number) {
 async function deleteHandler(lineId: string) {
   try {
     const action: CartUpdateAction = { action: 'removeLineItem', lineItemId: lineId }
-    const res = await deleteItem([action])
+    const res = await updateBag([action])
     itemsList.value = res.body.lineItems
     totalPrice.value = `${res.body.totalPrice.centAmount / 100} ${res.body.totalPrice.currencyCode}`
     toast.add({ severity: 'success', summary: `Item deleted`, life: 5000 })
+    if (itemsList.value.length === 0) {
+      isBagEmpty.value = true
+    }
   } catch (error) {
     if (error instanceof Error) {
       toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
@@ -81,7 +89,7 @@ async function emptyBag() {
           })
         })
       }
-      await deleteItem(actionArray)
+      await updateBag(actionArray)
       isBagEmpty.value = true
       itemsList.value = []
     }
@@ -89,6 +97,36 @@ async function emptyBag() {
   } catch (error) {
     if (error instanceof Error) {
       toast.add({ severity: 'error', summary: `${error.message}`, life: 5000 })
+    }
+  }
+}
+async function promoSubmit(event: FormSubmitEvent) {
+  const input = event.states.promo.value
+  const promoResponse = await getApiRoot().discountCodes().get().execute()
+  const promoItems = promoResponse.body.results
+  const promoList: string[] = []
+  promoItems.forEach((promo) => promoList.push(promo.code))
+
+  if (input) {
+    if (promoList.includes(input)) {
+      const response = await updateBag([
+        {
+          action: 'addDiscountCode',
+          code: input,
+        },
+      ])
+      const cart = response.body
+      if (cart.discountOnTotalPrice?.discountedAmount.centAmount) {
+        oldPrice.value = `${cart.totalPrice.centAmount / 100 + cart.discountOnTotalPrice.discountedAmount.centAmount / 100} ${cart.totalPrice.currencyCode}`
+      }
+      totalPrice.value = `${cart.totalPrice.centAmount / 100} ${cart.totalPrice.currencyCode}`
+      if (oldPrice.value !== '') {
+        toast.add({ severity: 'warn', summary: 'You already used a promo code', life: 5000 })
+      } else {
+        toast.add({ severity: 'success', summary: 'Promo code is activated', life: 5000 })
+      }
+    } else {
+      toast.add({ severity: 'error', summary: 'Invalid promo code', life: 5000 })
     }
   }
 }
@@ -178,10 +216,25 @@ getCustomerCart()
           @click="emptyBag"
         >
         </Button>
-        <div>Total: {{ totalPrice }}</div>
+        <div class="total-text">
+          Total:
+          <span class="total-price">{{ totalPrice }}</span>
+          <span class="before-discount">{{ oldPrice }}</span>
+        </div>
       </div>
     </template>
   </DataTable>
+  <Form @submit="promoSubmit" v-if="!isBagEmpty" class="promo">
+    <InputText name="promo" placeholder="I have a promo code"></InputText>
+    <Button
+      icon="pi pi-check"
+      severity="secondary"
+      aria-label="Promo"
+      :size="'small'"
+      type="submit"
+      class="promo-button"
+    ></Button>
+  </Form>
 </template>
 <style lang="css" scoped>
 .total {
@@ -199,5 +252,21 @@ getCustomerCart()
   align-items: center;
   justify-content: space-between;
   max-width: 130px;
+}
+.promo {
+  align-self: flex-end;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 4fr 1fr;
+  width: 30%;
+}
+.promo-button {
+  width: 100%;
+}
+.before-discount {
+  text-align: end;
+  text-decoration: line-through;
+  font-size: 20px;
+  padding-left: 5px;
 }
 </style>
