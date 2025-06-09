@@ -6,6 +6,9 @@
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 30px 1fr 8fr;
 }
 
 a,
@@ -49,7 +52,7 @@ a,
   #app {
     height: 100vh;
     display: grid;
-    grid-template-rows: 1fr 8fr;
+    grid-template-rows: 30px 1fr 8fr;
     width: 100%;
     padding: 0 2rem;
   }

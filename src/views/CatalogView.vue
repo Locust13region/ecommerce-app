@@ -151,7 +151,6 @@ onMounted(async () => {
           @page="onPageChange"
         />
       </div>
-      <div class="footer"></div>
     </div>
   </div>
 </template>
