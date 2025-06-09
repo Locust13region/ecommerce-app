@@ -106,4 +106,8 @@ nav
 .p-megamenu.p-megamenu-mobile .p-megamenu-root-list {
   width: auto;
 }
+
+nav .p-megamenu-overlay {
+  z-index: 2;
+}
 </style>
