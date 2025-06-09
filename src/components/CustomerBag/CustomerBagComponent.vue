@@ -115,16 +115,16 @@ async function promoSubmit(event: FormSubmitEvent) {
           code: input,
         },
       ])
-      const cart = response.body
-      if (cart.discountOnTotalPrice?.discountedAmount.centAmount) {
-        oldPrice.value = `${cart.totalPrice.centAmount / 100 + cart.discountOnTotalPrice.discountedAmount.centAmount / 100} ${cart.totalPrice.currencyCode}`
-      }
-      totalPrice.value = `${cart.totalPrice.centAmount / 100} ${cart.totalPrice.currencyCode}`
       if (oldPrice.value !== '') {
         toast.add({ severity: 'warn', summary: 'You already used a promo code', life: 5000 })
       } else {
         toast.add({ severity: 'success', summary: 'Promo code is activated', life: 5000 })
       }
+      const cart = response.body
+      if (cart.discountOnTotalPrice?.discountedAmount.centAmount) {
+        oldPrice.value = `${cart.totalPrice.centAmount / 100 + cart.discountOnTotalPrice.discountedAmount.centAmount / 100} ${cart.totalPrice.currencyCode}`
+      }
+      totalPrice.value = `${cart.totalPrice.centAmount / 100} ${cart.totalPrice.currencyCode}`
     } else {
       toast.add({ severity: 'error', summary: 'Invalid promo code', life: 5000 })
     }
