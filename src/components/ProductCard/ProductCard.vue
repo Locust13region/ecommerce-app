@@ -2,13 +2,39 @@
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 import type { ProductCardItem } from '@/interfaces/catalogInterfaces.ts'
+import router from '@/router'
+import { ref } from 'vue'
+import { addToCart } from '@/services/Cart/add-to-cart'
+import { useToast } from 'primevue'
+import { useUserStateStore } from '@/stores/userState'
+
+const { isLoggedIn } = useUserStateStore()
 
 const props = defineProps<ProductCardItem>()
+
+const buttonText = ref('Add to Bag')
+
+const toast = useToast()
+
+const addToBagOnClick = async (event: Event) => {
+  event.stopPropagation()
+  if (isLoggedIn) {
+    buttonText.value = '✓'
+    setTimeout(() => {
+      buttonText.value = 'Add to Bag'
+    }, 1000)
+  }
+  await addToCart(props.currentProduct, 1, toast)
+}
+
+const onCardClick = (slug: string) => {
+  router.push(`/product/${slug}`)
+}
 </script>
 
 <template>
-  <RouterLink :to="`/product/${props.slug}`" class="product-card-link">
-    <Card style="overflow: hidden">
+  <div class="product-card-link">
+    <Card style="overflow: hidden" @click="onCardClick(props.slug)">
       <template #header>
         <img :alt="props.title" :src="props.imageURL" />
         <span v-if="props.discountedPrice" class="p-card-ribbon">ON SALE</span>
@@ -30,14 +56,32 @@ const props = defineProps<ProductCardItem>()
       </template>
       <template #footer>
         <div class="flex gap-4 mt-1 justify-center align-center">
-          <Button label="Add to Bag" outlined class="w-full product-card-button" />
+          <Button
+            :label="buttonText"
+            outlined
+            class="w-full product-card-button"
+            @click="addToBagOnClick"
+          />
         </div>
       </template>
     </Card>
-  </RouterLink>
+  </div>
 </template>
 
 <style>
+.product-card-link {
+  border-radius: 5px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.product-card-link:hover .p-card-title {
+  color: var(--marked-text);
+}
+.product-card-link:hover {
+  border-color: var(--marked-text);
+  transition: all 0.3s ease-in-out;
+}
+
 .product-card-link .p-card.p-component {
   width: 20rem;
   height: 100%;
@@ -71,10 +115,11 @@ const props = defineProps<ProductCardItem>()
   padding: 5px 10px;
   top: 1rem;
 }
-.product-card-link {
-  border-radius: 5px;
+.p-card-footer .product-card-button {
+  width: 120px;
 }
-a.product-card-link:hover .p-card-title {
-  color: var(--marked-text);
+.p-card-footer .product-card-button:active {
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  transform: translate3d(0, 1px, 0);
 }
 </style>

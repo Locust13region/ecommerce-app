@@ -171,6 +171,7 @@ nav a:first-of-type {
     align-items: center;
     width: 40%;
     flex-wrap: nowrap;
+    /* width: 30%; */
   }
 }
 </style>
