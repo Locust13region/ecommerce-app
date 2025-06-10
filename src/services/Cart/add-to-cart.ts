@@ -25,7 +25,7 @@ export const addToCart = async (
     } else {
       toast.add({
         severity: 'info',
-        summary: "Sorry, you can't buy this product. It doesn't have SCU.",
+        summary: "Sorry, you can't buy this product. It doesn't have SKU.",
         life: 5000,
       })
       return false
