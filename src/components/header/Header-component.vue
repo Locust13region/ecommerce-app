@@ -34,7 +34,7 @@ onMounted(async () => {
     <div class="wrapper">
       <nav>
         <RouterLink to="/"> <span class="pi pi-home"></span> Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/about">About Us</RouterLink>
         <!-- <RouterLink to="/catalog">Catalog</RouterLink> -->
         <MegaMenu :model="navMenuItems" :class="'header-megamenu'" />
       </nav>
