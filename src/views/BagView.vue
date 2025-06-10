@@ -8,21 +8,27 @@ const bag = useBagStateStore()
 
 async function getCustomerCart() {
   const { getApiRoot } = useAuth()
-  const cartResponse = await getApiRoot().me().carts().get().execute()
+  try {
+    const cartResponse = await getApiRoot().me().carts().get().execute()
 
-  if (cartResponse.body.results.length === 0) {
-    bag.setEmpty()
-  } else if (cartResponse.body.results[0].lineItems.length !== 0) {
-    const cart = cartResponse.body.results[0]
-    const totalStr = `${cart.totalPrice.centAmount / 100} ${cart.totalPrice.currencyCode}`
+    if (cartResponse.body.results.length === 0) {
+      bag.setEmpty()
+    } else if (cartResponse.body.results[0].lineItems.length !== 0) {
+      const cart = cartResponse.body.results[0]
+      const totalStr = `${cart.totalPrice.centAmount / 100} ${cart.totalPrice.currencyCode}`
 
-    bag.setNotEmpty()
-    bag.setItems(cart.lineItems)
-    bag.setTotal(totalStr)
+      bag.setNotEmpty()
+      bag.setItems(cart.lineItems)
+      bag.setTotal(totalStr)
 
-    if (cart.discountOnTotalPrice?.discountedAmount.centAmount) {
-      const oldPrice = `${cart.totalPrice.centAmount / 100 + cart.discountOnTotalPrice.discountedAmount.centAmount / 100} ${cart.totalPrice.currencyCode}`
-      bag.setOldPrice(oldPrice)
+      if (cart.discountOnTotalPrice?.discountedAmount.centAmount) {
+        const oldPrice = `${cart.totalPrice.centAmount / 100 + cart.discountOnTotalPrice.discountedAmount.centAmount / 100} ${cart.totalPrice.currencyCode}`
+        bag.setOldPrice(oldPrice)
+      }
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message)
     }
   }
 }
