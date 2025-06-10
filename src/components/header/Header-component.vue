@@ -8,8 +8,12 @@ import type { MegaMenuItem } from '@/interfaces/catalogInterfaces'
 import { onMounted, ref } from 'vue'
 import { transformCategoriesToMegaMenu } from '@/services/Catalog/ParseCategoriesToMegaMenu/parseCategoriesToMegaMenu'
 import { useCategoriesStore } from '@/composables/useCategoryStore'
+import { useBagStateStore } from '@/stores/bagStates'
+import { useShoppingBag } from '@/composables/useShoppingBag'
 
 const user = useUserStateStore()
+const bag = useBagStateStore()
+const { getBag, getItemsList } = useShoppingBag()
 const { logout } = useAuth()
 
 function logoutHandler() {
@@ -24,6 +28,11 @@ const navMenuItems = ref<MegaMenuItem[]>([])
 onMounted(async () => {
   await categoriesStore.loadCategories()
   navMenuItems.value = transformCategoriesToMegaMenu(categoriesStore.categories, 'en-US', false)
+  await getBag()
+  const itemsInBag = await getItemsList()
+  if (itemsInBag.length !== 0) {
+    bag.setItems(itemsInBag)
+  }
 })
 </script>
 
@@ -35,7 +44,6 @@ onMounted(async () => {
       <nav>
         <RouterLink to="/"> <span class="pi pi-home"></span> Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
-        <!-- <RouterLink to="/catalog">Catalog</RouterLink> -->
         <MegaMenu :model="navMenuItems" :class="'header-megamenu'" />
       </nav>
       <div class="auth">
@@ -47,8 +55,15 @@ onMounted(async () => {
         >
           Sign Up
         </Button>
-        <Button class="button-to-bag" @click="router.push('/bag')" v-if="user.isLoggedIn">
-          <span class="pi pi-shopping-bag"></span>
+        <Button
+          class="button-to-bag"
+          @click="router.push('/bag')"
+          v-if="user.isLoggedIn"
+          :badge="bag.items.length.toString()"
+          badgeSeverity="contrast"
+          variant="outlined"
+          icon="pi pi-shopping-bag"
+        >
         </Button>
         <Button class="button-to-login" @click="router.push('/login')" v-if="!user.isLoggedIn">
           <span class="pi pi-sign-in"></span>
@@ -59,13 +74,15 @@ onMounted(async () => {
           severity="secondary"
           @click="router.push('/profile')"
           v-if="user.isLoggedIn"
+          icon="pi pi-user"
         >
-          <span class="pi pi-user"></span>
-          Profile
         </Button>
-        <Button class="button-to-logout" @click="logoutHandler" v-if="user.isLoggedIn">
-          <span class="pi pi-sign-out"></span>
-          Logout
+        <Button
+          class="button-to-logout"
+          @click="logoutHandler"
+          v-if="user.isLoggedIn"
+          icon="pi pi-sign-out"
+        >
         </Button>
       </div>
     </div>
@@ -128,13 +145,13 @@ nav a:first-of-type {
 }
 
 .button-to-signup,
-.button-to-login,
-.button-to-profile-page,
-.button-to-logout {
+.button-to-login {
   width: 45%;
   min-width: 100px;
 }
-.button-to-bag {
+.button-to-bag,
+.button-to-profile-page,
+.button-to-logout {
   height: 43px;
 }
 
@@ -169,9 +186,7 @@ nav a:first-of-type {
   .auth {
     justify-content: space-between;
     align-items: center;
-    width: 40%;
     flex-wrap: nowrap;
-    /* width: 30%; */
   }
 }
 </style>
