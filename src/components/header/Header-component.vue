@@ -35,7 +35,7 @@ onMounted(async () => {
         <img alt="logo" class="logo" src="@/assets/books.png" width="50" height="50" />
       </RouterLink>
       <Divider class="divider" layout="vertical" />
-      <RouterLink to="/about">About Us</RouterLink>
+      <RouterLink to="/about">Team</RouterLink>
       <Divider class="divider" layout="vertical" />
       <MegaMenu :model="navMenuItems" :class="'header-megamenu'" />
       <Button

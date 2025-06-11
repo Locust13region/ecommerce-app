@@ -2,108 +2,34 @@
 import Card from 'primevue/card'
 import Divider from 'primevue/divider'
 import Button from 'primevue/button'
+import team from '@/data/team-data'
+import collaboration from '@/data/team-collaboration'
 </script>
 
 <template>
   <h1>Meet the Undefined Team!</h1>
-  <section class="about-team">
-    <Card>
+  <section class="about-team" v-for="(member, index) in team" :key="index">
+    <Card :member="member">
       <template #header>
-        <img class="team-member_img" alt="Elizabeth" src="../assets/l.webp" />
+        <img class="team-member_img" :alt="member.imgAlt" :src="member.imgSrc" />
       </template>
-      <template #title>Elizaveta Abramova</template>
-      <template #subtitle>Team lead, front-end developer </template>
+      <template #title>{{ member.name }}</template>
+      <template #subtitle>{{ member.role }}</template>
       <template #content>
-        <p class="">
-          About a year ago I was an absolute novice. My current main goal is to become a good
-          Frontend Developer. Excited to gain hands-on experience and continue growing as a
-          developer within an team.
-        </p>
+        <p>{{ member.bio }}</p>
         <Divider />
         <h3>Contributions</h3>
-        <ul class="">
-          <li>Created login page</li>
-          <li>Created profile page</li>
-          <li>Created cart page</li>
-          <li>Implemented routing</li>
-          <li>SCRUM master</li>
+        <ul v-for="(contribution, index) in member.contributions" :key="index">
+          <li>{{ contribution }}</li>
         </ul>
       </template>
       <template #footer>
-        <div class="">
+        <div>
           <Button
             as="a"
             label="GitHub Profile"
             variant="link"
-            href="https://github.com/ElizavetaAbramova"
-            target="_blank"
-            rel="noopener"
-          />
-        </div>
-      </template>
-    </Card>
-    <Card>
-      <template #header>
-        <img class="team-member_img" alt="Roman" src="../assets/r.webp" />
-      </template>
-      <template #title>Roman Kargin</template>
-      <template #subtitle>Front-end developer </template>
-      <template #content>
-        <p class="">
-          About a year ago I was an absolute novice. My current main goal is to become a good
-          Frontend Developer. Excited to gain hands-on experience and continue growing as a
-          developer within an team.
-        </p>
-        <Divider />
-        <h3>Contributions</h3>
-        <ul class="">
-          <li>Created signup page</li>
-          <li>Created catalog page</li>
-          <li>Implemented catalog sorting, filtering and searching</li>
-          <li>Created main page</li>
-        </ul>
-      </template>
-      <template #footer>
-        <div class="">
-          <Button
-            as="a"
-            label="GitHub Profile"
-            variant="link"
-            href="https://github.com/thefoku"
-            target="_blank"
-            rel="noopener"
-          />
-        </div>
-      </template>
-    </Card>
-    <Card>
-      <template #header>
-        <img class="team-member_img" alt="Andrei" src="../assets/a.webp" />
-      </template>
-      <template #title>Andrei Maslennikov</template>
-      <template #subtitle>Front-end developer </template>
-      <template #content>
-        <p class="">
-          At the beginning of my career, I worked in IT for over 10 years. I was involved in network
-          infrastructure, did some programming. Now I want to return to the profession as a
-          front-end developer.
-        </p>
-        <Divider />
-        <h3>Contributions</h3>
-        <ul class="">
-          <li>Implemented interaction with commercetools</li>
-          <li>Created detailed product page</li>
-          <li>Created about page</li>
-          <li>Deploy project</li>
-        </ul>
-      </template>
-      <template #footer>
-        <div class="">
-          <Button
-            as="a"
-            label="GitHub Profile"
-            variant="link"
-            href="https://github.com/Locust13region"
+            :href="member.git"
             target="_blank"
             rel="noopener"
           />
@@ -119,27 +45,8 @@ import Button from 'primevue/button'
       work as a team, make decisions together, and move forward toward a common goal.
     </p>
     <h3>During the project, we:</h3>
-    <ul>
-      <li>
-        Got familiar with SCRUM principles — learning how to assign roles effectively, manage tasks,
-        and track progress through sprints.
-      </li>
-      <li>
-        Practiced high-quality code review — approaching every code change critically and
-        thoughtfully, making our product more stable and clean.
-      </li>
-      <li>
-        Communicated actively and supported each other — sharing ideas, discussing the best
-        approaches, and offering valuable advice.
-      </li>
-      <li>
-        Developed teamwork skills — learning to listen, compromise, and respect every team member’s
-        opinion.
-      </li>
-      <li>
-        Dived into new technologies — for all of us, this was the first time working with Vue,
-        PrimeVue, and commercetools, and we tackled the challenges with confidence and unity.
-      </li>
+    <ul v-for="(item, index) in collaboration" :key="index">
+      <li>{{ item }}</li>
     </ul>
     <p>
       This was more than just a technical project — it was an experience of growth, mutual support,
