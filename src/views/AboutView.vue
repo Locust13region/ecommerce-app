@@ -84,9 +84,9 @@ import Button from 'primevue/button'
       <template #subtitle>Front-end developer </template>
       <template #content>
         <p class="">
-          About a year ago I was an absolute novice. My current main goal is to become a good
-          Frontend Developer. Excited to gain hands-on experience and continue growing as a
-          developer within an team.
+          At the beginning of my career, I worked in IT for over 10 years. I was involved in network
+          infrastructure, did some programming. Now I want to return to the profession as a
+          front-end developer.
         </p>
         <Divider />
         <h3>Contributions</h3>
