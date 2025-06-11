@@ -125,7 +125,7 @@ nav .link {
   max-width: 8rem;
 }
 
-@media (width < 600px) {
+@media (width < 36rem) {
   nav {
     justify-content: space-between;
     padding: 1rem 0;
