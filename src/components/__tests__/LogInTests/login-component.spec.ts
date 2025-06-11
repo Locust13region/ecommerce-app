@@ -4,6 +4,7 @@ import LoginComponent from '../../login/login-component.vue'
 import PrimeVue from 'primevue/config'
 import { ToastService } from 'primevue'
 import router from '../../../router'
+import { createTestingPinia } from '@pinia/testing'
 
 describe('LoginComponent', () => {
   beforeEach(() => {
@@ -12,7 +13,14 @@ describe('LoginComponent', () => {
 
   const wrapper = mount(LoginComponent, {
     global: {
-      plugins: [PrimeVue, ToastService, router],
+      plugins: [
+        PrimeVue,
+        ToastService,
+        router,
+        createTestingPinia({
+          createSpy: vi.fn,
+        }),
+      ],
       stubs: {
         RouterLink: {
           template: '<a><slot /></a>',
