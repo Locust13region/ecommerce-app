@@ -23,7 +23,7 @@ export default [
     imgAlt: 'Roman',
     name: 'Roman Kargin',
     role: 'Front-end developer',
-    bio: 'About a year ago I was an absolute novice. My current main goal is to become a good Frontend Developer. Excited to gain hands-on experience and continue growing as a developer within an team.',
+    bio: 'Living in Tbilisi, and working as a technical support specialist in an e-commerce platform. Soon, I plan to change my career and become a front-end software developer. In my free time, I play video games, guitar, and take care of two cats and a dog.',
     contributions: [
       'Created signup page',
       'Created catalog page',
