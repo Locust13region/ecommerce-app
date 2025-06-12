@@ -8,8 +8,8 @@ import collaboration from '@/data/team-collaboration'
 
 <template>
   <h1>Meet the Undefined Team!</h1>
-  <section class="about-team" v-for="(member, index) in team" :key="index">
-    <Card :member="member">
+  <section class="about-team">
+    <Card v-for="(member, index) in team" :key="index">
       <template #header>
         <img class="team-member_img" :alt="member.imgAlt" :src="member.imgSrc" />
       </template>
