@@ -11,7 +11,7 @@ import ShippingAddresses from './ShippingAddresses.vue'
 </script>
 
 <template>
-  <div class="card">
+  <div class="personal-tabs-block">
     <Tabs value="personal" scrollable>
       <TabList>
         <Tab value="personal">Personal Information</Tab>
