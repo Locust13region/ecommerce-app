@@ -3,6 +3,7 @@ import CustomerBagComponent from '@/components/CustomerBag/CustomerBagComponent.
 import { RouterLink } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { useBagStateStore } from '@/stores/bagStates'
+import { onMounted } from 'vue'
 
 const bag = useBagStateStore()
 
@@ -32,7 +33,9 @@ async function getCustomerCart() {
     }
   }
 }
-getCustomerCart()
+onMounted(() => {
+  getCustomerCart()
+})
 </script>
 
 <template>
