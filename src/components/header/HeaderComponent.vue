@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button } from 'primevue'
+import { Button, OverlayBadge } from 'primevue'
 import router from '@/router'
 import { useAuth } from '@/composables/useAuth'
 import { useUserStateStore } from '@/stores/userState'
@@ -56,14 +56,14 @@ onMounted(async () => {
           Sign Up
         </Button>
         <Button
+          variant="outlined"
           class="button-to-bag"
           @click="router.push('/bag')"
           v-if="user.isLoggedIn"
-          :badge="bag.items.length.toString()"
-          badgeSeverity="contrast"
-          variant="outlined"
-          icon="pi pi-shopping-bag"
         >
+          <OverlayBadge :value="bag.items.length.toString()" severity="contrast">
+            <i class="pi pi-shopping-bag" style="font-size: 1rem" />
+          </OverlayBadge>
         </Button>
         <Button class="button-to-login" @click="router.push('/login')" v-if="!user.isLoggedIn">
           <span class="pi pi-sign-in"></span>
