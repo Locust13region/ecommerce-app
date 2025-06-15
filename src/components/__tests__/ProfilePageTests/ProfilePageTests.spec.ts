@@ -48,7 +48,7 @@ vi.mock('@/components/userProfile/user-profile-component.vue', () => ({
 // }))
 
 import UserProfileView from '../../../views/UserProfileView.vue'
-import HeaderComponent from '../../header/HeaderComponent.vue'
+import HeaderComponent from '../../header/Header-component.vue'
 import { createTestingPinia } from '@pinia/testing'
 import UserProfileComponent from '../../userProfile/user-profile-component.vue'
 // import PersonalInfoForm from '../../userProfile/personalInfoForm.vue'
