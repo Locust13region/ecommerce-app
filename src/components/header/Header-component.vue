@@ -135,15 +135,16 @@ nav .link {
 }
 
 .button-to-signup,
-.button-to-profile-page {
+.button-to-bag {
   margin-left: auto;
   max-width: 8rem;
 }
 
-.button-to-bag,
+.button-to-login,
 .button-to-profile-page,
 .button-to-logout {
   height: 43px;
+  margin-left: 1rem;
 }
 
 @media (width < 36rem) {
