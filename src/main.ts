@@ -23,7 +23,7 @@ router.beforeEach(async (to /*, from*/) => {
       name: 'home',
     }
   }
-  if (to.name === 'profile' && !isLoggedIn) {
+  if ((to.name === 'profile' || to.name === 'bag') && !isLoggedIn) {
     return {
       name: 'home',
     }

@@ -1,11 +1,14 @@
 import { useApiState } from '@/stores/apiState'
+import { useBagStateStore } from '@/stores/bagStates'
+import type { LineItem } from '@commercetools/platform-sdk'
 import { ref } from 'vue'
 
 export function useShoppingBag() {
   const api = useApiState()
-
   const bagId = ref('')
   const bagVersion = ref(0)
+  const bagItemsList = ref<LineItem[]>([])
+  const bag = useBagStateStore()
 
   const getBag = async (): Promise<{ id: string; version: number }> => {
     try {
@@ -16,6 +19,7 @@ export function useShoppingBag() {
       if (activeCart) {
         bagId.value = activeCart.id
         bagVersion.value = activeCart.version
+        bagItemsList.value = activeCart.lineItems
       } else {
         const createResponse = await api.root
           .me()
@@ -42,11 +46,11 @@ export function useShoppingBag() {
 
   const getBagId = () => bagId.value
   const getBagVersion = () => bagVersion.value
+  const getItemsList = () => bagItemsList.value
 
   const addToBag = async ({ sku, quantity = 1 }: { sku: string; quantity?: number }) => {
     try {
       const { id, version } = await getBag()
-
       const response = await api.root
         .me()
         .carts()
@@ -66,6 +70,8 @@ export function useShoppingBag() {
         .execute()
 
       bagVersion.value = response.body.version
+      bagItemsList.value = response.body.lineItems
+      bag.setItems(response.body.lineItems)
     } catch (error) {
       if (
         typeof error === 'object' &&
@@ -103,6 +109,8 @@ export function useShoppingBag() {
         .execute()
 
       bagVersion.value = response.body.version
+      bagItemsList.value = response.body.lineItems
+      bag.setItems(response.body.lineItems)
     } catch (error) {
       if (
         typeof error === 'object' &&
@@ -123,8 +131,10 @@ export function useShoppingBag() {
   } // техническая функция просмотра корзин
 
   return {
+    getBag,
     getBagId,
     getBagVersion,
+    getItemsList,
     addToBag,
     removeFromBag,
     getAllBags,

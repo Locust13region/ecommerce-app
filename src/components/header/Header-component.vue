@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button } from 'primevue'
+import { Button, OverlayBadge } from 'primevue'
 import Divider from 'primevue/divider'
 import router from '@/router'
 import { useAuth } from '@/composables/useAuth'
@@ -9,8 +9,12 @@ import type { MegaMenuItem } from '@/interfaces/catalogInterfaces'
 import { onMounted, ref } from 'vue'
 import { transformCategoriesToMegaMenu } from '@/services/Catalog/ParseCategoriesToMegaMenu/parseCategoriesToMegaMenu'
 import { useCategoriesStore } from '@/composables/useCategoryStore'
+import { useBagStateStore } from '@/stores/bagStates'
+import { useShoppingBag } from '@/composables/useShoppingBag'
 
 const user = useUserStateStore()
+const bag = useBagStateStore()
+const { getBag, getItemsList } = useShoppingBag()
 const { logout } = useAuth()
 
 function logoutHandler() {
@@ -25,6 +29,11 @@ const navMenuItems = ref<MegaMenuItem[]>([])
 onMounted(async () => {
   await categoriesStore.loadCategories()
   navMenuItems.value = transformCategoriesToMegaMenu(categoriesStore.categories, 'en-US', false)
+  await getBag()
+  const itemsInBag = await getItemsList()
+  if (itemsInBag.length !== 0) {
+    bag.setItems(itemsInBag)
+  }
 })
 </script>
 
@@ -49,6 +58,18 @@ onMounted(async () => {
         <template #default>
           <span class="button-label-full pi pi-sign-in"> Login</span>
           <span class="button-label-short pi pi-sign-in" />
+        </template>
+      </Button>
+      <Button
+        variant="outlined"
+        class="button-to-bag"
+        @click="router.push('/bag')"
+        v-if="user.isLoggedIn"
+      >
+        <template #default>
+          <OverlayBadge :value="bag.items.length.toString()" severity="contrast">
+            <i class="pi pi-shopping-bag" style="font-size: 1rem" />
+          </OverlayBadge>
         </template>
       </Button>
       <Button
@@ -119,10 +140,10 @@ nav .link {
   max-width: 8rem;
 }
 
-.button-to-login,
+.button-to-bag,
+.button-to-profile-page,
 .button-to-logout {
-  margin-left: 1rem;
-  max-width: 8rem;
+  height: 43px;
 }
 
 @media (width < 36rem) {
@@ -143,6 +164,7 @@ nav .link {
   .button-to-signup,
   .button-to-profile-page,
   .button-to-login,
+  .button-to-bag,
   .button-to-logout {
     margin: 0;
   }
