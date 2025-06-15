@@ -13,7 +13,7 @@ import ShippingAddresses from './ShippingAddresses.vue'
 <template>
   <div class="personal-tabs-block">
     <Tabs value="personal" scrollable>
-      <TabList>
+      <TabList class="personal-tabs-list">
         <Tab value="personal">Personal Information</Tab>
         <Tab value="billing-address">Billing Address</Tab>
         <Tab value="shipping-address">Shipping Address</Tab>

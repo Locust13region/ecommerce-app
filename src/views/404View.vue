@@ -21,7 +21,6 @@ import { Button } from 'primevue'
   align-items: center;
   width: 100%;
   gap: 15px;
-  height: 70%;
 }
 
 .button-to-home {

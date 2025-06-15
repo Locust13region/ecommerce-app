@@ -39,18 +39,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="bag">
+  <div class="shopping-bag">
     <h1>My shopping bag</h1>
     <div v-if="bag.isEmpty">
       Your bag is empty. You can choose any of the books provided
       <RouterLink to="/catalog"> on the catalog page.</RouterLink>
     </div>
-    <CustomerBagComponent v-if="!bag.isEmpty"></CustomerBagComponent>
+    <CustomerBagComponent v-if="!bag.isEmpty" class="customer-bag"></CustomerBagComponent>
   </div>
 </template>
 
 <style lang="css" scoped>
-.bag {
+.shopping-bag {
   display: flex;
   flex-direction: column;
   gap: 10px 0;

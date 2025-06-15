@@ -190,17 +190,13 @@ async function promoSubmit(event: FormSubmitEvent) {
   gap: 10px;
   border-top: 2px solid white;
   font-size: 25px;
+  width: 100%;
 }
 .quantity-block {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 130px;
-}
-.quantity-block .p-button,
-.delete-button-block .p-button {
-  width: 1rem;
-  height: 1rem;
+  width: 130px;
 }
 .promo {
   display: grid;
@@ -208,7 +204,7 @@ async function promoSubmit(event: FormSubmitEvent) {
   grid-template-columns: 2fr 1fr;
 }
 .promo-button {
-  width: 100%;
+  width: 50px;
 }
 .promo-input {
   width: 170px;
@@ -224,11 +220,5 @@ async function promoSubmit(event: FormSubmitEvent) {
   text-decoration: line-through;
   font-size: 23px;
   padding-left: 5px;
-}
-
-@media screen and (max-width: 576px) {
-  .bag .checkout-table {
-    font-size: 10px;
-  }
 }
 </style>

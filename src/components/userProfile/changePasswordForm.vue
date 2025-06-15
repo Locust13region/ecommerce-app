@@ -69,4 +69,10 @@ async function onSubmit(event: FormSubmitEvent) {
   gap: 10px 0;
   width: 35%;
 }
+
+@media (max-width: 560px) {
+  .change-password {
+    width: 100%;
+  }
+}
 </style>
