@@ -61,9 +61,17 @@ onMounted(async () => {
           @click="router.push('/bag')"
           v-if="user.isLoggedIn"
         >
-          <OverlayBadge :value="bag.items.length.toString()" severity="contrast">
-            <i class="pi pi-shopping-bag" style="font-size: 1rem" />
-          </OverlayBadge>
+          <template #default>
+            <OverlayBadge
+              :value="bag.items.length.toString()"
+              class="button-label-full"
+              severity="contrast"
+            >
+              <i class="pi pi-shopping-bag" style="font-size: 1rem" />
+            </OverlayBadge>
+            <!-- <span class="button-label-full pi pi-user"> Profile</span> -->
+            <!-- <span class="button-label-short pi pi-user" /> -->
+          </template>
         </Button>
         <Button class="button-to-login" @click="router.push('/login')" v-if="!user.isLoggedIn">
           <span class="pi pi-sign-in"></span>
