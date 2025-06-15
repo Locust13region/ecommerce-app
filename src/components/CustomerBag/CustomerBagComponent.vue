@@ -87,7 +87,7 @@ async function promoSubmit(event: FormSubmitEvent) {
 </script>
 
 <template>
-  <DataTable stripedRows :value="bag.items" :size="'small'" tableStyle="min-width: 50rem">
+  <DataTable stripedRows :value="bag.items" :size="'small'" class="checkout-table">
     <Column field="variant.images[0]" header="Cover">
       <template #body="{ data }">
         <div>
@@ -137,7 +137,7 @@ async function promoSubmit(event: FormSubmitEvent) {
         </div>
       </template>
     </Column>
-    <Column header="Delete Item">
+    <Column header="Delete Item" class="delete-button-block">
       <template #body="{ data }">
         <Button
           icon="pi pi-times"
@@ -197,6 +197,11 @@ async function promoSubmit(event: FormSubmitEvent) {
   justify-content: space-between;
   max-width: 130px;
 }
+.quantity-block .p-button,
+.delete-button-block .p-button {
+  width: 1rem;
+  height: 1rem;
+}
 .promo {
   display: grid;
   gap: 10px;
@@ -219,5 +224,11 @@ async function promoSubmit(event: FormSubmitEvent) {
   text-decoration: line-through;
   font-size: 23px;
   padding-left: 5px;
+}
+
+@media screen and (max-width: 576px) {
+  .bag .checkout-table {
+    font-size: 10px;
+  }
 }
 </style>
