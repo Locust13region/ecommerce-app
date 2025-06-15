@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Button, OverlayBadge } from 'primevue'
+import Divider from 'primevue/divider'
 import router from '@/router'
 import { useAuth } from '@/composables/useAuth'
 import { useUserStateStore } from '@/stores/userState'
@@ -38,90 +39,84 @@ onMounted(async () => {
 
 <template>
   <header>
-    <img alt="logo" class="logo" src="@/assets/books.png" width="50" height="50" />
-
-    <div class="wrapper">
-      <nav>
-        <RouterLink to="/"> <span class="pi pi-home"></span> Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <MegaMenu :model="navMenuItems" :class="'header-megamenu'" />
-      </nav>
-      <div class="auth">
-        <Button
-          class="button-to-signup"
-          severity="secondary"
-          @click="router.push('/signup')"
-          v-if="!user.isLoggedIn"
-        >
-          Sign Up
-        </Button>
-        <Button
-          variant="outlined"
-          class="button-to-bag"
-          @click="router.push('/bag')"
-          v-if="user.isLoggedIn"
-        >
-          <template #default>
-            <OverlayBadge
-              :value="bag.items.length.toString()"
-              class="button-label-full"
-              severity="contrast"
-            >
-              <i class="pi pi-shopping-bag" style="font-size: 1rem" />
-            </OverlayBadge>
-            <!-- <span class="button-label-full pi pi-user"> Profile</span> -->
-            <!-- <span class="button-label-short pi pi-user" /> -->
-          </template>
-        </Button>
-        <Button class="button-to-login" @click="router.push('/login')" v-if="!user.isLoggedIn">
-          <span class="pi pi-sign-in"></span>
-          Login
-        </Button>
-        <Button
-          class="button-to-profile-page"
-          severity="secondary"
-          @click="router.push('/profile')"
-          v-if="user.isLoggedIn"
-          icon="pi pi-user"
-        >
-        </Button>
-        <Button
-          class="button-to-logout"
-          @click="logoutHandler"
-          v-if="user.isLoggedIn"
-          icon="pi pi-sign-out"
-        >
-        </Button>
-      </div>
-    </div>
+    <nav>
+      <RouterLink to="/">
+        <img alt="logo" class="logo" src="@/assets/books.png" width="50" height="50" />
+      </RouterLink>
+      <Divider class="divider" layout="vertical" />
+      <RouterLink to="/about">Team</RouterLink>
+      <Divider class="divider" layout="vertical" />
+      <MegaMenu :model="navMenuItems" :class="'header-megamenu'" />
+      <Button
+        class="button-to-signup"
+        severity="secondary"
+        label="Sign Up"
+        @click="router.push('/signup')"
+        v-if="!user.isLoggedIn"
+      />
+      <Button class="button-to-login" @click="router.push('/login')" v-if="!user.isLoggedIn">
+        <template #default>
+          <span class="button-label-full pi pi-sign-in"> Login</span>
+          <span class="button-label-short pi pi-sign-in" />
+        </template>
+      </Button>
+      <Button
+        variant="outlined"
+        class="button-to-bag"
+        @click="router.push('/bag')"
+        v-if="user.isLoggedIn"
+      >
+        <template #default>
+          <OverlayBadge
+            :value="bag.items.length.toString()"
+            class="button-label-full"
+            severity="contrast"
+          >
+            <i class="pi pi-shopping-bag" style="font-size: 1rem" />
+          </OverlayBadge>
+        </template>
+      </Button>
+      <Button
+        class="button-to-profile-page"
+        icon="pi pi-user"
+        severity="secondary"
+        label="Profile"
+        @click="router.push('/profile')"
+        v-if="user.isLoggedIn"
+      >
+        <template #default>
+          <span class="button-label-full pi pi-user"> Profile</span>
+          <span class="button-label-short pi pi-user" />
+        </template>
+      </Button>
+      <Button class="button-to-logout" @click="logoutHandler" v-if="user.isLoggedIn">
+        <template #default>
+          <span class="button-label-full pi pi-sign-out"> Logout</span>
+          <span class="button-label-short pi pi-sign-out" />
+        </template>
+      </Button>
+    </nav>
   </header>
 </template>
 
 <style scoped>
 header {
   line-height: 1.5;
-  max-height: 100vh;
+  margin-top: 2rem;
 }
 
-header .wrapper {
+nav {
+  margin-top: 1rem;
+  padding: 1rem 1rem 1rem 0;
+  width: 100%;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
 }
 
 .logo {
   display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 50%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin: auto;
 }
 
 nav a.router-link-exact-active {
@@ -136,26 +131,23 @@ nav a,
 nav .link {
   display: inline-block;
   padding: 0.5rem 1rem;
-  border-left: 1px solid var(--color-border);
   height: 100%;
 }
 
-nav a:first-of-type {
-  border: 0;
-}
-
-.auth {
-  display: flex;
-  flex-wrap: wrap;
-  min-width: 170px;
-  gap: 10px;
-  justify-content: center;
+.button-label-short {
+  display: none;
 }
 
 .button-to-signup,
-.button-to-login {
-  width: 45%;
-  min-width: 100px;
+.button-to-profile-page {
+  margin-left: auto;
+  max-width: 8rem;
+}
+
+.button-to-bag,
+.button-to-profile-page,
+.button-to-logout {
+  height: 43px;
 }
 .button-to-bag,
 .button-to-profile-page,
@@ -163,38 +155,34 @@ nav a:first-of-type {
   height: 43px;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    margin-top: 1rem;
-    max-height: max-content;
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    flex-wrap: wrap;
-    width: 80%;
-    align-items: center;
-    justify-content: space-between;
-    flex-direction: row;
-  }
-
+@media (width < 36rem) {
   nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
+    justify-content: space-between;
     padding: 1rem 0;
-    margin-top: 0;
   }
 
-  .auth {
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: nowrap;
+  .divider {
+    display: none;
+  }
+
+  nav a,
+  nav .link {
+    padding: 0;
+  }
+
+  .button-to-signup,
+  .button-to-profile-page,
+  .button-to-login,
+  .button-to-logout {
+    margin: 0;
+  }
+
+  .button-label-full {
+    display: none;
+  }
+
+  .button-label-short {
+    display: inline;
   }
 }
 </style>
