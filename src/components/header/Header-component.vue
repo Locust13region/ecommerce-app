@@ -67,11 +67,7 @@ onMounted(async () => {
         v-if="user.isLoggedIn"
       >
         <template #default>
-          <OverlayBadge
-            :value="bag.items.length.toString()"
-            class="button-label-full"
-            severity="contrast"
-          >
+          <OverlayBadge :value="bag.items.length.toString()" severity="contrast">
             <i class="pi pi-shopping-bag" style="font-size: 1rem" />
           </OverlayBadge>
         </template>
@@ -149,11 +145,6 @@ nav .link {
 .button-to-logout {
   height: 43px;
 }
-.button-to-bag,
-.button-to-profile-page,
-.button-to-logout {
-  height: 43px;
-}
 
 @media (width < 36rem) {
   nav {
@@ -173,6 +164,7 @@ nav .link {
   .button-to-signup,
   .button-to-profile-page,
   .button-to-login,
+  .button-to-bag,
   .button-to-logout {
     margin: 0;
   }
