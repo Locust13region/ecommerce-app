@@ -45,7 +45,7 @@ onMounted(() => {
       Your bag is empty. You can choose any of the books provided
       <RouterLink to="/catalog"> on the catalog page.</RouterLink>
     </div>
-    <CustomerBagComponent v-if="!bag.isEmpty" class="customer-bag"></CustomerBagComponent>
+    <CustomerBagComponent v-if="!bag.isEmpty"></CustomerBagComponent>
   </div>
 </template>
 
