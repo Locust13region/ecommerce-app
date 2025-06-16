@@ -42,6 +42,7 @@ h1 {
   .button-to-home {
     width: 250px;
   }
+
   .img-404 {
     height: 250px;
     width: 250px;
