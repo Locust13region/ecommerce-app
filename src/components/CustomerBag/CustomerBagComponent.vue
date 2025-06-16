@@ -113,6 +113,7 @@ async function promoSubmit(event: FormSubmitEvent) {
       <template #body="{ data }">
         <div class="quantity-block">
           <Button
+            class="quantity-button"
             icon="pi pi-minus"
             severity="secondary"
             aria-label="minus"
@@ -121,6 +122,7 @@ async function promoSubmit(event: FormSubmitEvent) {
           />
           <h4>{{ data.quantity }}</h4>
           <Button
+            class="quantity-button"
             icon="pi pi-plus"
             severity="secondary"
             aria-label="plus"
@@ -140,6 +142,7 @@ async function promoSubmit(event: FormSubmitEvent) {
     <Column header="Delete Item" class="delete-button-block">
       <template #body="{ data }">
         <Button
+          class="delete-button"
           icon="pi pi-times"
           severity="danger"
           aria-label="Cancel"
@@ -196,8 +199,18 @@ async function promoSubmit(event: FormSubmitEvent) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 130px;
 }
+
+.quantity-block h4 {
+  padding: 0.2rem;
+}
+
+.quantity-block .quantity-button,
+.delete-button-block .delete-button {
+  width: 1rem;
+  height: 1rem;
+}
+
 .promo {
   display: grid;
   gap: 10px;
@@ -220,5 +233,11 @@ async function promoSubmit(event: FormSubmitEvent) {
   text-decoration: line-through;
   font-size: 23px;
   padding-left: 5px;
+}
+
+@media screen and (max-width: 576px) {
+  .shopping-bag .checkout-table {
+    font-size: 10px;
+  }
 }
 </style>
