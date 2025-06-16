@@ -54,6 +54,10 @@ a,
     display: grid;
     grid-template-rows: 30px 1fr 8fr;
     width: 100%;
-    padding: 0 2rem;
+  }
+}
+@media (min-width: 500px) {
+  #app {
+    padding: 2rem;
   }
 }

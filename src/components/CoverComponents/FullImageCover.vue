@@ -39,5 +39,6 @@ const routeToCatalog = () => {
   color: #fff;
   font-size: 3rem;
   text-shadow: 3px 1px 5px black;
+  text-align: center;
 }
 </style>

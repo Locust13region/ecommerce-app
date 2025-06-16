@@ -87,7 +87,7 @@ async function promoSubmit(event: FormSubmitEvent) {
 </script>
 
 <template>
-  <DataTable stripedRows :value="bag.items" :size="'small'" tableStyle="min-width: 50rem">
+  <DataTable stripedRows :value="bag.items" :size="'small'" class="checkout-table">
     <Column field="variant.images[0]" header="Cover">
       <template #body="{ data }">
         <div>
@@ -113,6 +113,7 @@ async function promoSubmit(event: FormSubmitEvent) {
       <template #body="{ data }">
         <div class="quantity-block">
           <Button
+            class="quantity-button"
             icon="pi pi-minus"
             severity="secondary"
             aria-label="minus"
@@ -121,6 +122,7 @@ async function promoSubmit(event: FormSubmitEvent) {
           />
           <h4>{{ data.quantity }}</h4>
           <Button
+            class="quantity-button"
             icon="pi pi-plus"
             severity="secondary"
             aria-label="plus"
@@ -137,9 +139,10 @@ async function promoSubmit(event: FormSubmitEvent) {
         </div>
       </template>
     </Column>
-    <Column header="Delete Item">
+    <Column header="Delete Item" class="delete-button-block">
       <template #body="{ data }">
         <Button
+          class="delete-button"
           icon="pi pi-times"
           severity="danger"
           aria-label="Cancel"
@@ -190,20 +193,31 @@ async function promoSubmit(event: FormSubmitEvent) {
   gap: 10px;
   border-top: 2px solid white;
   font-size: 25px;
+  width: 100%;
 }
 .quantity-block {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 130px;
 }
+
+.quantity-block h4 {
+  padding: 0.2rem;
+}
+
+.quantity-block .quantity-button,
+.delete-button-block .delete-button {
+  width: 1rem;
+  height: 1rem;
+}
+
 .promo {
   display: grid;
   gap: 10px;
   grid-template-columns: 2fr 1fr;
 }
 .promo-button {
-  width: 100%;
+  width: 50px;
 }
 .promo-input {
   width: 170px;
@@ -219,5 +233,11 @@ async function promoSubmit(event: FormSubmitEvent) {
   text-decoration: line-through;
   font-size: 23px;
   padding-left: 5px;
+}
+
+@media screen and (max-width: 576px) {
+  .shopping-bag .checkout-table {
+    font-size: 10px;
+  }
 }
 </style>
