@@ -3,12 +3,17 @@ import { changePassword } from '@/services/saveChanges/changePassword'
 import { Button, Message, Password, useToast } from 'primevue'
 import { personalDataValidator } from '@/services/PersonalDataValidator/PersonalDataValidator'
 import { Form, type FormSubmitEvent } from '@primevue/forms'
+import { useAuth } from '@/composables/useAuth'
+import router from '@/router'
 
 const toast = useToast()
+const { logout } = useAuth()
 async function onSubmit(event: FormSubmitEvent) {
   if (event.valid) {
     try {
       await changePassword(event)
+      logout()
+      router.push('/login')
       toast.add({ severity: 'success', summary: 'Password changed', life: 5000 })
     } catch (error) {
       if (error instanceof Error) {
@@ -63,5 +68,11 @@ async function onSubmit(event: FormSubmitEvent) {
   flex-direction: column;
   gap: 10px 0;
   width: 35%;
+}
+
+@media (max-width: 560px) {
+  .change-password {
+    width: 100%;
+  }
 }
 </style>

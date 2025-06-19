@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// import signUp from '@/components/signUp/signUp-component.vue'
 import { RouterLink } from 'vue-router'
 import loginComponent from '@/components/login/login-component.vue'
 </script>

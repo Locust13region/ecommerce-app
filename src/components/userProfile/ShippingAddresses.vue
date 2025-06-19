@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { Address } from '@/interfaces/signUpFormInterfaces'
-import type { BaseAddress, MyCustomerUpdateAction } from '@commercetools/platform-sdk'
+import type {
+  BaseAddress,
+  ClientResponse,
+  Customer,
+  MyCustomerUpdateAction,
+} from '@commercetools/platform-sdk'
 import { Button, InputText, Message, Select, useToast } from 'primevue'
 import { Form, FormField, type FormSubmitEvent } from '@primevue/forms'
 import Card from 'primevue/card'
@@ -96,13 +101,13 @@ async function setDefaultAddress(id: string) {
   try {
     const currentDefaultAddress = defaultAddressHolder.value[0]
     const newDefaultAddress = shippingAddressesHolder.value.find((address) => address.id === id)
-
-    shippingAddressesHolder.value.push(currentDefaultAddress)
-    defaultAddressHolder.value.pop()
+    await saveChanges([{ action: 'setDefaultShippingAddress', addressId: id }])
+    if (currentDefaultAddress) {
+      shippingAddressesHolder.value.push(currentDefaultAddress)
+      defaultAddressHolder.value.pop()
+    }
     defaultAddressHolder.value.push(newDefaultAddress as BaseAddress)
     shippingAddressesHolder.value = shippingAddressesHolder.value.filter((elem) => elem.id !== id)
-
-    await saveChanges([{ action: 'setDefaultShippingAddress', addressId: id }])
     toast.add({
       severity: 'success',
       summary: `New default address saved`,

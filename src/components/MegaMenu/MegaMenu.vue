@@ -92,12 +92,13 @@ onUnmounted(() => {
 <style>
 nav .header-megamenu.p-megamenu {
   border-color: transparent;
-  border-left: 1px solid var(--color-border);
   padding: 0px;
 }
+
 .catalog-menu .p-megamenu {
   border-color: transparent;
 }
+
 .p-megamenu-submenu .p-megamenu-submenu-label {
   padding: 0px;
 }
@@ -109,6 +110,7 @@ li.p-megamenu-submenu-label .p-megamenu-item-link:hover {
 nav .p-megamenu-submenu .p-megamenu-item .p-megamenu-item-link .p-megamenu-item-label {
   margin-left: 10%;
 }
+
 nav
   .header-megamenu.p-megamenu:not(.active)
   .p-megamenu-root-list
@@ -118,6 +120,7 @@ nav
   > .p-megamenu-item-label {
   color: var(--marked-text);
 }
+
 .p-megamenu.p-megamenu-mobile .p-megamenu-root-list {
   width: auto;
 }

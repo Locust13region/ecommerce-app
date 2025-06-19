@@ -8,3 +8,15 @@ import userProfileComponent from '../components/userProfile/user-profile-compone
     <userProfileComponent></userProfileComponent>
   </div>
 </template>
+
+<style lang="css" scoped>
+.profile {
+  overflow: hidden;
+  height: min-content;
+}
+@media (max-width: 380px) {
+  .profile {
+    width: 330px;
+  }
+}
+</style>

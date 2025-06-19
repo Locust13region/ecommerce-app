@@ -98,13 +98,14 @@ async function setDefaultAddress(id: string) {
   try {
     const currentDefaultAddress = defaultAddressHolder.value[0]
     const newDefaultAddress = billingAddressesHolder.value.find((address) => address.id === id)
-
-    billingAddressesHolder.value.push(currentDefaultAddress)
-    defaultAddressHolder.value.pop()
+    await saveChanges([{ action: 'setDefaultBillingAddress', addressId: id }])
+    if (currentDefaultAddress) {
+      billingAddressesHolder.value.push(currentDefaultAddress)
+      defaultAddressHolder.value.pop()
+    }
     defaultAddressHolder.value.push(newDefaultAddress as BaseAddress)
     billingAddressesHolder.value = billingAddressesHolder.value.filter((elem) => elem.id !== id)
 
-    await saveChanges([{ action: 'setDefaultBillingAddress', addressId: id }])
     toast.add({
       severity: 'success',
       summary: `New default address saved`,

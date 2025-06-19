@@ -25,6 +25,8 @@ export function parseProductsForCards(productsData: ProductProjection[]): Produc
 
     const slug = currentProduct.slug?.['en-US'] ?? ''
 
+    const sku: string = currentProduct.masterVariant.sku ?? ''
+
     return {
       title,
       price: parsedPrice,
@@ -32,6 +34,8 @@ export function parseProductsForCards(productsData: ProductProjection[]): Produc
       shortDescription,
       imageURL,
       slug,
+      sku,
+      currentProduct,
     }
   })
 }

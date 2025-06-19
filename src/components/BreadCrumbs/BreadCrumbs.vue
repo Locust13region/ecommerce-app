@@ -65,3 +65,9 @@ watch(
     </Breadcrumb>
   </div>
 </template>
+
+<style scoped>
+.p-breadcrumb-item span.text-primary.font-semibold:hover {
+  color: #fff;
+}
+</style>

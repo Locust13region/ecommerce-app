@@ -21,7 +21,6 @@ import { Button } from 'primevue'
   align-items: center;
   width: 100%;
   gap: 15px;
-  height: 70%;
 }
 
 .button-to-home {
@@ -43,6 +42,7 @@ h1 {
   .button-to-home {
     width: 250px;
   }
+
   .img-404 {
     height: 250px;
     width: 250px;
