@@ -9,6 +9,10 @@ import ProductImageCarousel from '@/components/product-detailed/ProductImageCaro
 import ImageDialog from '@/components/product-detailed//ImageDialog.vue'
 import ProductInfo from '@/components/product-detailed//ProductInfo.vue'
 import { useProductListStore } from '@/stores/useProductListStore'
+import { addToCart } from '@/services/Cart/add-to-cart'
+import { removeFromCart } from '@/services/Cart/remove-from-cart'
+import { useUserStateStore } from '@/stores/userState'
+import { isProductInCart } from '@/services/Cart/is-product-in-cart'
 
 const { productSlug } = defineProps<{ productSlug: string }>()
 
@@ -16,9 +20,13 @@ const toast = useToast()
 const router = useRouter()
 const { fetchProduct } = useProduct()
 const { products } = useProductListStore()
+const { isLoggedIn } = useUserStateStore()
 
 const product = ref<ProductProjection | null>(null)
 const showModal = ref(false)
+
+const quantity = ref(1)
+const productInCart = ref(false)
 
 const images = computed(() => product.value?.masterVariant.images?.map((img) => img.url) ?? [])
 
@@ -51,15 +59,24 @@ onMounted(async () => {
         life: 5000,
       })
       goBack()
+      return
     }
+  }
+  if (isLoggedIn && product.value) {
+    productInCart.value = await isProductInCart(product.value)
   }
 })
 
 const goBack = () => router.back()
 const openModal = () => (showModal.value = true)
-const addToCart = () => {
-  if (!product.value) return
-  console.log('Add to cart')
+
+const handleAddToCart = async () => {
+  const addResult = await addToCart(product.value, quantity.value, toast)
+  if (addResult) productInCart.value = true
+}
+const handleRemoveFromCart = async () => {
+  const removeResult = await removeFromCart(product.value, toast)
+  if (removeResult) productInCart.value = false
 }
 </script>
 
@@ -87,7 +104,11 @@ const addToCart = () => {
           product.masterVariant.attributes?.[0]?.value.toString() || 'information is missing'
         "
         :priceInfo="priceInfo"
-        @addToCart="addToCart"
+        :productSku="product.masterVariant.sku"
+        v-model:quantity="quantity"
+        v-model:productInCart="productInCart"
+        @addToCart="handleAddToCart"
+        @removeFromCart="handleRemoveFromCart"
       />
     </main>
 

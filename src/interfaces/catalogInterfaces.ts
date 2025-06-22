@@ -19,6 +19,8 @@ export interface ProductCardItem {
   shortDescription: string
   imageURL: string
   slug: string
+  sku: string
+  currentProduct: ProductProjection
 }
 
 export interface FetchProductsResponse {

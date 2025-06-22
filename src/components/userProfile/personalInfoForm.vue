@@ -196,10 +196,9 @@ getCustomer(getCustomerData).catch((error) => {
       severity="contrast"
       @click="switchToEditMode"
       raised
+      icon="pi pi-pencil"
     >
-      <span class="pi pi-pencil"></span>
-      Edit</Button
-    >
+    </Button>
     <div class="control-buttons">
       <Button
         v-if="flagEditMode"
@@ -207,11 +206,18 @@ getCustomer(getCustomerData).catch((error) => {
         @click="switchToReadMode"
         class="cancel-button"
         raised
-        ><span class="pi pi-times"></span> Cancel</Button
+        icon="pi pi-times"
       >
-      <Button v-if="flagEditMode" severity="success" class="save-button" type="submit" raised
-        ><span class="pi pi-check"></span> Save</Button
+      </Button>
+      <Button
+        v-if="flagEditMode"
+        severity="success"
+        class="save-button"
+        type="submit"
+        raised
+        icon="pi pi-check"
       >
+      </Button>
     </div>
   </Form>
 </template>
@@ -239,7 +245,7 @@ input,
 .edit-button,
 .save-button,
 .cancel-button {
-  min-width: 180px;
+  min-width: 50px;
 }
 .control-buttons {
   display: flex;
@@ -251,12 +257,6 @@ input,
   .birthDate,
   .email {
     width: 50%;
-  }
-  .edit-button,
-  .save-button,
-  .cancel-button {
-    min-width: 150px;
-    width: fit-content;
   }
 }
 </style>
